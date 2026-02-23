@@ -1,30 +1,39 @@
 package com.cts.edusphere.entities;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.web.service.annotation.GetExchange;
 
 import java.time.LocalDate;
-
 
 @Entity
 @Getter
 @Setter
 @SuperBuilder
-@Table(name="departmenthead")
-@PrimaryKeyJoinColumn(name = "departmentHeadID")
+@Table(name= "faculty")
+@NoArgsConstructor
+@AllArgsConstructor
+@PrimaryKeyJoinColumn(name = "facultyId")
 @EntityListeners(AuditingEntityListener.class)
 
-public class DepartmentHead extends User{
+public class Faculty extends User{
+        @Column(nullable = false)
+        private int facultyId;
 
-    @Column(nullable = false)
-    private LocalDate departmentHeadId;
+        @Column(nullable = false)
+        private String facultyName;
+
+        @Column(nullable = false)
+        private int departmentId;
+
+        @Column(nullable = false)
+        private String position;
+
+        @Column(nullable = false)
+        private LocalDate joinDate;
 
     @Override
     public boolean equals(Object o) {
@@ -35,6 +44,5 @@ public class DepartmentHead extends User{
     public int hashCode() {
         return super.hashCode();
     }
-
 
 }

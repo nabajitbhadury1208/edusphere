@@ -1,11 +1,9 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.entities.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -13,14 +11,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @SuperBuilder
-@Table(name="complianceofficer")
-@PrimaryKeyJoinColumn(name = "complianceOfficerID")
+@Table(name = "admin")
+@NoArgsConstructor
+@AllArgsConstructor
+@PrimaryKeyJoinColumn(name = "adminId")
 @EntityListeners(AuditingEntityListener.class)
 
-public class ComplianceOfficer extends User{
+public class Administrator extends User {
 
     @Column(nullable = false)
-    private int complianceOfficerId;
+    private int adminId;
 
     @Override
     public boolean equals(Object o) {
@@ -31,7 +31,4 @@ public class ComplianceOfficer extends User{
     public int hashCode() {
         return super.hashCode();
     }
-
-
-
 }
