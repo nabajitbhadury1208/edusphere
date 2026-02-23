@@ -1,6 +1,6 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
 
-import com.cts.schlmgmt.enums.DocType;
+import com.cts.edusphere.enums.DocType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

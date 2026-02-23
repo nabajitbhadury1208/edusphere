@@ -1,4 +1,4 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class AuditLog {
     @ManyToOne // One User may have many Audit Logs
     @JoinColumn(name = "UserId", referencedColumnName = "UserID")
     @NotNull
-    private User User; // Foreign Key
+    private User user; // Foreign Key
 
     @Column(name = "Action")
     @NotNull

@@ -1,4 +1,4 @@
-package com.cts.schlmgmt.enums;
+package com.cts.edusphere.enums;
 
 public enum Role {
     STUDENT,
@@ -8,3 +8,4 @@ public enum Role {
     COMPLIANCE,
     REGULATOR
 }
+
