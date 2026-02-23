@@ -1,46 +1,48 @@
 package com.cts.edusphere.entities;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Table(name= "FACULTY")
+@Getter
+@Setter
+@SuperBuilder
+@Table(name= "faculty")
 @NoArgsConstructor
 @AllArgsConstructor
-@PrimaryKeyJoinColumn(name = "FacultyID")
+@PrimaryKeyJoinColumn(name = "facultyId")
+@EntityListeners(AuditingEntityListener.class)
 
 public class Faculty extends User{
-        @Column(name = "FacultyID")
-        @NotNull
+        @Column(nullable = false)
         private int facultyId;
 
-        @Column(name = "FacultyName")
-        @NotNull
+        @Column(nullable = false)
         private String facultyName;
 
-        @Column(name = "DepartmentID")
-        @NotNull
+        @Column(nullable = false)
         private int departmentId;
 
-        @Column(name = "Position")
-        @NotNull
+        @Column(nullable = false)
         private String position;
 
-        @Column(name = "JoinDate")
-        @NotNull
+        @Column(nullable = false)
         private LocalDate joinDate;
 
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
 }
