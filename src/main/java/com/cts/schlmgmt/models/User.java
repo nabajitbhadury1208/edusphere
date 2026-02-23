@@ -52,4 +52,6 @@ public class User {
     @NotNull
     @Column(name = "Updated At")
     private LocalDate updatedAt;
+
+
 }
