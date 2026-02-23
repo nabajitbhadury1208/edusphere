@@ -3,25 +3,22 @@ package com.cts.schlmgmt.models;
 import com.cts.schlmgmt.enums.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Table(name = "STUDENT")
-public class Student {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "StudentID")
-    private UUID studentId;
-
-    @Column(name = "Name")
-    @NotNull
-    private String name;
-
+@NoArgsConstructor
+@AllArgsConstructor
+@PrimaryKeyJoinColumn(name = "StudentID")
+public class Student extends User {
     @Column(name = "DOB")
     @NotNull
     private LocalDate dob;
@@ -42,8 +39,4 @@ public class Student {
     @Column(name = "EnrollmentDate")
     @NotNull
     private LocalDateTime enrollmentDate;
-
-    @Column(name = "Status")
-    @NotNull
-    private boolean status;
 }

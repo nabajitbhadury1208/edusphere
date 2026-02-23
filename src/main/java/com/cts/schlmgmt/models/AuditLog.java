@@ -12,12 +12,12 @@ import java.util.UUID;
 @Table(name = "AUDIT LOG")
 public class AuditLog {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "AuditID")
     private UUID auditId;
 
     @ManyToOne // One User may have many Audit Logs
-    @JoinColumn(table = "UserID")
+    @JoinColumn(name = "UserId", referencedColumnName = "UserID")
     @NotNull
     private User User; // Foreign Key
 
