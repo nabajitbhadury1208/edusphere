@@ -1,10 +1,10 @@
-package com.cts.schlmgmt;
+package com.cts.edusphere;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SchlmgmtApplicationTests {
+class EduSphereTests {
 
 	@Test
 	void contextLoads() {
