@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
-
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = true)
