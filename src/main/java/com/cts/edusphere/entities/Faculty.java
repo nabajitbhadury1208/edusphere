@@ -1,4 +1,4 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
 
 
 import jakarta.persistence.Column;

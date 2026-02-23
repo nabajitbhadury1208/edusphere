@@ -1,4 +1,5 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
+import com.cts.edusphere.entities.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -13,7 +14,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Table(name="Regulator")
 @PrimaryKeyJoinColumn(name = "RegulatorID")
-public class Regulator extends User{
+public class Regulator extends User {
 
     @Column(name = "RegulatorId")
     @NotNull

@@ -1,4 +1,4 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 
 
 @Entity

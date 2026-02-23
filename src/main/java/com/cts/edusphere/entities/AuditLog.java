@@ -19,7 +19,7 @@ public class AuditLog {
     @ManyToOne // One User may have many Audit Logs
     @JoinColumn(name = "UserId", referencedColumnName = "UserID")
     @NotNull
-    private User User; // Foreign Key
+    private User user; // Foreign Key
 
     @Column(name = "Action")
     @NotNull

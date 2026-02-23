@@ -1,5 +1,6 @@
-package com.cts.schlmgmt.models;
+package com.cts.edusphere.entities;
 
+import com.cts.edusphere.entities.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "AdminID")
-public class Administrator extends User{
+public class Administrator extends User {
 
     @Column(name = "AdminID")
     @NotNull
