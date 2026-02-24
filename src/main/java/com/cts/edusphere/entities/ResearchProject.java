@@ -1,42 +1,49 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "research_projects")
+@AttributeOverride(name = "id", column = @Column(name = "project_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class ResearchProject {
+@AllArgsConstructor
+@SuperBuilder
+public class ResearchProject extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
-    private UUID projectId;
-
-    @Column(nullable = false)
+    @Column(nullable = false, name = "title")
     private String title;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Faculty faculty; // FK -> Faculty
+    @JoinColumn(name = "faculty_id", nullable = false)
+    private Faculty faculty;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Student student; // FK -> Student
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-    @Column(nullable = false)
-    private LocalDate startDate;
+    @Column(nullable = false, name = "start_date")
+    private Instant startDate;
 
-    @Column(nullable = false)
-    private LocalDate endDate;
+    @Column(nullable = false, name = "end_date")
+    private Instant endDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "status")
     private String status;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

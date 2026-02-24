@@ -1,38 +1,49 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.ComplianceType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "compliance_records")
+@AttributeOverride(name = "id", column = @Column(name = "compliance_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class ComplianceRecord {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
-    private UUID complianceId;
-
-    // Kept scalar because the diagram models a generic "EntityID"
-    @Column(nullable = false)
+@AllArgsConstructor
+@SuperBuilder
+public class ComplianceRecord extends BaseEntity{
+    @Column(name = "entity_id", nullable = false)
     private UUID entityId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String type;
+    private ComplianceType complianceType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "result")
     private String result;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    @Column(nullable = false, name = "compliance_date")
+    private LocalDate complianceDate;
 
-    @Column(length = 4000)
+    @Column(columnDefinition = "TEXT")
     private String notes;
+
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

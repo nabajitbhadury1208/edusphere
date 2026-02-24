@@ -4,7 +4,11 @@ package com.cts.edusphere.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.Instant;
+import java.util.UUID;
 
 
 @Entity
@@ -18,20 +22,14 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Faculty extends User{
-//        @Column(nullable = false)
-//        private int facultyId;
-
-//        @Column(nullable = false)
-//        private String facultyName;
-
-        @Column(nullable = false)
-        private int departmentId;
+        @Column(nullable = false, name = "department_id")
+        private UUID departmentId;
 
         @Column(nullable = false)
         private String position;
 
-//        @Column(nullable = false)
-//        private LocalDate joinDate;
+        @CreatedDate
+        private Instant joinDate;
 
     @Override
     public boolean equals(Object o) {

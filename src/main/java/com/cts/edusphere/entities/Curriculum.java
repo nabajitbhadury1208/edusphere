@@ -1,32 +1,43 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
 
 @Entity
-@Data
-
 @Table(name="curriculum")
-public class Curriculum {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false )
-    private UUID curriculumID;
+@AttributeOverride(name = "id", column = @Column(name = "curriculum_id"))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 
-    @ManyToOne
-    @JoinColumn(name = "CourseId")
+public class Curriculum extends BaseEntity{
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
     private Course course;
 
     @Column()
     private String description;
 
-    // have to check this one by Nabajit here in this case the datatype needs to be fixed
-    @Column
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
+    @Column(name = "modules_json", columnDefinition = "json")
     private String modulesJSON;
 
-    @Column()
-    private Boolean status;
+    @Column(nullable = false)
+    private boolean status;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

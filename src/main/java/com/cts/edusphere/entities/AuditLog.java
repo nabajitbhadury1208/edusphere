@@ -2,34 +2,43 @@ package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Data
 @Table(name = "audit_log")
-public class AuditLog {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column
-    private UUID auditId;
+@AttributeOverride(name = "id", column = @Column(name = "audit_log_id"))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 
-    @ManyToOne // One User may have many Audit Logs
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
-    @NotNull
-    private User user; // Foreign Key
+public class AuditLog extends BaseEntity {
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
+    private User user;
 
-    @Column
-    @NotNull
+    @Column(nullable = false)
     private String action;
 
-    @Column
-    @NotNull
+    @Column(nullable = false)
     private String resource;
 
-    @Column
-    @NotNull
-    private LocalDateTime timestamp;
+    @Column(nullable = false)
+    private Instant timestamp;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

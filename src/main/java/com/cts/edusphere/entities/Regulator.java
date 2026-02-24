@@ -15,10 +15,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 
 public class Regulator extends User {
-
-//    @Column(nullable = false)
-//    private int regulatorId;
-
     @Override
     public boolean equals(Object o) {
         return super.equals(o);
@@ -28,6 +24,4 @@ public class Regulator extends User {
     public int hashCode() {
         return super.hashCode();
     }
-
-
 }

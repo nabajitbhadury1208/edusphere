@@ -1,38 +1,44 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Table(name = "audits")
+@AttributeOverride(name = "id", column = @Column(name = "audit_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class Audit {
+@AllArgsConstructor
+@SuperBuilder
+public class Audit extends BaseEntity {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private ComplianceOfficer officer;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
-    private UUID auditId;
-
-    // OfficerID in the diagram; kept scalar to avoid assuming a specific role/entity
-    @Column(nullable = false)
-    private UUID officerId;
-
-    @Column(nullable = false)
+    @Column(nullable = false, name = "scope")
     private String scope;
 
-    @Column(length = 4000)
+    @Column(columnDefinition = "TEXT")
     private String findings;
 
-    @Column(nullable = false)
-    private LocalDate date;
+    @Column(nullable = false, name = "audit_date")
+    private LocalDate auditDate;
 
-    @Column(nullable = false)
-    private String status;
+    @Column(nullable = false, name = "status")
+    private Boolean status;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
 }

@@ -15,10 +15,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 
 public class DepartmentHead extends User{
-
-//    @Column(nullable = false)
-//    private LocalDate departmentHeadId;
-
     @Override
     public boolean equals(Object o) {
         return super.equals(o);
@@ -28,6 +24,4 @@ public class DepartmentHead extends User{
     public int hashCode() {
         return super.hashCode();
     }
-
-
 }

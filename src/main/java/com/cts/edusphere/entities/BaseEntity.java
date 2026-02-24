@@ -1,9 +1,7 @@
 package com.cts.edusphere.entities;
 
-import com.cts.edusphere.enums.Role;
+
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UuidGenerator;
@@ -14,41 +12,21 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.UUID;
 
-@Entity
-@Table(name = "users")
+@MappedSuperclass
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
-public class User {
+public class BaseEntity {
     @Id
     @UuidGenerator
-    @Column(name = "user_id")
-    private UUID userId;
-
-    @NotBlank(message = "Name cannot be blank")
-    @Column(nullable = false, name = "name")
-    private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
-    @Email
-    @Column(unique = true, nullable = false)
-    private String email;
-
-    @Column(unique = true)
-    private String phone;
-
-    @Column(nullable = false)
-    private boolean status;
+    @Column(name = "id")
+    private UUID id;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
@@ -58,8 +36,8 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return userId != null && userId.equals(user.userId);
+        if (!(o instanceof BaseEntity that)) return false;
+        return id != null && id.equals(that.id);
     }
 
     @Override

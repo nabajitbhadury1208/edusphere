@@ -1,42 +1,46 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.NotificationType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "notifications")
+@AttributeOverride(name = "id", column = @Column(name = "notification_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class Notification {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
-    private UUID notificationId;
+@AllArgsConstructor
+@SuperBuilder
+public class Notification extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private User user; // FK -> User
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    // Generic "EntityID" from the diagram; kept scalar
-    @Column
+    @Column(name = "entity_id")
     private UUID entityId;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 2000, name = "message")
     private String message;
 
-    @Column
-    private String category;
+    @Column(name = "category")
+    private NotificationType category;
 
-    @Column(nullable = false)
-    private String status;
+    @Column(nullable = false, name = "status")
+    private boolean status;
 
-    @Column(nullable = false)
-    private Instant createdDate = Instant.now();
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

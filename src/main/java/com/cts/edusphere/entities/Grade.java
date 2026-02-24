@@ -1,31 +1,25 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.UUID;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "grades")
+@AttributeOverride(name = "id", column = @Column(name = "grade_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class Grade {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "grade_id", nullable = false, updatable = false)
-    private UUID gradeId;
-
+@AllArgsConstructor
+@SuperBuilder
+public class Grade extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_id", nullable = false)
-    private Exam exam; // FK -> Exam
+    private Exam exam;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student; // FK -> Student
+    private Student student;
 
     @Column(name = "score", nullable = false)
     private Double score;
@@ -35,4 +29,14 @@ public class Grade {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

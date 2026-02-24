@@ -1,39 +1,48 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
 @Table(name = "thesis")
+@AttributeOverride(name = "id", column = @Column(name = "thesis_id"))
 @Getter
 @Setter
 @NoArgsConstructor
-public class Thesis {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(nullable = false, updatable = false)
-    private UUID thesisId;
+@AllArgsConstructor
+@SuperBuilder
+public class Thesis extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Student student; // FK -> Student
+    @JoinColumn(name = "student_id", nullable = false)
+    private Student student;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "title")
     private String title;
 
-    // Diagram only lists SupervisorID; keeping it scalar to avoid assumptions
-    @Column(nullable = false)
+    @Column(nullable = false, name = "supervisor_id")
     private UUID supervisorId;
 
-    @Column(nullable = false)
-    private LocalDate submissionDate;
+    @CreatedDate
+    @Column(nullable = false, name = "submission_date")
+    private Instant submissionDate;
 
-    @Column(nullable = false)
-    private String status;
+    @Column(nullable = false, name = "status")
+    private boolean status;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

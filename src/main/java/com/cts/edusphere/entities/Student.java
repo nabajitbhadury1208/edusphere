@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @Setter
 @SuperBuilder
 @Table(name = "student")
-@NoArgsConstructor
-@AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "user_id")
 @EntityListeners(AuditingEntityListener.class)
 
