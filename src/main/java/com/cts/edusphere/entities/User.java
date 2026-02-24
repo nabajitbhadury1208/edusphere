@@ -1,6 +1,7 @@
 package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.Role;
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,14 +22,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
-public class User {
-    @Id
-    @UuidGenerator
-    @Column(name = "user_id")
-    private UUID userId;
+@AttributeOverride(name = "id", column = @Column(name = "user_id"))
 
+public class User extends BaseEntity{
     @NotBlank(message = "Name cannot be blank")
     @Column(nullable = false, name = "name")
     private String name;
@@ -44,26 +41,7 @@ public class User {
     @Column(unique = true)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean status;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return userId != null && userId.equals(user.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+    private Status status;
 }

@@ -1,11 +1,19 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.GradeStatus;
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "grades")
+@Table(
+        name = "grades",
+        indexes = {
+                @Index(name = "idx_grade_student", columnList = "student_id"),
+                @Index(name = "idx_grade_exam", columnList = "exam_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "grade_id"))
 @Getter
 @Setter
@@ -27,16 +35,9 @@ public class Grade extends BaseEntity {
     @Column(name = "grade", nullable = false)
     private String grade;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private GradeStatus status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

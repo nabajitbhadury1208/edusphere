@@ -1,14 +1,17 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
-
-
 @Entity
-@Table(name="curriculum")
+@Table(
+        name="curriculum",
+        indexes = {
+                @Index(name = "idx_curriculum_course", columnList = "course_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "curriculum_id"))
 @Getter
 @Setter
@@ -28,16 +31,7 @@ public class Curriculum extends BaseEntity{
     @Column(name = "modules_json", columnDefinition = "json")
     private String modulesJSON;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean status;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+    private Status status;
 }

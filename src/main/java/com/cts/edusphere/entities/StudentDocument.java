@@ -8,10 +8,14 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "student_document")
+@Table(
+        name = "student_document",
+        indexes = {
+                @Index(name = "idx_student_document_student", columnList = "student_id"),
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "document_id"))
 @Getter
 @Setter
@@ -19,7 +23,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 public class StudentDocument extends BaseEntity {
-    @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
@@ -32,19 +35,11 @@ public class StudentDocument extends BaseEntity {
     private String fileUri;
 
     @CreatedDate
-    @Column(nullable = false, name = "upload_date")
+    @Column(nullable = false, name = "upload_date", updatable = false)
     private Instant uploadDate;
 
     @Column(nullable = false, name = "verification_status")
     private boolean verificationStatus;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

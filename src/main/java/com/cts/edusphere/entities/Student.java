@@ -14,10 +14,10 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @SuperBuilder
-@Table(name = "student")
+@Table(name = "students")
+@NoArgsConstructor
+@AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "user_id")
-@EntityListeners(AuditingEntityListener.class)
-
 
 public class Student extends User {
     @Column(nullable = false)
@@ -30,17 +30,8 @@ public class Student extends User {
     @Column(nullable = false)
     private String address;
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "enrollment_date")
     private Instant enrollmentDate;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

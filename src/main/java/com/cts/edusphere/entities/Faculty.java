@@ -15,30 +15,21 @@ import java.util.UUID;
 @Getter
 @Setter
 @SuperBuilder
-@Table(name= "faculty")
+@Table(name= "faculty_members")
 @NoArgsConstructor
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "user_id")
-@EntityListeners(AuditingEntityListener.class)
 
 public class Faculty extends User{
-        @Column(nullable = false, name = "department_id")
-        private UUID departmentId;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "department_id", nullable = false)
 
         @Column(nullable = false)
         private String position;
 
-        @CreatedDate
+        @Column(nullable = false, updatable = false, name = "join_date")
         private Instant joinDate;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 
 }

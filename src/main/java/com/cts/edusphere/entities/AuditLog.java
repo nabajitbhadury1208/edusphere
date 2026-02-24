@@ -1,16 +1,19 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
-@Table(name = "audit_log")
+@Table(
+        name = "audit_log",
+        indexes = {
+                @Index(name = "idx_audit_log_user", columnList = "user_id"),
+                @Index(name = "idx_audit_log_resource", columnList = "resource")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "audit_log_id"))
 @Getter
 @Setter
@@ -32,13 +35,4 @@ public class AuditLog extends BaseEntity {
     @Column(nullable = false)
     private Instant timestamp;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

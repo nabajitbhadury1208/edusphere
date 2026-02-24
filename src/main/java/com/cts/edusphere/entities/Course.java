@@ -7,7 +7,12 @@ import lombok.experimental.SuperBuilder;
 import java.util.UUID;
 
 @Entity
-@Table(name = "course")
+@Table(
+        name = "course",
+        indexes = {
+                @Index(name = "idx_course_department", columnList = "department_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "course_id"))
 @Getter
 @Setter
@@ -20,9 +25,9 @@ public class Course extends BaseEntity{
     @Column(nullable = false)
     private String title;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private UUID departmentId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
     @Column(nullable = false)
     private int credits;
@@ -33,13 +38,4 @@ public class Course extends BaseEntity{
     @Column(nullable = false)
     private boolean status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

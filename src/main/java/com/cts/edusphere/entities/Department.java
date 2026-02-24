@@ -1,11 +1,18 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@Table(name = "department")
+@Table(
+        name = "department",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uc_department_code", columnNames = "department_code")
+        },
+        indexes = @Index(name = "idx_department_head", columnList = "head_id")
+)
 @Getter
 @Setter
 @AttributeOverride(name = "id", column = @Column(name = "department_id"))
@@ -16,26 +23,18 @@ public class Department extends BaseEntity {
     @Column(name = "department_name", nullable = false)
     private String departmentName;
 
-    @Column(name = "department_code", nullable = false)
+    @Column(name = "department_code", nullable = false, unique = true)
     private String departmentCode;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "head_id", nullable = false)
-    private Faculty headId;
+    private DepartmentHead head;
 
     @Column(name = "contact_info", nullable = false)
     private String contactInfo;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private boolean status;
+    private Status status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

@@ -5,11 +5,15 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "notifications")
+@Table(
+        name = "notifications",
+        indexes = {
+                @Index(name = "idx_notification_user", columnList = "user_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "notification_id"))
 @Getter
 @Setter
@@ -28,19 +32,11 @@ public class Notification extends BaseEntity {
     @Column(nullable = false, length = 2000, name = "message")
     private String message;
 
-    @Column(name = "category")
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
     private NotificationType category;
 
-    @Column(nullable = false, name = "status")
-    private boolean status;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
+    @Column(nullable = false, name = "is_read")
+    private boolean isRead;
 }

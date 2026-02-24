@@ -36,14 +36,4 @@ public class ComplianceRecord extends BaseEntity{
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

@@ -1,16 +1,20 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.ThesisStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
-@Table(name = "thesis")
+@Table(
+        name = "thesis",
+        indexes = {
+                @Index(name = "idx_thesis_student", columnList = "student_id"),
+                @Index(name = "idx_thesis_supervisor", columnList = "supervisor_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "thesis_id"))
 @Getter
 @Setter
@@ -26,23 +30,15 @@ public class Thesis extends BaseEntity {
     @Column(nullable = false, name = "title")
     private String title;
 
-    @Column(nullable = false, name = "supervisor_id")
-    private UUID supervisorId;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "supervisor_id", nullable = false)
+    private Faculty supervisor;
 
-    @CreatedDate
     @Column(nullable = false, name = "submission_date")
-    private Instant submissionDate;
+    private LocalDate submissionDate;
 
-    @Column(nullable = false, name = "status")
-    private boolean status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ThesisStatus status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

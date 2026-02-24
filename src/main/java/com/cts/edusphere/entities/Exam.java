@@ -1,6 +1,7 @@
 package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.ExamType;
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -8,7 +9,12 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "exam")
+@Table(
+        name = "exam",
+        indexes = {
+                @Index(name = "idx_exam_course", columnList = "course_id")
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "exam_id"))
 @Getter
 @Setter
@@ -28,16 +34,8 @@ public class Exam extends BaseEntity {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false)
-    private boolean status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private Status status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

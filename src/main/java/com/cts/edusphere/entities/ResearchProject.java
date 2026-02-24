@@ -1,14 +1,22 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.ProjectStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "research_projects")
+@Table(
+        name = "research_projects",
+        indexes = {
+                @Index(name = "idx_research_project_title", columnList = "title"),
+        }
+)
 @AttributeOverride(name = "id", column = @Column(name = "project_id"))
 @Getter
 @Setter
@@ -24,26 +32,34 @@ public class ResearchProject extends BaseEntity {
     @JoinColumn(name = "faculty_id", nullable = false)
     private Faculty faculty;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "research_project_faculty",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "faculty_id")
+    )
+    @Builder.Default
+    private List<Faculty> facultyMembers = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "research_project_students",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
+    @Builder.Default
+    private List<Student> students = new ArrayList<>();
+
 
     @Column(nullable = false, name = "start_date")
-    private Instant startDate;
+    private LocalDate startDate;
 
     @Column(nullable = false, name = "end_date")
-    private Instant endDate;
+    private LocalDate endDate;
 
-    @Column(nullable = false, name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private ProjectStatus status;
 
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }
