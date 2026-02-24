@@ -23,6 +23,7 @@ import java.util.UUID;
 public class Faculty extends User{
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "department_id", nullable = false)
+        private Department department;
 
         @Column(nullable = false)
         private String position;
