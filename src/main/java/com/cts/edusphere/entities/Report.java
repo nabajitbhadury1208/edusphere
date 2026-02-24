@@ -3,12 +3,11 @@ package com.cts.edusphere.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="Report")
+@Table(name="report")
 @Data
 public class Report {
     @Id
@@ -16,12 +15,12 @@ public class Report {
     @Column(nullable = false)
     private UUID reportId;
 
-    @Column()
+    @Column
     private String scope;
 
-    @Column()
+    @Column
     private String metrics;
 
-    @Column()
+    @Column
     private LocalDateTime generatedDate;
 }

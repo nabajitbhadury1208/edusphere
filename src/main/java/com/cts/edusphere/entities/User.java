@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 import java.util.UUID;
 
-
 @Entity
 @Table(name = "users")
 @Getter
@@ -24,9 +23,6 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.JOINED)
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
-
-
-
 public class User {
     @Id
     @UuidGenerator

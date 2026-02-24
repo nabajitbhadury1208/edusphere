@@ -11,16 +11,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @SuperBuilder
-@Table(name = "admin")
+@Table(name = "administrators")
 @NoArgsConstructor
 @AllArgsConstructor
-@PrimaryKeyJoinColumn(name = "adminId")
+@PrimaryKeyJoinColumn(name = "user_id")
 @EntityListeners(AuditingEntityListener.class)
 
 public class Administrator extends User {
 
-    @Column(nullable = false)
-    private int adminId;
+//    @Column(nullable = false)
+//    private int adminId;
 
     @Override
     public boolean equals(Object o) {

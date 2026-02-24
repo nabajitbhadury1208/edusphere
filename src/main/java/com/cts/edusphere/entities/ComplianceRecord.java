@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "complianceRecords")
+@Table(name = "compliance_records")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,22 +17,22 @@ public class ComplianceRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "compliance_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private UUID complianceId;
 
     // Kept scalar because the diagram models a generic "EntityID"
-    @Column(name = "entity_id", nullable = false)
+    @Column(nullable = false)
     private UUID entityId;
 
-    @Column(name = "type", nullable = false)
+    @Column(nullable = false)
     private String type;
 
-    @Column(name = "result", nullable = false)
+    @Column(nullable = false)
     private String result;
 
-    @Column(name = "date", nullable = false)
+    @Column(nullable = false)
     private LocalDate date;
 
-    @Column(name = "notes", length = 4000)
+    @Column(length = 4000)
     private String notes;
 }

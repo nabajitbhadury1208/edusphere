@@ -24,12 +24,9 @@ public class Curriculum {
     private String description;
 
     // have to check this one by Nabajit here in this case the datatype needs to be fixed
-    @Column(name = "ModulesJSON")
+    @Column
     private String modulesJSON;
 
     @Column()
     private Boolean status;
-
-
-
 }

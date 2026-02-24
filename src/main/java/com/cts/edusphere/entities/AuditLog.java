@@ -9,27 +9,27 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "AUDIT LOG")
+@Table(name = "audit_log")
 public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "AuditID")
+    @Column
     private UUID auditId;
 
     @ManyToOne // One User may have many Audit Logs
-    @JoinColumn(name = "UserId", referencedColumnName = "UserID")
+    @JoinColumn(name = "user_id", referencedColumnName = "userId")
     @NotNull
     private User user; // Foreign Key
 
-    @Column(name = "Action")
+    @Column
     @NotNull
     private String action;
 
-    @Column(name = "Resource")
+    @Column
     @NotNull
     private String resource;
 
-    @Column(name = "Timestamp")
+    @Column
     @NotNull
     private LocalDateTime timestamp;
 }

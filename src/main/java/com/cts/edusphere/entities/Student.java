@@ -2,17 +2,13 @@ package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.Gender;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -21,7 +17,7 @@ import java.util.UUID;
 @Table(name = "student")
 @NoArgsConstructor
 @AllArgsConstructor
-@PrimaryKeyJoinColumn(name = "userId")
+@PrimaryKeyJoinColumn(name = "user_id")
 @EntityListeners(AuditingEntityListener.class)
 
 
@@ -50,5 +46,3 @@ public class Student extends User {
         return super.hashCode();
     }
 }
-
-

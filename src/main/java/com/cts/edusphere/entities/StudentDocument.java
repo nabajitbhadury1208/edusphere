@@ -10,34 +10,29 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "STUDENT DOCUMENT")
+@Table(name = "student_document")
 public class StudentDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "DocumentID")
+    @Column(name = "document_id", nullable = false)
     private UUID documentId;
 
-    @Column(name = "StudentId")
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "Student")
+    @JoinColumn(name = "student")
     private Student student;
 
-    @Column(name = "DocType")
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @NotNull
     private DocType doctype;
 
-    @Column(name = "FileURI")
-    @NotNull
+    @Column(nullable = false)
     private String fileURI;
 
-    @Column(name = "UploadedDate")
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime uploadDate;
 
-    @Column(name = "VerificationStatus")
-    @NotNull
+    @Column(nullable = false)
     private boolean verificationStatus;
 
 

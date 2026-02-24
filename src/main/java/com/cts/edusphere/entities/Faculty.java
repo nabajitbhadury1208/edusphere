@@ -2,12 +2,10 @@ package com.cts.edusphere.entities;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -16,15 +14,15 @@ import java.time.LocalDate;
 @Table(name= "faculty")
 @NoArgsConstructor
 @AllArgsConstructor
-@PrimaryKeyJoinColumn(name = "facultyId")
+@PrimaryKeyJoinColumn(name = "user_id")
 @EntityListeners(AuditingEntityListener.class)
 
 public class Faculty extends User{
-        @Column(nullable = false)
-        private int facultyId;
+//        @Column(nullable = false)
+//        private int facultyId;
 
-        @Column(nullable = false)
-        private String facultyName;
+//        @Column(nullable = false)
+//        private String facultyName;
 
         @Column(nullable = false)
         private int departmentId;
@@ -32,8 +30,8 @@ public class Faculty extends User{
         @Column(nullable = false)
         private String position;
 
-        @Column(nullable = false)
-        private LocalDate joinDate;
+//        @Column(nullable = false)
+//        private LocalDate joinDate;
 
     @Override
     public boolean equals(Object o) {

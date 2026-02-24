@@ -1,29 +1,32 @@
 package com.cts.edusphere.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "COURSE")
+@Table(name = "course")
 @Data
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "CourseId")
+    @Column
     private UUID courseId;
 
-    @Column(name = "Title")
-    @NotNull
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "DepartmentID")
     @ManyToOne
-    @JoinColumn(name = "")
+    @JoinColumn(name = "department_id")
     private String departmentId;
+
+    @Column
     private int credits;
+
+    @Column
     private int duration;
+
+    @Column
     private boolean status;
 }

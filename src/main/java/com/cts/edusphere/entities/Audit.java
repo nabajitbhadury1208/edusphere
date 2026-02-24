@@ -17,22 +17,22 @@ public class Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "audit_id", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private UUID auditId;
 
     // OfficerID in the diagram; kept scalar to avoid assuming a specific role/entity
-    @Column(name = "officer_id", nullable = false)
+    @Column(nullable = false)
     private UUID officerId;
 
-    @Column(name = "scope", nullable = false)
+    @Column(nullable = false)
     private String scope;
 
-    @Column(name = "findings", length = 4000)
+    @Column(length = 4000)
     private String findings;
 
-    @Column(name = "date", nullable = false)
+    @Column(nullable = false)
     private LocalDate date;
 
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private String status;
 }

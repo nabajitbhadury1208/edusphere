@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Exam")
+@Table(name = "exam")
 @Data
 public class Exam {
 
@@ -17,7 +17,7 @@ public class Exam {
     private UUID examId;
 
     @ManyToOne
-    @JoinColumn(name="CourseId")
+    @JoinColumn(name="course_id")
     private Course course;
 
     @Column()
