@@ -285,3 +285,64 @@ Always verify your changes before committing:
 
 # Mac/Linux
 ./mvnw clean compile
+```
+
+---
+
+## 8. Working with the Maven Wrapper
+
+To avoid environment issues, never commit your local `target/` folder or `.idea/` settings. These are handled by our `.gitignore`.
+
+Always verify your changes before committing:
+```powershell
+# Windows
+.\mvnw clean compile
+
+# Mac/Linux
+./mvnw clean compile
+```
+
+---
+
+## 9. Troubleshooting Common Git Issues
+
+### Issue: "Your branch is behind by X commits"
+**Solution**: Run `git pull` to fetch and merge the latest changes.
+
+### Issue: "fatal: Not a valid object name"
+**Solution**: Ensure you're in the correct repository directory and the branch exists locally or remotely.
+
+### Issue: "error: Your local changes to ... would be overwritten by merge"
+**Solution**: Commit or stash your changes before pulling:
+```bash
+git stash                    # Temporarily save changes
+git pull                     # Pull latest changes
+git stash pop               # Restore your changes
+```
+
+### Issue: "Merge conflict in multiple files"
+**Solution**: Refer to **Section 4: Merge Conflict Resolution** for detailed steps.
+
+### Issue: "Push rejected - fetch first"
+**Solution**: Always `git pull` before `git push` (see Section 6).
+
+---
+
+## 10. Best Practices Summary
+
+✅ **Do**:
+- Always pull before starting new work
+- Always pull before pushing
+- Resolve conflicts immediately when they occur
+- Keep feature branches short-lived (1-3 days max)
+- Write clear, conventional commit messages
+- Test your code with `./mvnw clean compile` before pushing
+- Communicate with teammates about overlapping work
+
+❌ **Don't**:
+- Commit directly to `main` or `dev`
+- Push without pulling first
+- Leave merge conflicts unresolved
+- Make massive commits with unrelated changes
+- Force push to `main` or `dev` (even with `-f` flag)
+- Ignore build failures
