@@ -1,7 +1,6 @@
 package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.GradeStatus;
-import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

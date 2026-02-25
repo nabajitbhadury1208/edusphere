@@ -2,7 +2,6 @@ package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.DocType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;

@@ -3,8 +3,6 @@ package com.cts.edusphere.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.CreatedDate;
-
 import java.time.Instant;
 
 @Entity
