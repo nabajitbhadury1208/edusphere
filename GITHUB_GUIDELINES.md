@@ -8,7 +8,7 @@ To maintain a clean history and stable production environment for the **EduSpher
 
 We follow a simplified **Feature Branch Workflow**.
 
-* **`main`**: This branch contains the production-ready code. No one commits directly to `main`.
+* **`main`**: This branch contains the production-ready code. No one commits directly to `main` unless you are a pro guy.
 * **`dev`**: The integration branch for features. All PRs are merged here first.
 * **Feature Branches**: Created for every new task, bug fix, or entity.
     * **Naming Convention**: `feature/short-description` or `bugfix/issue-number`
