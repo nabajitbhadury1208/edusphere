@@ -2,6 +2,8 @@ package com.cts.edusphere.entities;
 
 import com.cts.edusphere.enums.GradeStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -28,6 +30,8 @@ public class Grade extends BaseEntity {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @DecimalMax(value = "100.0", message = "Score cannot be greater than 100")
+    @DecimalMin(value = "0.0", message = "Score cannot be less than 0")
     @Column(name = "score", nullable = false)
     private Double score;
 

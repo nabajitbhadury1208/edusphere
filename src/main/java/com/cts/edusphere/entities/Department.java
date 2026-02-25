@@ -26,8 +26,8 @@ public class Department extends BaseEntity {
     @Column(name = "department_code", nullable = false, unique = true)
     private String departmentCode;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "head_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "head_id", nullable = true)
     private DepartmentHead head;
 
     @Column(name = "contact_info", nullable = false)

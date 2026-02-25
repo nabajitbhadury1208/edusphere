@@ -33,9 +33,6 @@ public class StudentDocument extends BaseEntity {
     @Column(nullable = false, name = "file_uri")
     private String fileUri;
 
-    @CreatedDate
-    @Column(nullable = false, name = "upload_date", updatable = false)
-    private Instant uploadDate;
 
     @Column(nullable = false, name = "verification_status")
     private boolean verificationStatus;

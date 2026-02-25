@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @SuperBuilder
 public class Audit extends BaseEntity {
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private ComplianceOfficer officer;
 

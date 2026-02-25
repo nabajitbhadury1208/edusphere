@@ -20,11 +20,11 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 
 public class Curriculum extends BaseEntity{
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
 
-    @Column()
+    @Column(nullable = false)
     private String description;
 
     @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)

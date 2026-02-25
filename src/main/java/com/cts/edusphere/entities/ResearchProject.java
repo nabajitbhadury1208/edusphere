@@ -12,7 +12,7 @@ import java.util.List;
 @Table(
         name = "research_projects",
         indexes = {
-                @Index(name = "idx_research_project_title", columnList = "title"),
+                @Index(name = "idx_research_project_faculty", columnList = "faculty_id"),
         }
 )
 @AttributeOverride(name = "id", column = @Column(name = "project_id"))

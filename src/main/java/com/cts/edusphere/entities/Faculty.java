@@ -4,6 +4,7 @@ package com.cts.edusphere.entities;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+
 import java.time.Instant;
 
 
@@ -11,22 +12,27 @@ import java.time.Instant;
 @Getter
 @Setter
 @SuperBuilder
-@Table(name= "faculty_members")
+@Table(name = "faculty_members")
 @NoArgsConstructor
 @AllArgsConstructor
 @PrimaryKeyJoinColumn(name = "user_id")
 
-public class Faculty extends User{
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "department_id", nullable = false)
-        private Department department;
+public class Faculty extends User {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
-        @Column(nullable = false)
-        private String position;
+    @Column(nullable = false)
+    private String position;
 
-        @Column(nullable = false, updatable = false, name = "join_date")
-        private Instant joinDate;
+    @Column(nullable = false, updatable = false, name = "join_date")
+    private Instant joinDate;
 
-
+    @PrePersist
+    protected void onPrePersist() {
+        if (joinDate == null) {
+            joinDate = Instant.now();
+        }
+    }
 
 }

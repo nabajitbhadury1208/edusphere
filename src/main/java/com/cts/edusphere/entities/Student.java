@@ -31,5 +31,11 @@ public class Student extends User {
     @Column(nullable = false, updatable = false, name = "enrollment_date")
     private Instant enrollmentDate;
 
+    @PrePersist
+    protected void onPrePersist(){
+        if (enrollmentDate == null){
+            enrollmentDate = Instant.now();
+        }
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.cts.edusphere.entities;
 
+import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -33,7 +34,8 @@ public class Course extends BaseEntity{
     @Column(nullable = false)
     private int duration;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean status;
+    private Status status;
 
 }

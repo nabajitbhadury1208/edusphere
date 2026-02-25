@@ -13,16 +13,6 @@ import lombok.experimental.SuperBuilder;
 @PrimaryKeyJoinColumn(name = "user_id")
 
 public class ComplianceOfficer extends User{
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
 
 
 }
