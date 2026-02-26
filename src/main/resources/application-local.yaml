@@ -1,5 +1,5 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/edusphere?createDatabaseIfNotExist=true&serverTimezone=UTC
-    username: perfecto
-    password: Perfecto
+    username: Ash
+    password: Ash&Sneha
