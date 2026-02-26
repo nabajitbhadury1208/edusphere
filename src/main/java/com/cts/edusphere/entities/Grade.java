@@ -42,5 +42,4 @@ public class Grade extends BaseEntity {
     @Column(name = "status", nullable = false)
     private GradeStatus status;
 
-
 }
