@@ -42,7 +42,7 @@ public class Department extends BaseEntity {
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Faculty> faculties;
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Course> courses;
 
 }
