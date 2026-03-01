@@ -1,5 +1,4 @@
-package com.cts.edusphere.entities;
-
+package com.cts.edusphere.modules;
 
 import jakarta.persistence.*;
 import lombok.*;

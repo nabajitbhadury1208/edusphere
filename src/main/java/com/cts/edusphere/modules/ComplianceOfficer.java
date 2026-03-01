@@ -1,4 +1,4 @@
-package com.cts.edusphere.entities;
+package com.cts.edusphere.modules;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,9 +9,10 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
-@Table(name = "administrators")
+@Table(name="compliance_officers")
 @PrimaryKeyJoinColumn(name = "user_id")
 
-public class Administrator extends User {
+public class ComplianceOfficer extends User{
+
 
 }

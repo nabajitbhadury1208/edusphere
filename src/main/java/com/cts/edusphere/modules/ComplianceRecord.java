@@ -1,4 +1,4 @@
-package com.cts.edusphere.entities;
+package com.cts.edusphere.modules;
 
 import com.cts.edusphere.enums.ComplianceResult;
 import com.cts.edusphere.enums.ComplianceType;

@@ -1,4 +1,4 @@
-package com.cts.edusphere.entities;
+package com.cts.edusphere.modules;
 
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;

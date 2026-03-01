@@ -1,19 +1,19 @@
-package com.cts.edusphere.entities;
+package com.cts.edusphere.modules;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-
 @Entity
 @Getter
 @Setter
 @SuperBuilder
-@Table(name="regulators")
-@PrimaryKeyJoinColumn(name = "user_id")
 @NoArgsConstructor
+@Table(name="department_heads")
+@PrimaryKeyJoinColumn(name = "user_id")
 
-public class Regulator extends User {
+public class DepartmentHead extends User{
 
 }
