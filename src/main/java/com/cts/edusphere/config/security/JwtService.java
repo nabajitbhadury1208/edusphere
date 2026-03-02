@@ -69,18 +69,16 @@ public class JwtService {
 
             String userId = claims.getSubject();
             String name = claims.get("name", String.class);
-            List<?> roles = claims.get("roles", List.class);
+            String role = claims.get("role", String.class);
             String type = claims.get("type", String.class);
 
             if (!expectedTypeClaim.equals(type)) {
                 throw new BadCredentialsException("Invalid token type");
             }
 
-            if (roles == null) throw new BadCredentialsException("No roles found in token");
+            if (role == null) throw new BadCredentialsException("No roles found in token");
 
-            var authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(role.toString()))
-                    .toList();
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
 
             return new UserPrincipal(UUID.fromString(userId), name, authorities);
         } catch (JwtException | IllegalArgumentException e) {

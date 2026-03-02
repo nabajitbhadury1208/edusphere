@@ -49,19 +49,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         try {
+            var authRequest = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+            Authentication authentication = authenticationManager.authenticate(authRequest);
+
+            User user = userService.getUserByEmail(request.email());
 
             var role =
-                    principal.authorities().stream()
+                    authentication.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("role"))
+                            .filter(auth -> auth.startsWith("ROLE_"))
                             .findFirst()
                             .map(auth -> auth.substring(5))
                             .orElse("USER");
             Role roleEnum = Role.valueOf(role);
-            String accessToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.REFRESH);
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
             log.error("Login failed for user: {}", request.email(), e);
@@ -76,9 +80,9 @@ public class AuthController {
             var role =
                     principal.authorities().stream()
                             .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("role"))
+                            .filter(auth -> auth.startsWith("ROLE_"))
                             .findFirst()
-                            .map(auth -> auth.substring(5))
+                            .map(auth -> auth.toUpperCase().substring(5))
                             .orElse("USER");
             Role roleEnum = Role.valueOf(role);
             String accessToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.ACCESS);
@@ -91,12 +95,12 @@ public class AuthController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         try {
-            userService.changePassword(request.userId(), request.currentPassword(), request.newPassword());
+            userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            log.error("Password change failed for user: {}", request.userId(), e);
+            log.error("Password change failed for user: {}", principal.userId(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }

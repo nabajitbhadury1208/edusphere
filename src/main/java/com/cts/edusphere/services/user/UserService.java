@@ -1,6 +1,7 @@
 package com.cts.edusphere.services.user;
 
 import com.cts.edusphere.common.dto.RegisterRequest;
+import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.PasswordCannotBeChangedException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.UserNotCreatedException;
@@ -39,6 +40,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+    }
+
     public void deleteUserById(UUID id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User with id " + id + " not found");
@@ -70,7 +76,7 @@ public class UserService {
             if (userRepository.existsByEmail(request.email())) {
                 throw new IllegalArgumentException("Email already in use");
             }
-            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone()).password(passwordEncoder.encode(request.password())).role(request.role()).build();
+            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone()).password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE).build();
             return userRepository.save(user);
         } catch (Exception e) {
             throw new UserNotCreatedException("Failed to create user: " + e.getMessage());
