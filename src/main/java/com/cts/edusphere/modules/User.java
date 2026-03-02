@@ -41,6 +41,6 @@ public class User extends BaseEntity{
     private Status status;
 
    @NotBlank(message = "Password cannot be blank")
-   @Column(nullable = false, name = "passowrd")
+   @Column(nullable = false, name = "password")
    private String password;
 }

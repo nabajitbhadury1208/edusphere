@@ -1,5 +1,6 @@
 package com.cts.edusphere.config.security;
 
+import com.cts.edusphere.enums.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -33,7 +34,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
     }
 
-    public String generateAccessToken(String userId, String name, List<String> roles, TokenType type) {
+    public String generateAccessToken(String userId, String name, Role role, TokenType type) {
         var typeClaim = switch (type) {
             case ACCESS -> "access";
             case REFRESH -> "refresh";
@@ -47,7 +48,7 @@ public class JwtService {
                 .claim("userId", userId)
                 .claim("name", name)
                 .claim("type", typeClaim)
-                .claim("roles", roles)
+                .claim("role", role)
                 .issuedAt(new java.util.Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())

@@ -1,5 +1,7 @@
 package com.cts.edusphere.common.dto;
 
+import com.cts.edusphere.enums.Role;
+
 import java.util.List;
 
 public record RegisterRequest(
@@ -7,6 +9,6 @@ public record RegisterRequest(
         String email,
         String password,
         String phone,
-        List<String> roles
+        Role role
 ) {
 }
