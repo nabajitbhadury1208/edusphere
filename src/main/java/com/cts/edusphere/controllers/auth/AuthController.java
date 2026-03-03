@@ -94,8 +94,12 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/change-password")
+    @PatchMapping("/change-password")
     public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+        if (principal == null) {
+            log.error("Unauthorized attempt to change password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
             userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
             return ResponseEntity.ok().build();

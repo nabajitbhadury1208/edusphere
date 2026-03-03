@@ -54,7 +54,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(
                         authorizeRequests ->
-                                authorizeRequests.requestMatchers("/api/v1/auth/**").permitAll()
+                                authorizeRequests.requestMatchers("/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refresh").permitAll()
+                                        .requestMatchers("/api/v1/auth/change-password").authenticated()
                                         .anyRequest().authenticated()
                 ).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class
