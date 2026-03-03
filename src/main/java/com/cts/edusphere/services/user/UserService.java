@@ -8,12 +8,10 @@ import com.cts.edusphere.exceptions.genericexceptions.UserNotCreatedException;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,9 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
@@ -65,7 +61,7 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    Optional <User> findByEmail(String email) {
+    Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

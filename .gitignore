@@ -1,4 +1,5 @@
 HELP.md
+ash_sneha.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
