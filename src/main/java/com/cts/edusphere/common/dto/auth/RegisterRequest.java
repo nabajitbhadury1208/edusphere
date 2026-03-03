@@ -3,6 +3,7 @@ package com.cts.edusphere.common.dto.auth;
 import com.cts.edusphere.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
@@ -19,7 +20,7 @@ public record RegisterRequest(
 
         String phone,
 
-        @NotBlank(message = "Role must not be blank")
+        @NotNull(message = "Role must not be blank")
         Role role
 ) {
 }
