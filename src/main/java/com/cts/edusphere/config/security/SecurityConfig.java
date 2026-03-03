@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
-    @Value("$(cors.allowed-origins:http://localhost:3000)}")
+    @Value("${cors.allowed-origins:http://localhost:3000}")
     private List<String> allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, UserDetailsService userDetailsService, ObjectMapper objectMapper) {
@@ -96,6 +96,7 @@ public class SecurityConfig {
                                     .message("Authentication required: " + authException.getMessage())
                                     .path(request.getRequestURI())
                                     .build();
+                            response.getWriter().write(objectMapper.writeValueAsString(body));
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -107,10 +108,11 @@ public class SecurityConfig {
                                     .message("Access denied: " + accessDeniedException.getMessage())
                                     .path(request.getRequestURI())
                                     .build();
+
+                            response.getWriter().write(objectMapper.writeValueAsString(body));
                         }))
 
                 .authorizeHttpRequests(auth -> auth
-                        // [CHANGED] Public endpoints — login, register, and refresh are open
                         .requestMatchers(
                                 "/api/v1/auth/login",
                                 "/api/v1/auth/register",

@@ -28,9 +28,9 @@ import java.util.Map;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private AuthenticationManager authenticationManager;
-    private JwtService jwtService;
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserService userService;
 
 
     @PostMapping("/register")
