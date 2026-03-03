@@ -1,8 +1,6 @@
-package com.cts.edusphere.common.dto;
+package com.cts.edusphere.common.dto.auth;
 
 import com.cts.edusphere.enums.Role;
-
-import java.util.List;
 
 public record RegisterRequest(
         String name,
