@@ -1,4 +1,5 @@
 package com.cts.edusphere.controllers.user;
+import com.cts.edusphere.common.dto.user.UserRequest;
 import com.cts.edusphere.common.dto.user.UserResponse;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.mappers.UserMapper;
@@ -74,5 +75,32 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/me")
+    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request){
+        try{
+            var updatedUser = userService.updateUserById(principal.userId(), request, principal);
+            return ResponseEntity.ok(userMapper.toResponse(updatedUser));
+        } catch (IllegalArgumentException e){
+            log.warn("Unauthorized update attempt by user {}: {}", principal.userId(), e.getMessage());
+            return ResponseEntity.status(403).build();
+        } catch (Exception e){
+            log.error("Error updating user details: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
 
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+        try {
+            var updatedUser = userService.updateUserById(id, request, principal);
+            return ResponseEntity.ok(userMapper.toResponse(updatedUser));
+        } catch (IllegalArgumentException e) {
+            log.warn("Unauthorized update attempt by user {}: {}", principal.userId(), e.getMessage());
+            return ResponseEntity.status(403).build();
+        } catch (Exception e) {
+            log.error("Error updating user details: {}", e.getMessage());
+            return ResponseEntity.status(500).build();
+        }
+    }
 }

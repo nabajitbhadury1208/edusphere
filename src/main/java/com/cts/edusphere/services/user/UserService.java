@@ -1,6 +1,8 @@
 package com.cts.edusphere.services.user;
 
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
+import com.cts.edusphere.common.dto.user.UserRequest;
+import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.PasswordCannotBeChangedException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -51,20 +53,42 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUserById(UUID id, User updatedUser) {
-        return userRepository.findById(id).map(existingUser -> {
-            existingUser.setName(updatedUser.getName());
-            existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setPhone(updatedUser.getPhone());
-            return userRepository.save(existingUser);
-        }).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+    public User updateUserById(UUID id, UserRequest request, UserPrincipal userPrincipal) {
+        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+
+        boolean isAdmin = userPrincipal.authorities().stream().anyMatch(grantedAuthority -> grantedAuthority.equals("ROLE_ADMIN"));
+
+        boolean isSelfUpdate = userPrincipal.userId().equals(id);
+
+        if (!isAdmin && !isSelfUpdate) {
+            throw new IllegalArgumentException("You do not have permission to update this user");
+        }
+
+        if (request.name() != null) {
+            user.setName(request.name());
+        }
+        if (request.phone() != null) {
+            user.setPhone(request.phone());
+        }
+
+        if (isAdmin) {
+            if (request.role() != null) {
+                user.setRole(request.role());
+            }
+            if (request.status() != null) {
+                user.setStatus(request.status());
+            }
+        }
+
+        return userRepository.save(user);
+
     }
 
     boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    Optional <User> findByEmail(String email) {
+    Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -86,7 +110,7 @@ public class UserService {
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
         try {
             User user = getUserById(userId);
-            if(user == null){
+            if (user == null) {
                 throw new ResourceNotFoundException("User with id " + userId + " not found");
             }
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
