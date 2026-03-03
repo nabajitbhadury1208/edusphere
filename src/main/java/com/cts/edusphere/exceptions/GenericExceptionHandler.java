@@ -1,13 +1,6 @@
 package com.cts.edusphere.exceptions;
 
-import com.cts.edusphere.exceptions.genericexceptions.ExternalServiceException;
-import com.cts.edusphere.exceptions.genericexceptions.FileStorageException;
-import com.cts.edusphere.exceptions.genericexceptions.InsufficientPermissionException;
-import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.InvalidCredentialsException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceAlreadyExistsException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UnauthorizedAccessException;
+import com.cts.edusphere.exceptions.genericexceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -26,13 +19,19 @@ import java.util.Map;
 public class GenericExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GenericExceptionHandler.class);
 
-    private ResponseEntity<ErrorResponse> buildErrorResponse(String message, HttpStatus status, WebRequest request, Map<String, String> validationError){
+    private ResponseEntity<ErrorResponse> buildErrorResponse(String message, HttpStatus status, WebRequest request, Map<String, String> validationError) {
         ErrorResponse response = ErrorResponse.builder().timeStamp(Instant.now()).status(status.value()).error(status.getReasonPhrase()).message(message).path(request.getDescription(false).replace("uri=", "")).validationError(validationError).build();
         return new ResponseEntity<>(response, status);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGlobal(Exception ex, WebRequest request) {
+        logger.error("Unhandled exception: {}", ex.getMessage(), ex);
+        return buildErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request, null);
+    }
+
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest request){
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception, WebRequest request) {
         logger.warn("ResourceNotFoundException: {}", exception.getMessage());
         String message = "Resource not found";
         return buildErrorResponse(message, HttpStatus.NOT_FOUND, request, null);
@@ -94,6 +93,18 @@ public class GenericExceptionHandler {
         return buildErrorResponse(message, HttpStatus.CONFLICT, request, null);
     }
 
+    @ExceptionHandler(PasswordCannotBeChangedException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordCannotBeChanged(PasswordCannotBeChangedException ex, WebRequest request) {
+        logger.error("PasswordCannotBeChangedException: {}", ex.getMessage());
+        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, request, null);
+    }
+
+    @ExceptionHandler(UserNotCreatedException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotCreated(UserNotCreatedException ex, WebRequest request) {
+        logger.error("UserNotCreatedException: {}", ex.getMessage());
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, request, null);
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, WebRequest request) {
@@ -105,10 +116,6 @@ public class GenericExceptionHandler {
         return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST, request, errors);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGlobal(Exception ex, WebRequest request) {
-        logger.error("Unhandled exception: {}", ex.getMessage(), ex);
-        return buildErrorResponse("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR, request, null);
-    }
+
 
 }

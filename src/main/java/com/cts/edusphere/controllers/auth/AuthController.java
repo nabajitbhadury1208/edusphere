@@ -1,6 +1,6 @@
 package com.cts.edusphere.controllers.auth;
 
-import com.cts.edusphere.common.dto.*;
+import com.cts.edusphere.common.dto.auth.*;
 import com.cts.edusphere.config.security.JwtService;
 import com.cts.edusphere.config.security.TokenType;
 import com.cts.edusphere.config.security.UserPrincipal;
@@ -16,8 +16,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -95,14 +97,16 @@ public class AuthController {
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         if (principal == null) {
             log.error("Unauthorized attempt to change password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         try {
             userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
-            return ResponseEntity.ok().build();
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Password changed successfully");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Password change failed for user: {}", principal.userId(), e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
