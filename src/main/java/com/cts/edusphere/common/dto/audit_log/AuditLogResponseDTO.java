@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto;
+package com.cts.edusphere.common.dto.audit_log;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto;
+package com.cts.edusphere.common.dto.audit;
 
 import com.cts.edusphere.enums.AuditStatus;
 import jakarta.validation.constraints.NotNull;
