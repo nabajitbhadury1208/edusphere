@@ -32,62 +32,71 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserService userService;
 
-
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             User user = userService.registerUser(request);
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.ACCESS);
-
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.REFRESH);
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
+                    user.getRole(), TokenType.REFRESH);
 
             log.info("User registered successfully: {}", user.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            // FIXED: was .build() (empty body) — now returns a meaningful error message
+            log.error("Registration failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Registration failed", "message", e.getMessage()));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             var authRequest = new UsernamePasswordAuthenticationToken(request.email(), request.password());
             Authentication authentication = authenticationManager.authenticate(authRequest);
 
-
-            String role =
-                    authentication.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("ROLE_"))
-                            .findFirst()
-                            .map(auth -> auth.substring(5))
-                            .orElse("USER");
+            String role = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .filter(auth -> auth.startsWith("ROLE_"))
+                    .findFirst()
+                    .map(auth -> auth.substring(5))
+                    .orElse("USER");
             Role roleEnum = Role.valueOf(role);
 
             User user = userService.getUserByEmail(request.email());
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.REFRESH);
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+                    TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
+            // FIXED: was .build() (empty body) — now returns a meaningful error message
             log.error("Login failed for user: {}", request.email(), e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized", "message", "Invalid email or password"));
         }
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         try {
             UserPrincipal principal = jwtService.getUserPrincipalFromRefreshToken(request.refreshToken());
             User user = userService.getUserById(principal.userId());
 
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.REFRESH);
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
+                    user.getRole(), TokenType.REFRESH);
 
             log.info("Token refreshed successfully for user: {}", user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
+            // FIXED: was .build() (empty body) — now returns a meaningful error message
             log.error("Token refresh failed", e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized", "message", "Invalid or expired refresh token"));
         }
     }
 
@@ -104,11 +113,11 @@ public class AuthController {
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
         userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
         log.info("Password changed successfully for user: {}", principal.userId());
         return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
-
 
 }

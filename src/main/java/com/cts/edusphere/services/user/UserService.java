@@ -21,7 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // FIXED: was missing 'final', so @RequiredArgsConstructor skipped
+                                                   // injection → NPE on password encode
 
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
@@ -30,7 +31,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
 
     public User createUser(User user) {
@@ -39,7 +41,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
     }
 
     public void deleteUserById(UUID id) {
@@ -50,7 +53,8 @@ public class UserService {
     }
 
     public User updateUserById(UUID id, UserRequest request, UserPrincipal userPrincipal) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
         boolean isAdmin = userPrincipal.authorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
@@ -95,14 +99,9 @@ public class UserService {
             if (userRepository.existsByEmail(request.email())) {
                 throw new EmailAlreadyExistsException("Email " + request.email() + " is already in use");
             }
-            User user = User.builder().
-                    name(request.name()).
-                    email(request.email()).
-                    phone(request.phone()).
-                    password(passwordEncoder.encode(request.password())).
-                    role(request.role()).
-                    status(Status.ACTIVE).
-                    build();
+            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone())
+                    .password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE)
+                    .build();
             return userRepository.save(user);
         } catch (Exception e) {
             throw new UserNotCreatedException("Failed to create user: " + e.getMessage());

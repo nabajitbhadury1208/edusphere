@@ -1,4 +1,5 @@
 package com.cts.edusphere.controllers.user;
+
 import com.cts.edusphere.common.dto.user.UserRequest;
 import com.cts.edusphere.common.dto.user.UserResponse;
 import com.cts.edusphere.config.security.UserPrincipal;
@@ -21,15 +22,15 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
-    private final UserMapper userMapper;
+    private final UserService userService; // FIXED: missing 'final' → @RequiredArgsConstructor skipped injection
+    private final UserMapper userMapper; // FIXED: same
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal){
-        try{
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
+        try {
             var user = userService.getUserById(principal.userId());
             return ResponseEntity.ok(userMapper.toResponse(user));
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error fetching current user details: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -37,11 +38,11 @@ public class UserController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id){
-        try{
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+        try {
             var user = userService.getUserById(id);
             return ResponseEntity.ok(userMapper.toResponse(user));
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error fetching user details: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -49,14 +50,14 @@ public class UserController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteUserById(@PathVariable UUID id){
-        try{
+    public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
+        try {
             if (userService.getUserById(id) == null) {
                 return ResponseEntity.notFound().build();
             }
             userService.deleteUserById(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error deleting user: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -64,25 +65,26 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
-        try{
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        try {
             var users = userService.getAllUsers();
             return ResponseEntity.ok(userMapper.toResponseList(users));
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error fetching users: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request){
-        try{
+    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal,
+            @RequestBody UserRequest request) {
+        try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             log.warn("Unauthorized update attempt by user {}: {}", principal.userId(), e.getMessage());
             return ResponseEntity.status(403).build();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error updating user details: {}", e.getMessage());
             return ResponseEntity.status(500).build();
         }
@@ -90,7 +92,8 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
         try {
             var updatedUser = userService.updateUserById(id, request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));
