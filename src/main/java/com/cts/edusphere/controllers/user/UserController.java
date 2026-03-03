@@ -4,6 +4,8 @@ import com.cts.edusphere.common.dto.user.UserResponse;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.mappers.UserMapper;
 import com.cts.edusphere.services.user.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,9 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private UserMapper userMapper;
 
     @GetMapping("/me")
@@ -38,9 +37,9 @@ public class UserController {
 
     @GetMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> getUserById(@AuthenticationPrincipal UserPrincipal principal){
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id){
         try{
-            var user = userService.getUserById(principal.userId());
+            var user = userService.getUserById(id);
             return ResponseEntity.ok(userMapper.toResponse(user));
         } catch (Exception e){
             log.error("Error fetching user details: {}", e.getMessage());
@@ -91,7 +90,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         try {
             var updatedUser = userService.updateUserById(id, request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));

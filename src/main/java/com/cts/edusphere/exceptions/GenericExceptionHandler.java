@@ -6,11 +6,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import java.nio.file.AccessDeniedException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +25,7 @@ public class GenericExceptionHandler {
         ErrorResponse response = ErrorResponse.builder().timeStamp(Instant.now()).status(status.value()).error(status.getReasonPhrase()).message(message).path(request.getDescription(false).replace("uri=", "")).validationError(validationError).build();
         return new ResponseEntity<>(response, status);
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobal(Exception ex, WebRequest request) {
@@ -44,10 +47,38 @@ public class GenericExceptionHandler {
         return buildErrorResponse(message, HttpStatus.CONFLICT, request, null);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
+        logger.warn("DataIntegrityViolationException: {}", ex.getMessage());
+        String message = "Database integrity violation: Likely a duplicate entry or missing required field.";
+        return buildErrorResponse(message, HttpStatus.CONFLICT, request, null);
+    }
+
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex, WebRequest request) {
         logger.warn("InvalidCredentialsException: {}", ex.getMessage());
         String message = "Invalid credentials provided";
+        return buildErrorResponse(message, HttpStatus.UNAUTHORIZED, request, null);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentials(BadCredentialsException ex, WebRequest request) {
+        logger.warn("BadCredentialsException: {}", ex.getMessage());
+        String message = "Invalid credentials provided";
+        return buildErrorResponse(message, HttpStatus.UNAUTHORIZED, request, null);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException ex, WebRequest request) {
+        logger.warn("InvalidTokenException: {}", ex.getMessage());
+        String message = "Invalid authentication token";
+        return buildErrorResponse(message, HttpStatus.UNAUTHORIZED, request, null);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleTokenExpired(TokenExpiredException ex, WebRequest request) {
+        logger.warn("TokenExpiredException: {}", ex.getMessage());
+        String message = "Authentication token has expired";
         return buildErrorResponse(message, HttpStatus.UNAUTHORIZED, request, null);
     }
 
@@ -64,6 +95,29 @@ public class GenericExceptionHandler {
         String message = "Insufficient permissions to perform this action";
         return buildErrorResponse(message, HttpStatus.FORBIDDEN, request, null);
     }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        logger.warn("AccessDeniedException: {}", ex.getMessage());
+        String message = "Access is denied";
+        return buildErrorResponse(message, HttpStatus.FORBIDDEN, request, null);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(EmailAlreadyExistsException ex, WebRequest request) {
+        logger.warn("EmailAlreadyExistsException: {}", ex.getMessage());
+        String message = "Email already exists";
+        return buildErrorResponse(message, HttpStatus.CONFLICT, request, null);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPassword(InvalidPasswordException ex, WebRequest request) {
+        logger.warn("InvalidPasswordException: {}", ex.getMessage());
+        String message = "Invalid password provided";
+        return buildErrorResponse(message, HttpStatus.BAD_REQUEST, request, null);
+    }
+
+
 
     @ExceptionHandler(ExternalServiceException.class)
     public ResponseEntity<ErrorResponse> handleExternalServiceException(ExternalServiceException ex, WebRequest request) {
@@ -86,12 +140,6 @@ public class GenericExceptionHandler {
         return buildErrorResponse(message, HttpStatus.INTERNAL_SERVER_ERROR, request, null);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(DataIntegrityViolationException ex, WebRequest request) {
-        logger.warn("DataIntegrityViolationException: {}", ex.getMessage());
-        String message = "Database conflict: Likely a duplicate roll number or missing required field.";
-        return buildErrorResponse(message, HttpStatus.CONFLICT, request, null);
-    }
 
     @ExceptionHandler(PasswordCannotBeChangedException.class)
     public ResponseEntity<ErrorResponse> handlePasswordCannotBeChanged(PasswordCannotBeChangedException ex, WebRequest request) {

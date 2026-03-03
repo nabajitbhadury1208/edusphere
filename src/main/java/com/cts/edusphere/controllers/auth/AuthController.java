@@ -7,6 +7,8 @@ import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.services.user.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,26 +26,22 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
     private AuthenticationManager authenticationManager;
-
-    @Autowired
     private JwtService jwtService;
-
-    @Autowired
     private UserService userService;
 
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         try {
             User user = userService.registerUser(request);
             String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.ACCESS);
 
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.REFRESH);
 
+            log.info("User registered successfully: {}", user.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -51,14 +49,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
             var authRequest = new UsernamePasswordAuthenticationToken(request.email(), request.password());
             Authentication authentication = authenticationManager.authenticate(authRequest);
 
-            User user = userService.getUserByEmail(request.email());
 
-            var role =
+            String role =
                     authentication.getAuthorities().stream()
                             .map(GrantedAuthority::getAuthority)
                             .filter(auth -> auth.startsWith("ROLE_"))
@@ -66,6 +63,8 @@ public class AuthController {
                             .map(auth -> auth.substring(5))
                             .orElse("USER");
             Role roleEnum = Role.valueOf(role);
+
+            User user = userService.getUserByEmail(request.email());
             String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.ACCESS);
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
@@ -78,17 +77,13 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         try {
-            UserPrincipal principal = jwtService.getUserPrincipalFromToken(request.refreshToken(), TokenType.REFRESH);
-            var role =
-                    principal.authorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("ROLE_"))
-                            .findFirst()
-                            .map(auth -> auth.toUpperCase().substring(5))
-                            .orElse("USER");
-            Role roleEnum = Role.valueOf(role);
-            String accessToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.REFRESH);
+            UserPrincipal principal = jwtService.getUserPrincipalFromRefreshToken(request.refreshToken());
+            User user = userService.getUserById(principal.userId());
+
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.REFRESH);
+
+            log.info("Token refreshed successfully for user: {}", user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
             log.error("Token refresh failed", e);
@@ -96,21 +91,23 @@ public class AuthController {
         }
     }
 
-    @PatchMapping("/change-password")
-    public ResponseEntity<Map<String, String>> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(@AuthenticationPrincipal UserPrincipal principal) {
         if (principal == null) {
-            log.error("Unauthorized attempt to change password");
+            log.error("Unauthorized attempt to logout");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        try {
-            userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Password changed successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            log.error("Password change failed for user: {}", principal.userId(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logout successful (client should discard tokens)");
+        log.info("User logged out: {}", principal.userId());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/change-password")
+    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+        userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
+        log.info("Password changed successfully for user: {}", principal.userId());
+        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
 
 

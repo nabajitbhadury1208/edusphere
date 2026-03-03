@@ -4,9 +4,7 @@ import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequest;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.PasswordCannotBeChangedException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotCreatedException;
+import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +21,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -56,12 +52,12 @@ public class UserService {
     public User updateUserById(UUID id, UserRequest request, UserPrincipal userPrincipal) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
-        boolean isAdmin = userPrincipal.authorities().stream().anyMatch(grantedAuthority -> grantedAuthority.equals("ROLE_ADMIN"));
+        boolean isAdmin = userPrincipal.authorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         boolean isSelfUpdate = userPrincipal.userId().equals(id);
 
         if (!isAdmin && !isSelfUpdate) {
-            throw new IllegalArgumentException("You do not have permission to update this user");
+            throw new InsufficientPermissionException("You do not have permission to update this user");
         }
 
         if (request.name() != null) {
@@ -97,9 +93,16 @@ public class UserService {
 
         try {
             if (userRepository.existsByEmail(request.email())) {
-                throw new IllegalArgumentException("Email already in use");
+                throw new EmailAlreadyExistsException("Email " + request.email() + " is already in use");
             }
-            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone()).password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE).build();
+            User user = User.builder().
+                    name(request.name()).
+                    email(request.email()).
+                    phone(request.phone()).
+                    password(passwordEncoder.encode(request.password())).
+                    role(request.role()).
+                    status(Status.ACTIVE).
+                    build();
             return userRepository.save(user);
         } catch (Exception e) {
             throw new UserNotCreatedException("Failed to create user: " + e.getMessage());
@@ -110,11 +113,9 @@ public class UserService {
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
         try {
             User user = getUserById(userId);
-            if (user == null) {
-                throw new ResourceNotFoundException("User with id " + userId + " not found");
-            }
+
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                throw new IllegalArgumentException("Current password is incorrect");
+                throw new InvalidPasswordException("Current password is incorrect");
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));
