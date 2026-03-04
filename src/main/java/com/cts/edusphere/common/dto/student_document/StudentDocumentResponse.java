@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto.studentdocument;
+package com.cts.edusphere.common.dto.student_document;
 
 import com.cts.edusphere.enums.DocType;
 import com.cts.edusphere.modules.Student;
