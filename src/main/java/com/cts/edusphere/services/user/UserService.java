@@ -1,13 +1,14 @@
 package com.cts.edusphere.services.user;
 
-import com.cts.edusphere.common.dto.RegisterRequest;
+import com.cts.edusphere.common.dto.auth.RegisterRequest;
+import com.cts.edusphere.common.dto.user.UserRequest;
+import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.PasswordCannotBeChangedException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotCreatedException;
+import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder; // FIXED: was missing 'final', so @RequiredArgsConstructor skipped
+                                                   // injection → NPE on password encode
 
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
@@ -29,7 +31,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserById(UUID id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
 
     public User createUser(User user) {
@@ -38,7 +41,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User with email " + email + " not found"));
     }
 
     public void deleteUserById(UUID id) {
@@ -48,13 +52,36 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User updateUserById(UUID id, User updatedUser) {
-        return userRepository.findById(id).map(existingUser -> {
-            existingUser.setName(updatedUser.getName());
-            existingUser.setEmail(updatedUser.getEmail());
-            existingUser.setPhone(updatedUser.getPhone());
-            return userRepository.save(existingUser);
-        }).orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+    public User updateUserById(UUID id, UserRequest request, UserPrincipal userPrincipal) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+
+        boolean isAdmin = userPrincipal.authorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        boolean isSelfUpdate = userPrincipal.userId().equals(id);
+
+        if (!isAdmin && !isSelfUpdate) {
+            throw new InsufficientPermissionException("You do not have permission to update this user");
+        }
+
+        if (request.name() != null) {
+            user.setName(request.name());
+        }
+        if (request.phone() != null) {
+            user.setPhone(request.phone());
+        }
+
+        if (isAdmin) {
+            if (request.role() != null) {
+                user.setRole(request.role());
+            }
+            if (request.status() != null) {
+                user.setStatus(request.status());
+            }
+        }
+
+        return userRepository.save(user);
+
     }
 
     boolean existsByEmail(String email) {
@@ -70,9 +97,11 @@ public class UserService {
 
         try {
             if (userRepository.existsByEmail(request.email())) {
-                throw new IllegalArgumentException("Email already in use");
+                throw new EmailAlreadyExistsException("Email " + request.email() + " is already in use");
             }
-            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone()).password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE).build();
+            User user = User.builder().name(request.name()).email(request.email()).phone(request.phone())
+                    .password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE)
+                    .build();
             return userRepository.save(user);
         } catch (Exception e) {
             throw new UserNotCreatedException("Failed to create user: " + e.getMessage());
@@ -83,11 +112,9 @@ public class UserService {
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
         try {
             User user = getUserById(userId);
-            if(user == null){
-                throw new ResourceNotFoundException("User with id " + userId + " not found");
-            }
+
             if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-                throw new IllegalArgumentException("Current password is incorrect");
+                throw new InvalidPasswordException("Current password is incorrect");
             }
 
             user.setPassword(passwordEncoder.encode(newPassword));

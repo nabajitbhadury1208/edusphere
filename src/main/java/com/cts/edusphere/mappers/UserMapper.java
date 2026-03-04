@@ -1,113 +1,52 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.*;
-import com.cts.edusphere.modules.Department;
-import com.cts.edusphere.modules.Faculty;
-import com.cts.edusphere.modules.Student;
+import com.cts.edusphere.common.dto.auth.RegisterRequest;
+import com.cts.edusphere.common.dto.user.UserResponse;
+import com.cts.edusphere.enums.Status;
+import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
-
-    // Student Mapping
-    public StudentResponseDTO toStudentResponseDTO(Student student) {
-        if (student == null) {
+    public User toEntity(RegisterRequest request) {
+        if (request == null) {
             return null;
         }
-        return new StudentResponseDTO(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getPhone(),
-                student.getRole(),
-                student.getStatus(),
-                student.getDob(),
-                student.getGender(),
-                student.getAddress(),
-                student.getEnrollmentDate(),
-                student.getCreatedAt(),
-                student.getUpdatedAt()
-        );
-    }
 
-    public Student toStudentEntity(StudentRequestDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return Student.builder()
-                .name(dto.name())
-                .email(dto.email())
-                .phone(dto.phone())
-                .password(dto.password())
-                .dob(dto.dob())
-                .gender(dto.gender())
-                .address(dto.address())
-                .status(dto.status())
+        return User.builder()
+                .name(request.name())
+                .email(request.email())
+                .role(request.role())
+                .phone(request.phone())
+                .status(Status.ACTIVE) // Default status for new registrations
                 .build();
     }
 
-    // Faculty Mapping
-    public FacultyResponseDTO toFacultyResponseDTO(Faculty faculty) {
-        if (faculty == null) {
+    public UserResponse toResponse(User user) {
+        if (user == null) {
             return null;
         }
-        return new FacultyResponseDTO(
-                faculty.getId(),
-                faculty.getName(),
-                faculty.getEmail(),
-                faculty.getPhone(),
-                faculty.getRole(),
-                faculty.getStatus(),
-                faculty.getPosition(),
-                faculty.getDepartment() != null ? faculty.getDepartment().getId() : null,
-                faculty.getDepartment() != null ? faculty.getDepartment().getDepartmentName() : null,
-                faculty.getJoinDate(),
-                faculty.getCreatedAt(),
-                faculty.getUpdatedAt()
+
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRole(),
+                user.getStatus()
         );
     }
 
-    public Faculty toFacultyEntity(FacultyRequestDTO dto) {
-        if (dto == null) {
-            return null;
+    public List<UserResponse> toResponseList(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
         }
-        return Faculty.builder()
-                .name(dto.name())
-                .email(dto.email())
-                .phone(dto.phone())
-                .password(dto.password())
-                .position(dto.position())
-                .status(dto.status())
-                .build();
-    }
-
-    // Department Mapping
-    public DepartmentResponseDTO toDepartmentResponseDTO(Department department) {
-        if (department == null) {
-            return null;
-        }
-        return new DepartmentResponseDTO(
-                department.getId(),
-                department.getDepartmentName(),
-                department.getDepartmentCode(),
-                department.getContactInfo(),
-                department.getStatus(),
-                department.getHead() != null ? department.getHead().getId() : null,
-                department.getHead() != null ? department.getHead().getName() : null,
-                department.getCreatedAt(),
-                department.getUpdatedAt()
-        );
-    }
-
-    public Department toDepartmentEntity(DepartmentRequestDTO dto) {
-        if (dto == null) {
-            return null;
-        }
-        return Department.builder()
-                .departmentName(dto.departmentName())
-                .departmentCode(dto.departmentCode())
-                .contactInfo(dto.contactInfo())
-                .status(dto.status())
-                .build();
+        return users.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 }

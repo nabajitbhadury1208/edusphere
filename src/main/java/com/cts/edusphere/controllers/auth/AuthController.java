@@ -1,113 +1,122 @@
 package com.cts.edusphere.controllers.auth;
 
-import com.cts.edusphere.common.dto.*;
+import com.cts.edusphere.common.dto.auth.*;
 import com.cts.edusphere.config.security.JwtService;
 import com.cts.edusphere.config.security.TokenType;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.services.user.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private UserService userService;
-
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             User user = userService.registerUser(request);
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.ACCESS);
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
+                    user.getRole(), TokenType.REFRESH);
 
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(), TokenType.REFRESH);
-
+            log.info("User registered successfully: {}", user.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            log.error("Registration failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Registration failed", "message", e.getMessage()));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
             var authRequest = new UsernamePasswordAuthenticationToken(request.email(), request.password());
             Authentication authentication = authenticationManager.authenticate(authRequest);
 
-            User user = userService.getUserByEmail(request.email());
-
-            var role =
-                    authentication.getAuthorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("ROLE_"))
-                            .findFirst()
-                            .map(auth -> auth.substring(5))
-                            .orElse("USER");
+            String role = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .filter(auth -> auth.startsWith("ROLE_"))
+                    .findFirst()
+                    .map(auth -> auth.substring(5))
+                    .orElse("USER");
             Role roleEnum = Role.valueOf(role);
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum, TokenType.REFRESH);
+
+            User user = userService.getUserByEmail(request.email());
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+                    TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        } catch (DisabledException e) {
+            throw e; // let GenericExceptionHandler return 403
         } catch (Exception e) {
             log.error("Login failed for user: {}", request.email(), e);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized", "message", "Invalid email or password"));
         }
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         try {
-            UserPrincipal principal = jwtService.getUserPrincipalFromToken(request.refreshToken(), TokenType.REFRESH);
-            var role =
-                    principal.authorities().stream()
-                            .map(GrantedAuthority::getAuthority)
-                            .filter(auth -> auth.startsWith("ROLE_"))
-                            .findFirst()
-                            .map(auth -> auth.toUpperCase().substring(5))
-                            .orElse("USER");
-            Role roleEnum = Role.valueOf(role);
-            String accessToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(principal.userId().toString(), principal.name(), roleEnum, TokenType.REFRESH);
+            UserPrincipal principal = jwtService.getUserPrincipalFromRefreshToken(request.refreshToken());
+            User user = userService.getUserById(principal.userId());
+
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+                    TokenType.ACCESS);
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
+                    user.getRole(), TokenType.REFRESH);
+
+            log.info("Token refreshed successfully for user: {}", user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
             log.error("Token refresh failed", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Unauthorized", "message", "Invalid or expired refresh token"));
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, String>> logout(@AuthenticationPrincipal UserPrincipal principal) {
+        if (principal == null) {
+            log.error("Unauthorized attempt to logout");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Logout successful (client should discard tokens)");
+        log.info("User logged out: {}", principal.userId());
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/change-password")
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request, @AuthenticationPrincipal UserPrincipal principal) {
-        if (principal == null) {
-            log.error("Unauthorized attempt to change password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        try {
-            userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            log.error("Password change failed for user: {}", principal.userId(), e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
+        log.info("Password changed successfully for user: {}", principal.userId());
+        return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
     }
-
 
 }
