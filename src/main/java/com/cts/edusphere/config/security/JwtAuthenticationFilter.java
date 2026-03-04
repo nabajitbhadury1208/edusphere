@@ -1,10 +1,7 @@
 package com.cts.edusphere.config.security;
 
-import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.ErrorResponse;
 import com.cts.edusphere.exceptions.genericexceptions.InvalidTokenException;
-import com.cts.edusphere.exceptions.genericexceptions.UnauthorizedAccessException;
-import com.cts.edusphere.modules.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;

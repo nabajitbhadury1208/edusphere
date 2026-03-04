@@ -7,14 +7,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
-                @NotBlank(message = "Name must not be blank") String name,
+        @NotBlank(message = "Name must not be blank") String name,
 
-                @NotBlank(message = "Email must not be blank") @Email(message = "Email should be valid") String email,
+        @NotBlank(message = "Email must not be blank") @Email(message = "Email should be valid") String email,
 
-                @NotBlank(message = "Password must not be blank") @Size(min = 8, message = "Password must be at least 8 characters long") String password,
+        @NotBlank(message = "Password must not be blank") @Size(min = 8, message = "Password must be at least 8 characters long") String password,
 
-                String phone,
+        String phone,
 
-                @NotNull(message = "Role must not be null") // Changed: @NotBlank invalid for enums; use @NotNull
-                Role role) {
+        @NotNull(message = "Role must not be null")
+        Role role) {
 }

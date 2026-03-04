@@ -22,8 +22,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService; // FIXED: missing 'final' → @RequiredArgsConstructor skipped injection
-    private final UserMapper userMapper; // FIXED: same
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
@@ -77,7 +77,7 @@ public class UserController {
 
     @PatchMapping("/me")
     public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal,
-            @RequestBody UserRequest request) {
+                                                          @RequestBody UserRequest request) {
         try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));
@@ -93,7 +93,7 @@ public class UserController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request,
-            @AuthenticationPrincipal UserPrincipal principal) {
+                                                       @AuthenticationPrincipal UserPrincipal principal) {
         try {
             var updatedUser = userService.updateUserById(id, request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));

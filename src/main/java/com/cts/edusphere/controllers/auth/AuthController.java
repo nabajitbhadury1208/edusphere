@@ -10,10 +10,10 @@ import com.cts.edusphere.services.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,7 +44,6 @@ public class AuthController {
             log.info("User registered successfully: {}", user.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
-            // FIXED: was .build() (empty body) — now returns a meaningful error message
             log.error("Registration failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Registration failed", "message", e.getMessage()));
@@ -71,8 +70,9 @@ public class AuthController {
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
                     TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+        } catch (DisabledException e) {
+            throw e; // let GenericExceptionHandler return 403
         } catch (Exception e) {
-            // FIXED: was .build() (empty body) — now returns a meaningful error message
             log.error("Login failed for user: {}", request.email(), e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Unauthorized", "message", "Invalid email or password"));
@@ -93,7 +93,6 @@ public class AuthController {
             log.info("Token refreshed successfully for user: {}", user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
-            // FIXED: was .build() (empty body) — now returns a meaningful error message
             log.error("Token refresh failed", e);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Unauthorized", "message", "Invalid or expired refresh token"));
