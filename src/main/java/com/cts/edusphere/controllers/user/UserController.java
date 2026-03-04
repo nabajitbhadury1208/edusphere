@@ -76,8 +76,7 @@ public class UserController {
     }
 
     @PatchMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal,
-                                                          @RequestBody UserRequest request) {
+    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request) {
         try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));
@@ -92,8 +91,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request,
-                                                       @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
         try {
             var updatedUser = userService.updateUserById(id, request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));

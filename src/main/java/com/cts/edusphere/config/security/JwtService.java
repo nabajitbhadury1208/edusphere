@@ -41,8 +41,8 @@ public class JwtService {
             case REFRESH -> "refresh";
         };
         long expiration = switch (type) {
-            case ACCESS -> jwtExpiration * 60 * 1000; // Convert minutes to milliseconds
-            case REFRESH -> refreshTokenExpiration * 24 * 60 * 60 * 1000; // Convert days to milliseconds
+            case ACCESS -> jwtExpiration * 60 * 1000;
+            case REFRESH -> refreshTokenExpiration * 24 * 60 * 60 * 1000;
         };
         return Jwts.builder()
                 .subject(userId)
