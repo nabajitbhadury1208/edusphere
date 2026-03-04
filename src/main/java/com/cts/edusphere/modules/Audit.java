@@ -31,7 +31,7 @@ public class Audit extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String findings;
 
-    @Column(nullable = false, name = "audit_date")
+    @Column(nullable = false, name = " ")
     private LocalDate auditDate;
 
     @Enumerated(EnumType.STRING)
