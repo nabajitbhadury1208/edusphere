@@ -3,11 +3,13 @@ package com.cts.edusphere.services.student;
 import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
 import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
 import com.cts.edusphere.enums.Role;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.StudentMapper; // Updated Import
+import com.cts.edusphere.mappers.StudentMapper;
 import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,94 +20,122 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-    private final StudentMapper studentMapper; // Injecting specific mapper
+    private final StudentMapper studentMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) {
-        Student student = studentMapper.toEntity(requestDTO);
-        student.setRole(Role.STUDENT);
-        student.setPassword(passwordEncoder.encode(student.getPassword()));
-        Student savedStudent = studentRepository.save(student);
-        return studentMapper.toResponseDTO(savedStudent);
+        try {
+            Student student = studentMapper.toEntity(requestDTO);
+            student.setRole(Role.STUDENT);
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
+
+            Student savedStudent = studentRepository.save(student);
+            log.info("Student record created successfully with ID: {}", savedStudent.getId());
+            return studentMapper.toResponseDTO(savedStudent);
+        } catch (Exception e) {
+            log.error("Error occurred while creating student: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to create student record");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public StudentResponseDTO getStudentById(UUID id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        return studentMapper.toResponseDTO(student);
+        try {
+            return studentRepository.findById(id)
+                    .map(studentMapper::toResponseDTO)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while fetching student {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve student details");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponseDTO> getAllStudents() {
-        return studentRepository.findAll().stream()
-                .map(studentMapper::toResponseDTO)
-                .collect(Collectors.toList());
+        try {
+            return studentRepository.findAll().stream()
+                    .map(studentMapper::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error occurred while fetching all students: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve students list");
+        }
     }
 
     @Override
     public StudentResponseDTO updateStudent(UUID id, StudentRequestDTO requestDTO) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+        try {
+            Student student = studentRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
-        student.setName(requestDTO.name());
-        student.setEmail(requestDTO.email());
-        student.setPhone(requestDTO.phone());
-        student.setPassword(passwordEncoder.encode(requestDTO.password()));
-        student.setDob(requestDTO.dob());
-        student.setGender(requestDTO.gender());
-        student.setAddress(requestDTO.address());
-        student.setStatus(requestDTO.status());
+            student.setName(requestDTO.name());
+            student.setEmail(requestDTO.email());
+            student.setPhone(requestDTO.phone());
+            student.setPassword(passwordEncoder.encode(requestDTO.password()));
+            student.setDob(requestDTO.dob());
+            student.setGender(requestDTO.gender());
+            student.setAddress(requestDTO.address());
+            student.setStatus(requestDTO.status());
 
-        Student updatedStudent = studentRepository.save(student);
-        return studentMapper.toResponseDTO(updatedStudent);
+            Student updatedStudent = studentRepository.save(student);
+            log.info("Student record updated successfully: {}", id);
+            return studentMapper.toResponseDTO(updatedStudent);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while updating student {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("Failed to update student record");
+        }
     }
 
     @Override
     public StudentResponseDTO partiallyUpdateStudent(UUID id, StudentRequestDTO requestDTO) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+        try {
+            Student student = studentRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
-        if (requestDTO.name() != null) {
-            student.setName(requestDTO.name());
-        }
-        if (requestDTO.email() != null) {
-            student.setEmail(requestDTO.email());
-        }
-        if (requestDTO.phone() != null) {
-            student.setPhone(requestDTO.phone());
-        }
-        if (requestDTO.password() != null) {
-            student.setPassword(passwordEncoder.encode(requestDTO.password()));
-        }
-        if (requestDTO.dob() != null) {
-            student.setDob(requestDTO.dob());
-        }
-        if (requestDTO.gender() != null) {
-            student.setGender(requestDTO.gender());
-        }
-        if (requestDTO.address() != null) {
-            student.setAddress(requestDTO.address());
-        }
-        if (requestDTO.status() != null) {
-            student.setStatus(requestDTO.status());
-        }
+            if (requestDTO.name() != null) student.setName(requestDTO.name());
+            if (requestDTO.email() != null) student.setEmail(requestDTO.email());
+            if (requestDTO.phone() != null) student.setPhone(requestDTO.phone());
+            if (requestDTO.password() != null) student.setPassword(passwordEncoder.encode(requestDTO.password()));
+            if (requestDTO.dob() != null) student.setDob(requestDTO.dob());
+            if (requestDTO.gender() != null) student.setGender(requestDTO.gender());
+            if (requestDTO.address() != null) student.setAddress(requestDTO.address());
+            if (requestDTO.status() != null) student.setStatus(requestDTO.status());
 
-        Student updatedStudent = studentRepository.save(student);
-        return studentMapper.toResponseDTO(updatedStudent);
+            Student updatedStudent = studentRepository.save(student);
+            log.info("Student record partially updated: {}", id);
+            return studentMapper.toResponseDTO(updatedStudent);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while partially updating student {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("Failed to partially update student record");
+        }
     }
 
     @Override
     public void deleteStudent(UUID id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        studentRepository.delete(student);
+        try {
+            Student student = studentRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+            studentRepository.delete(student);
+            log.info("Student record deleted successfully: {}", id);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while deleting student {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("Failed to delete student record");
+        }
     }
 }
