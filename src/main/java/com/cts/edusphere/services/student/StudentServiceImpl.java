@@ -1,10 +1,10 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.StudentRequestDTO;
-import com.cts.edusphere.common.dto.StudentResponseDTO;
+import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.UserMapper;
+import com.cts.edusphere.mappers.StudentMapper; // Updated Import
 import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.repositories.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +22,16 @@ import java.util.stream.Collectors;
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-    private final UserMapper userMapper;
+    private final StudentMapper studentMapper; // Injecting specific mapper
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) {
-        Student student = userMapper.toStudentEntity(requestDTO);
+        Student student = studentMapper.toEntity(requestDTO);
         student.setRole(Role.STUDENT);
         student.setPassword(passwordEncoder.encode(student.getPassword()));
         Student savedStudent = studentRepository.save(student);
-        return userMapper.toStudentResponseDTO(savedStudent);
+        return studentMapper.toResponseDTO(savedStudent);
     }
 
     @Override
@@ -39,14 +39,14 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponseDTO getStudentById(UUID id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-        return userMapper.toStudentResponseDTO(student);
+        return studentMapper.toResponseDTO(student);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponseDTO> getAllStudents() {
         return studentRepository.findAll().stream()
-                .map(userMapper::toStudentResponseDTO)
+                .map(studentMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
         student.setStatus(requestDTO.status());
 
         Student updatedStudent = studentRepository.save(student);
-        return userMapper.toStudentResponseDTO(updatedStudent);
+        return studentMapper.toResponseDTO(updatedStudent);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class StudentServiceImpl implements StudentService {
         }
 
         Student updatedStudent = studentRepository.save(student);
-        return userMapper.toStudentResponseDTO(updatedStudent);
+        return studentMapper.toResponseDTO(updatedStudent);
     }
 
     @Override

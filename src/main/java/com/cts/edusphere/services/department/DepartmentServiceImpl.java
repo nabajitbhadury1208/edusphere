@@ -1,9 +1,9 @@
 package com.cts.edusphere.services.department;
 
-import com.cts.edusphere.common.dto.DepartmentRequestDTO;
-import com.cts.edusphere.common.dto.DepartmentResponseDTO;
+import com.cts.edusphere.common.dto.Department.DepartmentRequestDTO;
+import com.cts.edusphere.common.dto.Department.DepartmentResponseDTO;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.UserMapper;
+import com.cts.edusphere.mappers.DepartmentMapper; // Updated Import
 import com.cts.edusphere.modules.Department;
 import com.cts.edusphere.modules.DepartmentHead;
 import com.cts.edusphere.repositories.DepartmentHeadRepository;
@@ -23,11 +23,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final DepartmentHeadRepository departmentHeadRepository;
-    private final UserMapper userMapper;
+    private final DepartmentMapper departmentMapper; // Injecting specific mapper
 
     @Override
     public DepartmentResponseDTO createDepartment(DepartmentRequestDTO requestDTO) {
-        Department department = userMapper.toDepartmentEntity(requestDTO);
+        Department department = departmentMapper.toEntity(requestDTO);
 
         if (requestDTO.headId() != null) {
             DepartmentHead head = departmentHeadRepository.findById(requestDTO.headId())
@@ -36,7 +36,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         Department savedDepartment = departmentRepository.save(department);
-        return userMapper.toDepartmentResponseDTO(savedDepartment);
+        return departmentMapper.toResponseDTO(savedDepartment);
     }
 
     @Override
@@ -44,14 +44,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     public DepartmentResponseDTO getDepartmentById(UUID id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));
-        return userMapper.toDepartmentResponseDTO(department);
+        return departmentMapper.toResponseDTO(department);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<DepartmentResponseDTO> getAllDepartments() {
         return departmentRepository.findAll().stream()
-                .map(userMapper::toDepartmentResponseDTO)
+                .map(departmentMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -60,6 +60,8 @@ public class DepartmentServiceImpl implements DepartmentService {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));
 
+        // Note: You could also add an updateDepartmentFromDto method in your Mapper
+        // to handle this mapping logic and keep the service even thinner.
         department.setDepartmentName(requestDTO.departmentName());
         department.setDepartmentCode(requestDTO.departmentCode());
         department.setContactInfo(requestDTO.contactInfo());
@@ -72,7 +74,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         Department updatedDepartment = departmentRepository.save(department);
-        return userMapper.toDepartmentResponseDTO(updatedDepartment);
+        return departmentMapper.toResponseDTO(updatedDepartment);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         Department updatedDepartment = departmentRepository.save(department);
-        return userMapper.toDepartmentResponseDTO(updatedDepartment);
+        return departmentMapper.toResponseDTO(updatedDepartment);
     }
 
     @Override
@@ -112,7 +114,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         department.setHead(head);
         Department updatedDepartment = departmentRepository.save(department);
-        return userMapper.toDepartmentResponseDTO(updatedDepartment);
+        return departmentMapper.toResponseDTO(updatedDepartment);
     }
 
     @Override

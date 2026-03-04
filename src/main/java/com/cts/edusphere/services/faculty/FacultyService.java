@@ -1,8 +1,7 @@
 package com.cts.edusphere.services.faculty;
 
-import com.cts.edusphere.common.dto.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.FacultyResponseDTO;
-import com.cts.edusphere.modules.Faculty;
+import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

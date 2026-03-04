@@ -1,8 +1,7 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.StudentRequestDTO;
-import com.cts.edusphere.common.dto.StudentResponseDTO;
-import com.cts.edusphere.modules.Student;
+import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
 
 import java.util.List;
 import java.util.UUID;

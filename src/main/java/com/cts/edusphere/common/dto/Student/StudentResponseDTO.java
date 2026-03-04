@@ -1,22 +1,24 @@
-package com.cts.edusphere.common.dto;
+package com.cts.edusphere.common.dto.Student;
 
+import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.UUID;
 
-public record FacultyResponseDTO(
+public record StudentResponseDTO(
         UUID id,
         String name,
         String email,
         String phone,
         Role role,
         Status status,
-        String position,
-        UUID departmentId,
-        String departmentName,
-        Instant joinDate,
+        LocalDate dob,
+        Gender gender,
+        String address,
+        Instant enrollmentDate,
         Instant createdAt,
         Instant updatedAt
 ) {}

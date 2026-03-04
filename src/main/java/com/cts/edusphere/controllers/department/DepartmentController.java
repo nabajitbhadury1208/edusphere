@@ -1,8 +1,8 @@
 package com.cts.edusphere.controllers.department;
 
-import com.cts.edusphere.common.dto.DepartmentRequestDTO;
-import com.cts.edusphere.common.dto.DepartmentResponseDTO;
-import com.cts.edusphere.common.dto.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.Department.DepartmentRequestDTO;
+import com.cts.edusphere.common.dto.Department.DepartmentResponseDTO;
+import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
 import com.cts.edusphere.services.department.DepartmentService;
 import com.cts.edusphere.services.faculty.FacultyService;
 import jakarta.validation.Valid;

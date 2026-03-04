@@ -1,7 +1,7 @@
 package com.cts.edusphere.controllers.faculty;
 
-import com.cts.edusphere.common.dto.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
 import com.cts.edusphere.services.faculty.FacultyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

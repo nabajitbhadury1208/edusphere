@@ -1,7 +1,7 @@
 package com.cts.edusphere.controllers.student;
 
-import com.cts.edusphere.common.dto.StudentRequestDTO;
-import com.cts.edusphere.common.dto.StudentResponseDTO;
+import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
 import com.cts.edusphere.services.student.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
