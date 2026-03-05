@@ -83,22 +83,6 @@ public class DepartmentController {
         }
     }
 
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD')")
-    public ResponseEntity<DepartmentResponseDTO> partiallyUpdateDepartment(
-            @PathVariable UUID id,
-            @RequestBody DepartmentRequestDTO requestDTO) {
-        try {
-            DepartmentResponseDTO responseDTO = departmentService.partiallyUpdateDepartment(id, requestDTO);
-            return ResponseEntity.ok(responseDTO);
-        } catch (ResourceNotFoundException e) {
-            log.warn("Partial update failed - Department not found: {}", id);
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Error partially updating department {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @PatchMapping("/{id}/head")
     @PreAuthorize("hasRole('ADMIN')")

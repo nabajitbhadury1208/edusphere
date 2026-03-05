@@ -1,5 +1,6 @@
 package com.cts.edusphere.exceptions;
 
+import com.cts.edusphere.common.responses.ApiResponse;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,5 +176,6 @@ public class GenericExceptionHandler {
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST, request, errors);
     }
+
 
 }

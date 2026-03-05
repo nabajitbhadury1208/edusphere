@@ -12,7 +12,6 @@ public interface FacultyService {
     List<FacultyResponseDTO> getAllFaculties();
     List<FacultyResponseDTO> getFacultiesByDepartment(UUID departmentId);
     FacultyResponseDTO updateFaculty(UUID id, FacultyRequestDTO requestDTO);
-    FacultyResponseDTO partiallyUpdateFaculty(UUID id, FacultyRequestDTO requestDTO);
     void deleteFaculty(UUID id);
 }
 

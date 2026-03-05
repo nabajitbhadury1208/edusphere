@@ -78,36 +78,10 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
     }
 
+
+
     @Override
     public DepartmentResponseDTO updateDepartment(UUID id, DepartmentRequestDTO requestDTO) {
-        try {
-            Department department = departmentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));
-
-            department.setDepartmentName(requestDTO.departmentName());
-            department.setDepartmentCode(requestDTO.departmentCode());
-            department.setContactInfo(requestDTO.contactInfo());
-            department.setStatus(requestDTO.status());
-
-            if (requestDTO.headId() != null) {
-                DepartmentHead head = departmentHeadRepository.findById(requestDTO.headId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Department Head not found with id: " + requestDTO.headId()));
-                department.setHead(head);
-            }
-
-            Department updatedDepartment = departmentRepository.save(department);
-            log.info("Department updated successfully: {}", id);
-            return departmentMapper.toResponseDTO(updatedDepartment);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error updating department {}: {}", id, e.getMessage());
-            throw new InternalServerErrorException("Failed to update department");
-        }
-    }
-
-    @Override
-    public DepartmentResponseDTO partiallyUpdateDepartment(UUID id, DepartmentRequestDTO requestDTO) {
         try {
             Department department = departmentRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + id));

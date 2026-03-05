@@ -82,22 +82,6 @@ public class FacultyController {
         }
     }
 
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD')")
-    public ResponseEntity<FacultyResponseDTO> partiallyUpdateFaculty(
-            @PathVariable UUID id,
-            @RequestBody FacultyRequestDTO requestDTO) {
-        try {
-            FacultyResponseDTO responseDTO = facultyService.partiallyUpdateFaculty(id, requestDTO);
-            return ResponseEntity.ok(responseDTO);
-        } catch (ResourceNotFoundException e) {
-            log.warn("Partial update failed - Faculty not found: {}", id);
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            log.error("Error partially updating faculty {}: {}", id, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

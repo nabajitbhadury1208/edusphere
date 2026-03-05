@@ -99,36 +99,9 @@ public class FacultyServiceImpl implements FacultyService {
         }
     }
 
-    @Override
-    public FacultyResponseDTO updateFaculty(UUID id, FacultyRequestDTO requestDTO) {
-        try {
-            Faculty faculty = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
-
-            Department department = departmentRepository.findById(requestDTO.departmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + requestDTO.departmentId()));
-
-            faculty.setName(requestDTO.name());
-            faculty.setEmail(requestDTO.email());
-            faculty.setPhone(requestDTO.phone());
-            faculty.setPassword(passwordEncoder.encode(requestDTO.password()));
-            faculty.setPosition(requestDTO.position());
-            faculty.setStatus(requestDTO.status());
-            faculty.setDepartment(department);
-
-            Faculty updatedFaculty = facultyRepository.save(faculty);
-            log.info("Faculty updated successfully: {}", id);
-            return facultyMapper.toResponseDTO(updatedFaculty);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error updating faculty {}: {}", id, e.getMessage());
-            throw new InternalServerErrorException("Failed to update faculty record");
-        }
-    }
 
     @Override
-    public FacultyResponseDTO partiallyUpdateFaculty(UUID id, FacultyRequestDTO requestDTO) {
+    public FacultyResponseDTO UpdateFaculty(UUID id, FacultyRequestDTO requestDTO) {
         try {
             Faculty faculty = facultyRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
