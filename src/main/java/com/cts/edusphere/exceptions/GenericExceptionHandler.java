@@ -177,5 +177,34 @@ public class GenericExceptionHandler {
         return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST, request, errors);
     }
 
+    @ExceptionHandler(DepartmentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDepartmentNotFoundException(MethodArgumentNotValidException ex,
+            WebRequest request) {
+        logger.warn("DepartmentNotFoundException: {}", ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return buildErrorResponse("Fetching department failed", HttpStatus.BAD_REQUEST, request, errors);
+    }
+
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCourseNotFoundException(MethodArgumentNotValidException ex,
+            WebRequest request) {
+        logger.warn("CourseNotFoundException: {}", ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return buildErrorResponse("Fetching course by Id failed", HttpStatus.BAD_REQUEST, request, errors);
+    }
+
+    @ExceptionHandler(CourseAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleCourseAlreadyExsistsException(MethodArgumentNotValidException ex,
+            WebRequest request) {
+        logger.warn("CourseAlreadyExistsException: {}", ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return buildErrorResponse("Course with that name already exists", HttpStatus.BAD_REQUEST, request, errors);
+    }
 
 }

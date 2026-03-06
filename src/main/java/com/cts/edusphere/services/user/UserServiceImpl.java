@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // FIXED: was missing 'final', so @RequiredArgsConstructor skipped
                                                    // injection → NPE on password encode

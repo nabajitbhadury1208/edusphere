@@ -14,4 +14,3 @@ public interface FacultyService {
     FacultyResponseDTO updateFaculty(UUID id, FacultyRequestDTO requestDTO);
     void deleteFaculty(UUID id);
 }
-
