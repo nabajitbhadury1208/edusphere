@@ -17,10 +17,10 @@ public record CourseRequest(
         UUID departmentId,
 
         @Min(value = 1, message = "Credits must be at least 1")
-        int credits,
+        Integer credits,
 
         @Min(value = 1, message = "Duration must be at least 1")
-        int duration,
+        Integer duration,
 
         @NotNull(message = "Status is required")
         Status status

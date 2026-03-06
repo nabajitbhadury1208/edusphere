@@ -8,8 +8,7 @@ public record CourseResponse(
         String title,
         UUID departmentId,
         String departmentName,
-        int credits,
-        int duration,
+        Integer credits,
+        Integer duration,
         Status status
 ) {}
-
