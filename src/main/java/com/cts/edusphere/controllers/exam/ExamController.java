@@ -94,7 +94,7 @@ public class ExamController {
 
 
     @GetMapping("/course/{courseId}")
-    public ResponseEntity<?> getExamsByCourse(@PathVariable UUID id){
+    public ResponseEntity<?> getExamsByCourse(@PathVariable UUID courseId){
         try{
             List<ExamResponse> exams=examService.getExamsByCourse(courseId);
             return ResponseEntity.ok(exams);

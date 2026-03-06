@@ -57,13 +57,13 @@ public class ExamServiceImpl implements ExamService {
         Exam exam = examRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Exam not found"));
 
-        Course course = courseRepository.findById(request.getCouseId())
+        Course course = courseRepository.findById(request.courseId())
                 .orElseThrow(()-> new RuntimeException("Course not found"));
 
         exam.setCourse(course);
         exam.setType(request.type());
         exam.setDate(request.date());
-        exam.setStatus(request.getStatus());
+        exam.setStatus(request.status());
 
         Exam updatedExam =examRepository.save(exam);
         return ExamMapper.toDTO(updatedExam);
@@ -74,21 +74,21 @@ public class ExamServiceImpl implements ExamService {
         Exam exam = examRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Exam not found"));
 
-        if(request.getCourseId() != null){
-            Course course = courseRepository.findById(request.getCourseId())
+        if(request.courseId() != null){
+            Course course = courseRepository.findById(request.courseId())
                     .orElseThrow(() -> new RuntimeException("Course not found"));
 
             exam.setCourse(course);
         }
 
-        if(request.getType() !=null){
-            exam.setType(request.getType());
+        if(request.type() !=null){
+            exam.setType(request.type());
         }
-        if(request.getDate() !=null){
-            exam.setDate(request.getDate());
+        if(request.date() !=null){
+            exam.setDate(request.date());
         }
-        if(request.getStatus() !=null){
-            exam.setType(request.getStatus());
+        if(request.status() !=null){
+            exam.setStatus(request.status());
         }
         Exam updatedExam=examRepository.save(exam);
 
