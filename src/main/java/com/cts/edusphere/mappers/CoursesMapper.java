@@ -3,6 +3,7 @@ package com.cts.edusphere.mappers;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.cts.edusphere.common.dto.course.CourseRequest;
 import com.cts.edusphere.common.dto.course.CourseResponse;
@@ -10,6 +11,7 @@ import com.cts.edusphere.exceptions.genericexceptions.DepartmentNotFoundExceptio
 import com.cts.edusphere.modules.Course;
 import com.cts.edusphere.repositories.DepartmentRepository;
 
+@Component
 public class CoursesMapper {
     @Autowired
     DepartmentRepository departmentRepository;
