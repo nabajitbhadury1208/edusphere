@@ -1,7 +1,5 @@
 package com.cts.edusphere.mappers;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
