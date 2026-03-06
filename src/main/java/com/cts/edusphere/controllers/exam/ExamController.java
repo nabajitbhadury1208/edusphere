@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/exams")
+@RequestMapping("/api/v1/exams")
 @RequiredArgsConstructor
 public class ExamController {
 
@@ -53,17 +53,9 @@ public class ExamController {
         }
     }
 
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateExam(@PathVariable UUID id, @RequestBody ExamRequest request){
-        try{
-            ExamResponse updatedExam=examService.updateExam(id,request);
-            return ResponseEntity.ok(updatedExam);
-        }catch (ResourceNotFoundException ex){
-            return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<?> partialUpdateExam(@PathVariable UUID id, @RequestBody ExamRequest request){
         try{
             ExamResponse updatedExam=examService.partialUpdateExam(id,request);
             return ResponseEntity.ok(updatedExam);
@@ -72,15 +64,7 @@ public class ExamController {
         }
     }
 
-    @PatchMapping("/{id}/status")
-    public ResponseEntity<?> updateExamStatus(@PathVariable UUID id, @RequestBody Status Status){
-        try{
-            ExamResponse updatedExam=examService.updateExamStatus(id,Status);
-            return ResponseEntity.ok(updatedExam);
-        }catch (ResourceNotFoundException ex){
-            return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteExam(@PathVariable UUID id){
