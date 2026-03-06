@@ -27,7 +27,7 @@ public class ExamServiceImpl implements ExamService {
 
     @Override
     public ExamResponse createExam(ExamRequest request) {
-        Course course = courseRepository.findById(request.getCourseId())
+        Course course = courseRepository.findById(request.courseId())
                 .orElseThrow(() ->new RuntimeException("Course not found"));
 
         Exam exam = ExamMapper.toEntity(request, course);
