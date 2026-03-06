@@ -21,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 
 
 public class Course extends BaseEntity{
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -37,5 +37,4 @@ public class Course extends BaseEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status;
-
 }

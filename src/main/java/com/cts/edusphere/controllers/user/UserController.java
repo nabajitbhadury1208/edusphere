@@ -4,7 +4,7 @@ import com.cts.edusphere.common.dto.user.UserRequest;
 import com.cts.edusphere.common.dto.user.UserResponse;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.mappers.UserMapper;
-import com.cts.edusphere.services.user.UserService;
+import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final UserMapper userMapper;
 
     @GetMapping("/me")
