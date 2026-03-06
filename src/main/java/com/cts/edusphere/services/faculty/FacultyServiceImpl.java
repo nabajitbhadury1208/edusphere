@@ -100,8 +100,10 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
 
+
+
     @Override
-    public FacultyResponseDTO UpdateFaculty(UUID id, FacultyRequestDTO requestDTO) {
+    public FacultyResponseDTO updateFaculty(UUID id, FacultyRequestDTO requestDTO) {
         try {
             Faculty faculty = facultyRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
