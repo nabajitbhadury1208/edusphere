@@ -4,8 +4,8 @@ import com.cts.edusphere.common.dto.exam.ExamRequest;
 import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.modules.Course;
 import com.cts.edusphere.modules.Exam;
-import lombok.*;
 import org.springframework.stereotype.Component;
+
 @Component
 public class ExamMapper {
 
