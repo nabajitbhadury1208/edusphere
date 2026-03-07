@@ -12,7 +12,6 @@ public interface ExamService {
     List<ExamResponse> getAllExams();
     ExamResponse getExamById(UUID id);
     ExamResponse updateExam(UUID id, ExamRequest request);
-    ExamResponse partialUpdateExam(UUID id, ExamRequest request);
     ExamResponse updateExamStatus(UUID id, Status status);
     void deleteExam(UUID id);
     List<ExamResponse> getExamsByCourse(UUID courseId);

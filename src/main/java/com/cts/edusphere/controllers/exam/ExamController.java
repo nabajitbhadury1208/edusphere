@@ -8,6 +8,7 @@ import com.cts.edusphere.services.exam.ExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ExamController {
     private final ExamService examService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createExam(@RequestBody ExamRequest request){
         try{
             ExamResponse response = examService.createExam(request);
@@ -34,6 +36,7 @@ public class ExamController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllExams(){
         try{
             List<ExamResponse> exams=examService.getAllExams();
@@ -44,6 +47,7 @@ public class ExamController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getExamById(@PathVariable UUID id){
         try{
             ExamResponse exam=examService.getExamById(id);
@@ -53,20 +57,8 @@ public class ExamController {
         }
     }
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateExam(@PathVariable UUID id, @RequestBody ExamRequest request){
-        try{
-            ExamResponse updatedExam=examService.partialUpdateExam(id,request);
-            return ResponseEntity.ok(updatedExam);
-        }catch (ResourceNotFoundException ex){
-            return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
-        }
-    }
-
-
-
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteExam(@PathVariable UUID id){
         try{
            examService.deleteExam(id);
@@ -78,6 +70,7 @@ public class ExamController {
 
 
     @GetMapping("/course/{courseId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getExamsByCourse(@PathVariable UUID courseId){
         try{
             List<ExamResponse> exams=examService.getExamsByCourse(courseId);

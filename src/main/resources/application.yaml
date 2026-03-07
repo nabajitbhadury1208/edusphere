@@ -6,11 +6,29 @@ spring:
     name: edusphere
   profiles:
     active: local
+  datasource:
+
+    url: jdbc:mysql://localhost:3306/edusphere?useSSL=false&serverTimezone=UTC
+
+    username: Pon
+
+    password: Madhu@12
+
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
+
     hibernate:
-      ddl-auto: create
+
+      ddl-auto: update
+
     show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+
+
+
+
+
+jwt:
+
+  secret: qKGhdukK2Op8FP+U6DWc7/hI11SfSo9s+IKnqlDAZqKyBcQ35pXwkbO/pncYk20F9EeR8bHn6unP1yM+f1Xbfg==
+
