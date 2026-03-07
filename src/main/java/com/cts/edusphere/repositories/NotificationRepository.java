@@ -1,12 +1,19 @@
 package com.cts.edusphere.repositories;
 
 import com.cts.edusphere.modules.Notification;
+import java.util.List;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, UUID> {
-}
+public interface NotificationRepository
+  extends JpaRepository<Notification, UUID> {
+  List<Notification> findByUser_Id(UUID id);
 
+  @Query(
+    "UPDATE Notification n set n.isRead = true where n.user.user_id = :userId"
+  )
+  void markAllAsReadByUserId(UUID userId);
+}
