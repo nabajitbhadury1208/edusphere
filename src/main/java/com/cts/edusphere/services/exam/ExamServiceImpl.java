@@ -70,33 +70,6 @@ public class ExamServiceImpl implements ExamService {
     }
 
     @Override
-    public ExamResponse partialUpdateExam(UUID id, ExamRequest request) {
-        Exam exam = examRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Exam not found"));
-
-        if(request.courseId() != null){
-            Course course = courseRepository.findById(request.courseId())
-                    .orElseThrow(() -> new RuntimeException("Course not found"));
-
-            exam.setCourse(course);
-        }
-
-        if(request.type() !=null){
-            exam.setType(request.type());
-        }
-        if(request.date() !=null){
-            exam.setDate(request.date());
-        }
-        if(request.status() !=null){
-            exam.setStatus(request.status());
-        }
-        Exam updatedExam=examRepository.save(exam);
-
-        return ExamMapper.toDTO(updatedExam);
-
-    }
-
-    @Override
     public ExamResponse updateExamStatus(UUID id, Status status) {
         Exam exam = examRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Exam not found"));

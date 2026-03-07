@@ -13,5 +13,6 @@ public interface GradeService {
     List<GradeResponse> getGradesByStudent(UUID studentId);
     List<GradeResponse> getGradesByExam(UUID examId);
 
-
 }
+
+

@@ -5,6 +5,7 @@ import com.cts.edusphere.services.grade.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class GradeController {
     private final GradeService gradeService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> createGrade(@RequestBody GradeRequest request) {
         try {
             GradeResponse response = gradeService.createGrade(request);
@@ -31,6 +33,7 @@ public class GradeController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllGrades() {
         try {
             List<GradeResponse> grades = gradeService.getAllGrades();
@@ -42,6 +45,7 @@ public class GradeController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradeById(@PathVariable UUID id) {
         try {
             GradeResponse grade = gradeService.getGradeById(id);
@@ -53,6 +57,7 @@ public class GradeController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateGrade(@PathVariable UUID id, @RequestBody GradeRequest request) {
         try {
             GradeResponse updatedGrade = gradeService.updateGrade(id, request);
@@ -66,6 +71,7 @@ public class GradeController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteGrade(@PathVariable UUID id) {
         try {
             gradeService.deleteGrade(id);
@@ -77,6 +83,7 @@ public class GradeController {
     }
 
     @GetMapping("/students/{studentId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradesByStudent(@PathVariable UUID studentId) {
         try {
             List<GradeResponse> grades = gradeService.getGradesByStudent(studentId);
@@ -88,6 +95,7 @@ public class GradeController {
     }
 
     @GetMapping("/exam/{examId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradesByExam(@PathVariable UUID examId) {
         try {
             List<GradeResponse> grades = gradeService.getGradesByExam(examId);
