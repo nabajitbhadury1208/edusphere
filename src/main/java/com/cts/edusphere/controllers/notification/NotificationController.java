@@ -8,6 +8,11 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +24,7 @@ public class NotificationController {
 
   private NotificationService notificationService;
 
+  @PostMapping
   public ResponseEntity<String> createNotification(
     @Valid @RequestBody UUID userId,
     NotificationRequest notificationRequest
@@ -31,8 +37,9 @@ public class NotificationController {
     }
   }
 
+  @GetMapping("/{userId}")
   public ResponseEntity<String> getAllNotificationsForUserId(
-    @Valid @RequestBody UUID userId
+    @Valid @PathVariable UUID userId
   ) {
     try {
       notificationService.getAllNotificationsForUserId(userId);
@@ -44,8 +51,9 @@ public class NotificationController {
     }
   }
 
+  @PatchMapping("/{notificationId}/read")
   public ResponseEntity<String> markNotificationAsRead(
-    @Valid @RequestBody UUID notificationId
+    @Valid @PathVariable UUID notificationId
   ) {
     try {
       notificationService.markNotificationAsRead(notificationId);
@@ -59,8 +67,9 @@ public class NotificationController {
     }
   }
 
+  @PatchMapping("/{userId}/read-all")
   public ResponseEntity<String> markAllNotificationsAsRead(
-    @Valid @RequestBody UUID userId
+    @Valid @PathVariable UUID userId
   ) {
     try {
       notificationService.markAllNotificationsAsRead(userId);
@@ -74,8 +83,9 @@ public class NotificationController {
     }
   }
 
+  @DeleteMapping("/notifications/{notificationId}")
   public ResponseEntity<String> deleteNotificationById(
-    @Valid @RequestBody UUID notificationId
+    @Valid @PathVariable UUID notificationId
   ) {
     try {
       notificationService.deleteNotificationById(notificationId);
