@@ -109,7 +109,6 @@ public class NotificationServiceImpl implements NotificationService {
   public void deleteNotificationById(UUID notificationId) {
     try {
       notificationRepository.deleteById(notificationId);
-      notificationRepository.
     } catch (Exception e) {
       throw new InternalServerErrorException("Error deleting notifcation");
     }
