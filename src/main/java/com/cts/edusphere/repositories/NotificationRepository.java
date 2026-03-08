@@ -8,12 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface NotificationRepository
-  extends JpaRepository<Notification, UUID> {
+public interface NotificationRepository extends JpaRepository<Notification, UUID> {
   List<Notification> findByUser_Id(UUID id);
 
-  @Query(
-    "UPDATE Notification n set n.isRead = true where n.user.user_id = :userId"
-  )
+  @Query("UPDATE Notification n set n.isRead = true where n.user.id = :userId")
   void markAllAsReadByUserId(UUID userId);
 }
