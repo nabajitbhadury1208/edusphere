@@ -2,11 +2,13 @@ package com.cts.edusphere.controllers.student;
 
 import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
 import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.validation.CreateValidation;
+import com.cts.edusphere.common.validation.UpdateValidation;
 import com.cts.edusphere.services.student.StudentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @PostMapping
-    public ResponseEntity<StudentResponseDTO> createStudent(@Valid @RequestBody StudentRequestDTO requestDTO) {
+    public ResponseEntity<StudentResponseDTO> createStudent(@Validated(CreateValidation.class) @RequestBody StudentRequestDTO requestDTO) {
         StudentResponseDTO responseDTO = studentService.createStudent(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -40,7 +42,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDTO> updateStudent(
             @PathVariable UUID id,
-            @Valid @RequestBody StudentRequestDTO requestDTO) {
+            @Validated(UpdateValidation.class) @RequestBody StudentRequestDTO requestDTO) {
         StudentResponseDTO responseDTO = studentService.updateStudent(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }

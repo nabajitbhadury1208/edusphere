@@ -2,11 +2,13 @@ package com.cts.edusphere.controllers.faculty;
 
 import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
 import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.validation.CreateValidation;
+import com.cts.edusphere.common.validation.UpdateValidation;
 import com.cts.edusphere.services.faculty.FacultyService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public class FacultyController {
     private final FacultyService facultyService;
 
     @PostMapping
-    public ResponseEntity<FacultyResponseDTO> createFaculty(@Valid @RequestBody FacultyRequestDTO requestDTO) {
+    public ResponseEntity<FacultyResponseDTO> createFaculty(@Validated(CreateValidation.class) @RequestBody FacultyRequestDTO requestDTO) {
         FacultyResponseDTO responseDTO = facultyService.createFaculty(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -40,7 +42,7 @@ public class FacultyController {
     @PutMapping("/{id}")
     public ResponseEntity<FacultyResponseDTO> updateFaculty(
             @PathVariable UUID id,
-            @Valid @RequestBody FacultyRequestDTO requestDTO) {
+            @Validated(UpdateValidation.class) @RequestBody FacultyRequestDTO requestDTO) {
         FacultyResponseDTO responseDTO = facultyService.updateFaculty(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }

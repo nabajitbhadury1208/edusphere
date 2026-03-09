@@ -3,12 +3,14 @@ package com.cts.edusphere.controllers.department;
 import com.cts.edusphere.common.dto.Department.DepartmentRequestDTO;
 import com.cts.edusphere.common.dto.Department.DepartmentResponseDTO;
 import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.validation.CreateValidation;
+import com.cts.edusphere.common.validation.UpdateValidation;
 import com.cts.edusphere.services.department.DepartmentService;
 import com.cts.edusphere.services.faculty.FacultyService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +25,7 @@ public class DepartmentController {
     private final FacultyService facultyService;
 
     @PostMapping
-    public ResponseEntity<DepartmentResponseDTO> createDepartment(@Valid @RequestBody DepartmentRequestDTO requestDTO) {
+    public ResponseEntity<DepartmentResponseDTO> createDepartment(@Validated(CreateValidation.class) @RequestBody DepartmentRequestDTO requestDTO) {
         DepartmentResponseDTO responseDTO = departmentService.createDepartment(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
@@ -43,7 +45,7 @@ public class DepartmentController {
     @PutMapping("/{id}")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
             @PathVariable UUID id,
-            @Valid @RequestBody DepartmentRequestDTO requestDTO) {
+            @Validated(UpdateValidation.class) @RequestBody DepartmentRequestDTO requestDTO) {
         DepartmentResponseDTO responseDTO = departmentService.updateDepartment(id, requestDTO);
         return ResponseEntity.ok(responseDTO);
     }
