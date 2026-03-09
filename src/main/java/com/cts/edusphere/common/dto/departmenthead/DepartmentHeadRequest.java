@@ -1,6 +1,7 @@
 package com.cts.edusphere.common.dto.departmenthead;
 
 import com.cts.edusphere.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,6 +19,7 @@ public record DepartmentHeadRequest(
         String phone,
 
         @NotBlank(message = "Password cannot be blank")
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         String password,
 
         @NotNull(message = "Status cannot be null")

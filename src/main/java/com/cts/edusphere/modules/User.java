@@ -3,6 +3,7 @@ package com.cts.edusphere.modules;
 import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -42,6 +43,7 @@ public class User extends BaseEntity {
     private Status status;
 
    @NotBlank(message = "Password cannot be blank")
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @Column(nullable = false, name = "password")
    private String password;
 }

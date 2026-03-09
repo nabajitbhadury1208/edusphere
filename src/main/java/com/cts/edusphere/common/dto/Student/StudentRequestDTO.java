@@ -4,6 +4,7 @@ import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -20,7 +21,8 @@ public record StudentRequestDTO(
         String phone,
 
         @NotBlank(groups = OnCreate.class, message = "Password cannot be blank")
-        String password, //TODO NB check this
+        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+        String password,
 
         @NotNull(groups = OnCreate.class, message = "Date of birth cannot be null")
         @PastOrPresent(groups = {OnCreate.class, OnUpdate.class}, message = "Date of birth must be in the past")
