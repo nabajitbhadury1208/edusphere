@@ -1,5 +1,7 @@
 package com.cts.edusphere.common.dto.workload;
 
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.modules.Course;
 import com.cts.edusphere.modules.Faculty;
@@ -7,17 +9,17 @@ import jakarta.validation.constraints.NotNull;
 
 public record WorkLoadRequest(
 
-        @NotNull(message = "Faculty is required")
+        @NotNull(groups = OnCreate.class,message = "Faculty is required")
         Faculty faculty,
 
-        @NotNull(message = "Course is required")
+        @NotNull(groups = OnCreate.class,message = "Course is required")
         Course course,
         Integer hours,
 
-        @NotNull(message = "Semester is required")
+        @NotNull(groups = OnCreate.class,message = "Semester is required")
         String semester,
 
-        @NotNull(message = "Status is required")
+        @NotNull(groups = OnCreate.class,message = "Status is required")
         Status status
 ) {
 }
