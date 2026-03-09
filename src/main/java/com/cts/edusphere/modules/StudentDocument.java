@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(
-        name = "student_document",
+        name = "studentDocument",
         indexes = {
                 @Index(name = "idx_student_document_student", columnList = "student_id"),
         }

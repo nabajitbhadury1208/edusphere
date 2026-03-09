@@ -1,6 +1,5 @@
 package com.cts.edusphere.exceptions;
 
-import com.cts.edusphere.common.responses.ApiResponse;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import java.nio.file.AccessDeniedException;
 import java.time.Instant;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -255,6 +255,32 @@ public class GenericExceptionHandler {
     );
   }
 
+  @ExceptionHandler(StorageException.class)
+  public ResponseEntity<ErrorResponse> handleInvalidFileFormat(
+    StorageException ex,
+    WebRequest request){
+    logger.error("InvalidFileFormatException: {}", ex.getMessage());
+    return buildErrorResponse(
+        ex.getMessage(),
+        HttpStatus.BAD_REQUEST,
+        request,
+        null
+    );
+  }
+
+  @ExceptionHandler(StorageFileNotFoundException.class)
+  public ResponseEntity<ErrorResponse> handleStorageFileNotFound(
+    StorageFileNotFoundException ex,
+    WebRequest request) {
+      logger.error("StorageFileNotFoundException: {}", ex.getMessage());
+      return buildErrorResponse(
+              ex.getMessage(),
+              HttpStatus.NOT_FOUND,
+              request,
+              null
+      );
+  }
+
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> handleValidation(
     MethodArgumentNotValidException ex,
@@ -394,4 +420,20 @@ public class GenericExceptionHandler {
       errors
     );
   }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(
+            MethodArgumentNotValidException ex, WebRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST, request, errors);
+    }
+
+
 }

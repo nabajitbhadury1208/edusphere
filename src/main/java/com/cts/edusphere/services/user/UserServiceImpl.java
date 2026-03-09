@@ -21,8 +21,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // FIXED: was missing 'final', so @RequiredArgsConstructor skipped
-                                                   // injection → NPE on password encode
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {

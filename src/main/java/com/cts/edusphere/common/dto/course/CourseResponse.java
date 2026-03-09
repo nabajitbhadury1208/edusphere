@@ -5,6 +5,7 @@ import com.cts.edusphere.enums.Status;
 import java.util.UUID;
 
 public record CourseResponse(
+        UUID id,
         String title,
         UUID departmentId,
         String departmentName,

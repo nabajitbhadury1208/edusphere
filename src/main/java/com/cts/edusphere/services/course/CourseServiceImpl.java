@@ -34,15 +34,12 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse createCourse(CourseRequest courseRequest) {
         try {
-            if (!courseRepository.existsByTitle(courseRequest.title())) {
-                Course course = courseRepository.save(coursesMapper.toEntity(courseRequest));
-                log.info("Created course by name: {}", courseRequest.title());
-                return coursesMapper.toResponseDto(course);
-            }
-
-            else {
+            if (courseRepository.existsByTitle(courseRequest.title())) {
                 throw new CourseAlreadyExistsException("Course with name " + courseRequest.title() + " already exists");
             }
+            Course course = courseRepository.save(coursesMapper.toEntity(courseRequest));
+            log.info("Created course by name: {}", courseRequest.title());
+            return coursesMapper.toResponseDto(course);
 
         } catch (Exception e) {
             log.error("Error creating course: {}", e.getMessage());
@@ -80,20 +77,19 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse updateCourse(UUID id, CourseRequest courseRequest) {
         try {
-            Course existingCourse = courseRepository.findById(id).orElseThrow(() -> {
-                throw new CourseNotFoundException("Course with id: " + id + " doesn't exist");
-            });
+            Course existingCourse = courseRepository.findById(id).orElseThrow(() ->
+                new CourseNotFoundException("Course with id: " + id + " doesn't exist")
+            );
 
             if (courseRequest.title() != null)
                 existingCourse.setTitle(courseRequest.title());
 
             if (courseRequest.departmentId() != null) {
                 existingCourse
-                        .setDepartment(departmentRepository.findById(courseRequest.departmentId()).orElseThrow(() -> {
-                            throw new DepartmentNotFoundException(
-                                    "Department with id " + courseRequest.departmentId() + " doesn't exist");
-                        }));
-            }
+                        .setDepartment(departmentRepository.findById(courseRequest.departmentId())
+                                        .orElseThrow(() -> new DepartmentNotFoundException("Department with id " + courseRequest.departmentId() + " doesn't exist")));
+
+          }
 
             if (courseRequest.credits() != null)
                 existingCourse.setCredits(courseRequest.credits());
@@ -116,10 +112,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void deleteCourseById(UUID id) {
         try {
-            Course course = courseRepository.findById(id).orElseThrow(() -> {
-                throw new CourseNotFoundException("Course with id: " + id + " not found");
-            });
-
+            Course course = courseRepository.findById(id).orElseThrow(() -> new CourseNotFoundException("Course with id: " + id + " doesn't exist"));
             courseRepository.delete(course);
 
             log.info("Deleted course with id: {}", id);
@@ -131,9 +124,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void setActivateDeactivate(UUID id, Status status) {
         try {
-            Course course = courseRepository.findById(id).orElseThrow(() -> {
-                throw new CourseNotFoundException("Course with id: " + id + " not found");
-            });
+            Course course = courseRepository.findById(id).orElseThrow(() ->
+                 new CourseNotFoundException("Course with id: " + id + " not found")
+            );
 
             course.setStatus(status);
 

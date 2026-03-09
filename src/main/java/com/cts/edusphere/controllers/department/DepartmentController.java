@@ -66,6 +66,8 @@ public class DepartmentController {
         }
     }
 
+    // TODO: Fix: Currently asks for deptName, contactInfo,status etc because of validation set in RequestDTO
+    // Ideally shouldn't do so
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
@@ -83,7 +85,7 @@ public class DepartmentController {
         }
     }
 
-
+    // Todo: Fix the request param headId... maybe make it a path variable or as formdata?
     @PatchMapping("/{id}/head")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDTO> changeDepartmentHead(

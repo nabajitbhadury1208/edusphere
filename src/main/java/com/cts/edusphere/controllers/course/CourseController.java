@@ -39,7 +39,7 @@ public class CourseController {
   ) {
     try {
       CourseResponse courseResponse = courseService.createCourse(courseRequest);
-      return ResponseEntity.ok("Successfully created user");
+      return ResponseEntity.ok("Successfully created course");
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
@@ -66,6 +66,7 @@ public class CourseController {
   }
 
   @PutMapping("/{id}")
+  // TODO: Fix the update endpoint
   public ResponseEntity<String> updateCourseById(
     @PathVariable UUID id,
     @Valid @RequestBody CourseRequest courseRequest
@@ -78,7 +79,8 @@ public class CourseController {
     }
   }
 
-  @PatchMapping("/{id}/status")
+  // TODO: Fix the activate/deactivate endpoint
+  @PutMapping("/{id}/status")
   public ResponseEntity<String> setActivate(
     @PathVariable UUID id,
     @Valid @RequestBody Status status
@@ -86,7 +88,7 @@ public class CourseController {
     try {
       courseService.setActivateDeactivate(id, status);
       return ResponseEntity.ok(
-        "Successfully activated/deactivated User with Id: " + id
+        "Successfully" + status + "ed User with Id: " + id
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

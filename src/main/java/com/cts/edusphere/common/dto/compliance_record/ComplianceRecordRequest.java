@@ -30,15 +30,5 @@ public record ComplianceRecordRequest(
 
         String notes
 ) {
-    public static record ComplianceRecordResponse(
-            UUID id,
-            UUID recordedByUserId,
-            UUID entityId,
-            String entityType,
-            ComplianceType complianceType,
-            ComplianceResult result,
-            LocalDate complianceDate,
-            String notes,
-            Instant createdAt
-    ) {}
+
 }

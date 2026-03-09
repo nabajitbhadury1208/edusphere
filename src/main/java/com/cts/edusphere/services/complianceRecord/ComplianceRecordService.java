@@ -1,4 +1,4 @@
-package com.cts.edusphere.services.compliancerecord;
+package com.cts.edusphere.services.complianceRecord;
 
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;

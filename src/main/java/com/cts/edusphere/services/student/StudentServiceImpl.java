@@ -2,6 +2,7 @@ package com.cts.edusphere.services.student;
 
 import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
 import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -13,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -79,14 +82,14 @@ public class StudentServiceImpl implements StudentService {
             Student student = studentRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
-            if(requestDTO.name() != null) student.setName(requestDTO.name());
-            if(requestDTO.email() != null) student.setEmail(requestDTO.email());
-            if(requestDTO.phone() != null) student.setPhone(requestDTO.phone());
+            if (requestDTO.name() != null) student.setName(requestDTO.name());
+            if (requestDTO.email() != null) student.setEmail(requestDTO.email());
+            if (requestDTO.phone() != null) student.setPhone(requestDTO.phone());
 
-            if(requestDTO.dob() != null) student.setDob(requestDTO.dob());
-            if(requestDTO.gender() != null) student.setGender(requestDTO.gender());
-            if(requestDTO.address() != null) student.setAddress(requestDTO.address());
-            if(requestDTO.status() != null) student.setStatus(requestDTO.status());
+            if (requestDTO.dob() != null) student.setDob(requestDTO.dob());
+            if (requestDTO.gender() != null) student.setGender(requestDTO.gender());
+            if (requestDTO.address() != null) student.setAddress(requestDTO.address());
+            if (requestDTO.status() != null) student.setStatus(requestDTO.status());
 
             Student updatedStudent = studentRepository.save(student);
             log.info("Student record updated successfully: {}", id);
@@ -99,31 +102,6 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    @Override
-    public StudentResponseDTO partiallyUpdateStudent(UUID id, StudentRequestDTO requestDTO) {
-        try {
-            Student student = studentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
-
-            if (requestDTO.name() != null) student.setName(requestDTO.name());
-            if (requestDTO.email() != null) student.setEmail(requestDTO.email());
-            if (requestDTO.phone() != null) student.setPhone(requestDTO.phone());
-            if (requestDTO.password() != null) student.setPassword(passwordEncoder.encode(requestDTO.password()));
-            if (requestDTO.dob() != null) student.setDob(requestDTO.dob());
-            if (requestDTO.gender() != null) student.setGender(requestDTO.gender());
-            if (requestDTO.address() != null) student.setAddress(requestDTO.address());
-            if (requestDTO.status() != null) student.setStatus(requestDTO.status());
-
-            Student updatedStudent = studentRepository.save(student);
-            log.info("Student record partially updated: {}", id);
-            return studentMapper.toResponseDTO(updatedStudent);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error occurred while partially updating student {}: {}", id, e.getMessage());
-            throw new InternalServerErrorException("Failed to partially update student record");
-        }
-    }
 
     @Override
     public void deleteStudent(UUID id) {

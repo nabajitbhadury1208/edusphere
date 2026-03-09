@@ -19,7 +19,7 @@ public class CoursesMapper {
             return null;
         }
 
-        return new CourseResponse(course.getTitle(), course.getDepartment().getId(),
+        return new CourseResponse(course.getId(),course.getTitle(), course.getDepartment().getId(),
                 course.getDepartment().getDepartmentName(), course.getCredits(), course.getDuration(),
                 course.getStatus());
     }
@@ -29,6 +29,6 @@ public class CoursesMapper {
                 .department(departmentRepository.findById(courseRequest.departmentId())
                         .orElseThrow(() -> new DepartmentNotFoundException(
                                 "Department with id: " + courseRequest.departmentId() + " not found")))
-                .credits(courseRequest.credits()).duration(courseRequest.duration()).build();
+                .credits(courseRequest.credits()).duration(courseRequest.duration()).status(courseRequest.status()).build();
     }
 }

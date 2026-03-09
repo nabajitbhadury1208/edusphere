@@ -2,7 +2,7 @@ package com.cts.edusphere.controllers.compliancerecord;
 
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
-import com.cts.edusphere.services.compliancerecord.ComplianceRecordService;
+import com.cts.edusphere.services.complianceRecord.ComplianceRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -11,7 +11,6 @@ public interface StudentService {
     StudentResponseDTO getStudentById(UUID id);
     List<StudentResponseDTO> getAllStudents();
     StudentResponseDTO updateStudent(UUID id, StudentRequestDTO requestDTO);
-    StudentResponseDTO partiallyUpdateStudent(UUID id, StudentRequestDTO requestDTO);
     void deleteStudent(UUID id);
 }
 

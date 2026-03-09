@@ -67,6 +67,7 @@ public class FacultyController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    // TODO: Fix this endpoint
     public ResponseEntity<FacultyResponseDTO> updateFaculty(
             @PathVariable UUID id,
             @Valid @RequestBody FacultyRequestDTO requestDTO) {
