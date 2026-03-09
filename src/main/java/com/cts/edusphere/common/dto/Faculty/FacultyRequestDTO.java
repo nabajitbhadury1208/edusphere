@@ -1,16 +1,32 @@
 package com.cts.edusphere.common.dto.Faculty;
 
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.Status;
-
 import jakarta.validation.constraints.*;
+
 import java.util.UUID;
 
 public record FacultyRequestDTO(
-        @NotBlank(message = "Name cannot be blank") String name,
-        @Email(message = "Email should be valid") @NotBlank(message = "Email cannot be blank") String email,
-        @Pattern(regexp = "^\\+?\\d{7,15}$", message = "Phone number must be 7 - 15 digits") String phone,
-        @NotBlank(message = "Password cannot be blank") String password,
-        @NotBlank(message = "Position cannot be blank") String position,
-        @NotNull(message = "Department ID cannot be null") UUID departmentId,
-        @NotNull(message = "Status cannot be null") Status status
+        @NotBlank(groups = OnCreate.class, message = "Name cannot be blank")
+        String name,
+
+        @Email(groups = OnCreate.class, message = "Email should be valid")
+        @NotBlank(groups = OnCreate.class, message = "Email cannot be blank")
+        String email,
+
+        @Pattern(groups = {OnCreate.class, OnUpdate.class}, regexp = "^\\+?\\d{7,15}$", message = "Phone number must be 7 - 15 digits")
+        String phone,
+
+        @NotBlank(groups = OnCreate.class, message = "Password cannot be blank")
+        String password,
+
+        @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Position cannot be blank")
+        String position,
+
+        @NotNull(groups = OnCreate.class, message = "Department ID cannot be null")
+        UUID departmentId,
+
+        @NotNull(groups = {OnCreate.class, OnUpdate.class}, message = "Status cannot be null")
+        Status status
 ) {}
