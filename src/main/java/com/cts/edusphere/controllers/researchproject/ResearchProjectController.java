@@ -2,12 +2,15 @@ package com.cts.edusphere.controllers.researchproject;
 
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.researchProject.ResearchProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +26,7 @@ public class ResearchProjectController {
     // Sl No 1: Create
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY')")
-    public ResponseEntity<ResearchProjectResponse> create(@Valid @RequestBody ResearchProjectRequest request) {
+    public ResponseEntity<ResearchProjectResponse> create(@Validated(OnCreate.class) @RequestBody ResearchProjectRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(request));
     }
 
@@ -44,7 +47,7 @@ public class ResearchProjectController {
     // Sl No 6: Assign Co-investigator
     @PostMapping("/{id}/faculty")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
-    public ResponseEntity<ResearchProjectResponse> addFaculty(@PathVariable UUID id, @RequestParam UUID facultyId) {
+    public ResponseEntity<ResearchProjectResponse> addFaculty(@Validated(OnUpdate.class)@PathVariable UUID id, @RequestParam UUID facultyId) {
         return ResponseEntity.ok(projectService.addFacultyMember(id, facultyId));
     }
 
@@ -58,7 +61,7 @@ public class ResearchProjectController {
     // Sl No 8: Add Student
     @PostMapping("/{id}/students")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
-    public ResponseEntity<ResearchProjectResponse> addStudent(@PathVariable UUID id, @RequestParam UUID studentId) {
+    public ResponseEntity<ResearchProjectResponse> addStudent(@Validated(OnUpdate.class) @PathVariable UUID id, @RequestParam UUID studentId) {
         return ResponseEntity.ok(projectService.addStudent(id, studentId));
     }
 
