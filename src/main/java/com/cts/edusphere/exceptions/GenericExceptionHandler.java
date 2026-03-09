@@ -283,25 +283,25 @@ public class GenericExceptionHandler {
         );
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
-            MethodArgumentNotValidException ex,
-            WebRequest request
-    ) {
-        logger.warn("MethodArgumentNotValidException: {}", ex.getMessage());
-        Map<String, String> errors = new HashMap<>();
-        ex
-                .getBindingResult()
-                .getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
-                );
-        return buildErrorResponse(
-                "Validation failed",
-                HttpStatus.BAD_REQUEST,
-                request,
-                errors
-        );
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> handleValidation(
+    MethodArgumentNotValidException ex,
+    WebRequest request
+  ) {
+    logger.warn("MethodArgumentNotValidException: {}", ex.getMessage());
+    Map<String, String> errors = new HashMap<>();
+    ex
+      .getBindingResult()
+      .getFieldErrors()
+      .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
+      );
+    return buildErrorResponse(
+      "Validation failed",
+      HttpStatus.BAD_REQUEST,
+      request,
+      errors
+    );
+  }
 
     @ExceptionHandler(DepartmentNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDepartmentNotFoundException(
