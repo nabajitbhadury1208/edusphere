@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 
 
-public class Course extends BaseEntity{
+public class Course extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String title;
 

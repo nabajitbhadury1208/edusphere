@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.AuditStatus;
 import jakarta.persistence.*;
 import lombok.*;

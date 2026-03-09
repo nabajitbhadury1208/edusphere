@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
@@ -19,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
 
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     @NotBlank(message = "Name cannot be blank")
     @Column(nullable = false, name = "name")
     private String name;

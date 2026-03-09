@@ -1,4 +1,4 @@
-package com.cts.edusphere.services.researchProject;
+package com.cts.edusphere.services.research_project;
 
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
