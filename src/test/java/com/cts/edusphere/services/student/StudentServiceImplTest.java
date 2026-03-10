@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
@@ -189,7 +189,7 @@ public class StudentServiceImplTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
 
-        StudentResponseDTO result = studentService.partiallyUpdateStudent(studentId, partialDTO);
+        StudentResponseDTO result = studentService.updateStudent(studentId, partialDTO);
 
         assertNotNull(result);
         verify(studentRepository, times(1)).findById(studentId);
@@ -201,7 +201,7 @@ public class StudentServiceImplTest {
         StudentRequestDTO partialDTO = new StudentRequestDTO("Updated Name", null, null, null, null, null, null, null);
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> studentService.partiallyUpdateStudent(studentId, partialDTO));
+        assertThrows(ResourceNotFoundException.class, () -> studentService.updateStudent(studentId, partialDTO));
         verify(studentRepository, never()).save(any());
     }
 
