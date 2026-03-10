@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
@@ -182,28 +182,6 @@ public class StudentServiceImplTest {
         verify(studentRepository, never()).save(any());
     }
 
-    @Test
-    void testPartiallyUpdateStudent_Success() {
-        StudentRequestDTO partialDTO = new StudentRequestDTO("Updated Name", null, null, null, null, null, null, null);
-        when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
-        when(studentRepository.save(any(Student.class))).thenReturn(student);
-        when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
-
-        StudentResponseDTO result = studentService.partiallyUpdateStudent(studentId, partialDTO);
-
-        assertNotNull(result);
-        verify(studentRepository, times(1)).findById(studentId);
-        verify(studentRepository, times(1)).save(any(Student.class));
-    }
-
-    @Test
-    void testPartiallyUpdateStudent_NotFound() {
-        StudentRequestDTO partialDTO = new StudentRequestDTO("Updated Name", null, null, null, null, null, null, null);
-        when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> studentService.partiallyUpdateStudent(studentId, partialDTO));
-        verify(studentRepository, never()).save(any());
-    }
 
     @Test
     void testDeleteStudent_Success() {

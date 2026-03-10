@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AuditServiceImplTest {
+class AuditServiceImplTest {
 
     @Mock
     private AuditRepository auditRepository;

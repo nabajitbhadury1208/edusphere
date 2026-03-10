@@ -1,7 +1,8 @@
 package com.cts.edusphere.mappers;
 
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
-import com.cts.edusphere.common.dto.user.UserResponse;
+import com.cts.edusphere.common.dto.user.UserRequestDto;
+import com.cts.edusphere.common.dto.user.UserResponseDto;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
@@ -22,16 +23,27 @@ public class UserMapper {
                 .email(request.email())
                 .role(request.role())
                 .phone(request.phone())
-                .status(Status.ACTIVE) // Default status for new registrations
+                .status(Status.ACTIVE)
                 .build();
     }
 
-    public UserResponse toResponse(User user) {
+    public User toEntity(UserRequestDto dto) {
+        if (dto == null) return null;
+
+        return User.builder()
+                .name(dto.name())
+                .phone(dto.phone())
+                .role(dto.role())
+                .status(dto.status() != null ? dto.status() : Status.ACTIVE)
+                .build();
+    }
+
+    public UserResponseDto toResponse(User user) {
         if (user == null) {
             return null;
         }
 
-        return new UserResponse(
+        return new UserResponseDto(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
@@ -41,7 +53,7 @@ public class UserMapper {
         );
     }
 
-    public List<UserResponse> toResponseList(List<User> users) {
+    public List<UserResponseDto> toResponseList(List<User> users) {
         if (users == null || users.isEmpty()) {
             return Collections.emptyList();
         }

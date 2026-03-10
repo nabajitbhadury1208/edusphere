@@ -5,7 +5,7 @@ import com.cts.edusphere.enums.Status;
 
 import java.util.UUID;
 
-public record UserResponse(
+public record UserResponseDto(
         UUID id,
         String name,
         String email,

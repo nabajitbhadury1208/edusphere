@@ -1,14 +1,13 @@
 package com.cts.edusphere.services.user;
 
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
-import com.cts.edusphere.common.dto.user.UserRequest;
+import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class UserServiceImpl {
         userRepository.deleteById(id);
     }
 
-    public User updateUserById(UUID id, UserRequest request, UserPrincipal userPrincipal) {
+    public User updateUserById(UUID id, UserRequestDto request, UserPrincipal userPrincipal) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
