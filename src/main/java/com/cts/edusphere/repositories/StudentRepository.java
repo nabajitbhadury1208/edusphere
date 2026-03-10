@@ -1,5 +1,6 @@
 package com.cts.edusphere.repositories;
 
+import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.modules.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,6 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     Optional<Student> findByPhone(String phone);
 
-    @Query("SELECT s FROM student s WHERE s.status = 'ACTIVE'")
-    List<Student> findAllActiveStudents();
+    List<Student> findAllByStatus(Status status);
 }
 
