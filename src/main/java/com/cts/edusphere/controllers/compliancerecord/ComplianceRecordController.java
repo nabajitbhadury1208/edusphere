@@ -2,12 +2,15 @@ package com.cts.edusphere.controllers.compliancerecord;
 
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.complianceRecord.ComplianceRecordService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +25,7 @@ public class ComplianceRecordController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<ComplianceRecordResponse> create(@Valid @RequestBody ComplianceRecordRequest request) {
+    public ResponseEntity<ComplianceRecordResponse> create(@Validated(OnCreate.class) @RequestBody ComplianceRecordRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(recordService.createRecord(request));
     }
 
@@ -48,7 +51,7 @@ public class ComplianceRecordController {
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
     public ResponseEntity<ComplianceRecordResponse> update(
             @PathVariable UUID id,
-            @Valid @RequestBody ComplianceRecordRequest request) {
+            @Validated(OnUpdate.class) @RequestBody ComplianceRecordRequest request) {
         return ResponseEntity.ok(recordService.updateRecord(id, request));
     }
 
