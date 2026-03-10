@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ThesisRequest(
 
-        @NotNull(message = "Student is required")
+        @NotNull(message = "student is required")
         Student student,
 
         @NotNull(message = "Title is required")

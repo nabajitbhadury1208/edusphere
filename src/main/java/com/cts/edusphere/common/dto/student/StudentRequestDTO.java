@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto.Student;
+package com.cts.edusphere.common.dto.student;
 
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;

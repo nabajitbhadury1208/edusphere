@@ -1,7 +1,7 @@
 package com.cts.edusphere.controllers.faculty;
 
-import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.faculty.FacultyService;

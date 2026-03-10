@@ -8,7 +8,6 @@ import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -75,7 +74,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/me")
+    @PostMapping("/me")
     public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request) {
         try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);

@@ -16,7 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
 
     Optional<Student> findByPhone(String phone);
 
-    @Query("SELECT s FROM Student s WHERE s.status = 'ACTIVE'")
+    @Query("SELECT s FROM student s WHERE s.status = 'ACTIVE'")
     List<Student> findAllActiveStudents();
 }
 

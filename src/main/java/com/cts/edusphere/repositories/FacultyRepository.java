@@ -18,9 +18,9 @@ public interface FacultyRepository extends JpaRepository<Faculty, UUID> {
 
     List<Faculty> findByDepartmentId(UUID departmentId);
 
-    @Query("SELECT f FROM Faculty f WHERE f.department.id = :departmentId AND f.status = 'ACTIVE'")
+    @Query("SELECT f FROM faculty f WHERE f.department.id = :departmentId AND f.status = 'ACTIVE'")
     List<Faculty> findActiveFacultiesByDepartment(@Param("departmentId") UUID departmentId);
 
-    @Query("SELECT f FROM Faculty f WHERE f.status = 'ACTIVE'")
+    @Query("SELECT f FROM faculty f WHERE f.status = 'ACTIVE'")
     List<Faculty> findAllActiveFaculties();
 }

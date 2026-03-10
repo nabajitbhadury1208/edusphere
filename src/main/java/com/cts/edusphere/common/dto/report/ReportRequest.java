@@ -20,7 +20,7 @@ public record ReportRequest(
         @NotNull(message = "Scope is required")
         ReportScope scope,
 
-        @NotNull(message = "Department is required")
+        @NotNull(message = "department is required")
         Department department,
 
         @NotNull

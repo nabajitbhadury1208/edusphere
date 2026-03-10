@@ -28,7 +28,7 @@ public class CoursesMapper {
         return Course.builder().title(courseRequest.title())
                 .department(departmentRepository.findById(courseRequest.departmentId())
                         .orElseThrow(() -> new DepartmentNotFoundException(
-                                "Department with id: " + courseRequest.departmentId() + " not found")))
+                                "department with id: " + courseRequest.departmentId() + " not found")))
                 .credits(courseRequest.credits()).duration(courseRequest.duration()).status(courseRequest.status()).build();
     }
 }

@@ -1,8 +1,7 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
-import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -14,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +37,7 @@ public class StudentServiceImpl implements StudentService {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
 
             Student savedStudent = studentRepository.save(student);
-            log.info("Student record created successfully with ID: {}", savedStudent.getId());
+            log.info("student record created successfully with ID: {}", savedStudent.getId());
             return studentMapper.toResponseDTO(savedStudent);
         } catch (Exception e) {
             log.error("Error occurred while creating student: {}", e.getMessage());
@@ -54,7 +51,7 @@ public class StudentServiceImpl implements StudentService {
         try {
             return studentRepository.findById(id)
                     .map(studentMapper::toResponseDTO)
-                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("student not found with id: " + id));
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -80,7 +77,7 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponseDTO updateStudent(UUID id, StudentRequestDTO requestDTO) {
         try {
             Student student = studentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("student not found with id: " + id));
 
             if (requestDTO.name() != null) student.setName(requestDTO.name());
             if (requestDTO.email() != null) student.setEmail(requestDTO.email());
@@ -92,7 +89,7 @@ public class StudentServiceImpl implements StudentService {
             if (requestDTO.status() != null) student.setStatus(requestDTO.status());
 
             Student updatedStudent = studentRepository.save(student);
-            log.info("Student record updated successfully: {}", id);
+            log.info("student record updated successfully: {}", id);
             return studentMapper.toResponseDTO(updatedStudent);
         } catch (ResourceNotFoundException e) {
             throw e;
@@ -107,9 +104,9 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudent(UUID id) {
         try {
             Student student = studentRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("student not found with id: " + id));
             studentRepository.delete(student);
-            log.info("Student record deleted successfully: {}", id);
+            log.info("student record deleted successfully: {}", id);
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
