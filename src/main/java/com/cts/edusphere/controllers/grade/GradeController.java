@@ -1,11 +1,14 @@
 package com.cts.edusphere.controllers.grade;
 import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.grade.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
@@ -19,53 +22,30 @@ public class GradeController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createGrade(@RequestBody GradeRequest request) {
-        try {
+    public ResponseEntity<?> createGrade(@Validated(OnCreate.class) @RequestBody GradeRequest request) {
             GradeResponse response = gradeService.createGrade(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-        } catch (RuntimeException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-
-        } catch (Exception ex) {
-            return new ResponseEntity<>("Unable to create grade", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllGrades() {
-        try {
             List<GradeResponse> grades = gradeService.getAllGrades();
             return ResponseEntity.ok(grades);
-
-        } catch (Exception ex) {
-            return new ResponseEntity<>("Error retrieving grades", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradeById(@PathVariable UUID id) {
-        try {
             GradeResponse grade = gradeService.getGradeById(id);
             return ResponseEntity.ok(grade);
-
-        } catch (RuntimeException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-        }
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateGrade(@PathVariable UUID id, @RequestBody GradeRequest request) {
-        try {
+    public ResponseEntity<?> updateGrade(@PathVariable UUID id,@Validated(OnUpdate.class) @RequestBody GradeRequest request) {
             GradeResponse updatedGrade = gradeService.updateGrade(id, request);
             return ResponseEntity.ok(updatedGrade);
-
-        } catch (RuntimeException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-        }
     }
 
 
@@ -73,36 +53,21 @@ public class GradeController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteGrade(@PathVariable UUID id) {
-        try {
             gradeService.deleteGrade(id);
             return ResponseEntity.noContent().build();
-
-        } catch (RuntimeException ex) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-        }
     }
 
     @GetMapping("/students/{studentId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradesByStudent(@PathVariable UUID studentId) {
-        try {
             List<GradeResponse> grades = gradeService.getGradesByStudent(studentId);
             return ResponseEntity.ok(grades);
-
-        } catch (Exception ex) {
-            return new ResponseEntity<>("Error retrieving grades for student", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @GetMapping("/exam/{examId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getGradesByExam(@PathVariable UUID examId) {
-        try {
             List<GradeResponse> grades = gradeService.getGradesByExam(examId);
             return ResponseEntity.ok(grades);
-
-        } catch (Exception ex) {
-            return new ResponseEntity<>("Error retrieving grades for exam", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

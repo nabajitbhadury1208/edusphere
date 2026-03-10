@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.DocType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(
-        name = "studentDocument",
+        name = "student_document",
         indexes = {
                 @Index(name = "idx_student_document_student", columnList = "student_id"),
         }

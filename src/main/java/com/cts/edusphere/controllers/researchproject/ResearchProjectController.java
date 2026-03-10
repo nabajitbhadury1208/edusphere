@@ -2,7 +2,7 @@ package com.cts.edusphere.controllers.researchproject;
 
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
-import com.cts.edusphere.services.researchProject.ResearchProjectService;
+import com.cts.edusphere.services.research_project.ResearchProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,14 +55,14 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.removeFacultyMember(id, facultyId));
     }
 
-    // Sl No 8: Add Student
+    // Sl No 8: Add student
     @PostMapping("/{id}/students")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
     public ResponseEntity<ResearchProjectResponse> addStudent(@PathVariable UUID id, @RequestParam UUID studentId) {
         return ResponseEntity.ok(projectService.addStudent(id, studentId));
     }
 
-    // Sl No 9: Remove Student
+    // Sl No 9: Remove student
     @DeleteMapping("/{id}/students/{studentId}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
     public ResponseEntity<ResearchProjectResponse> removeStudent(@PathVariable UUID id, @PathVariable UUID studentId) {

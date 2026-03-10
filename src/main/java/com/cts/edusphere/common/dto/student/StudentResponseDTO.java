@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto.Student;
+package com.cts.edusphere.common.dto.student;
 
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;

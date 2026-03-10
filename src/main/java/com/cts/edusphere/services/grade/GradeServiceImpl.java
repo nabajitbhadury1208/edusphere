@@ -31,7 +31,7 @@ public class GradeServiceImpl implements GradeService {
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
 
         Student student = studentRepository.findById(request.studentId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new RuntimeException("student not found"));
 
         Grade grade = GradeMapper.toEntity(request, exam, student);
 
@@ -68,7 +68,7 @@ public class GradeServiceImpl implements GradeService {
                 .orElseThrow(() -> new RuntimeException("Exam not found"));
 
         Student student = studentRepository.findById(request.studentId())
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+                .orElseThrow(() -> new RuntimeException("student not found"));
 
         grade.setExam(exam);
         grade.setStudent(student);

@@ -1,12 +1,10 @@
 package com.cts.edusphere.controllers.student;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.services.student.StudentService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

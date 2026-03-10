@@ -1,7 +1,7 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.modules.Faculty;
 import org.springframework.stereotype.Component;
 

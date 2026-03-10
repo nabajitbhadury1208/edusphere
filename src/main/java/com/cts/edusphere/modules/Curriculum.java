@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 
-public class Curriculum extends BaseEntity{
+public class Curriculum extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
