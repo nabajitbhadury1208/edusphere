@@ -4,5 +4,5 @@ public enum AuditStatus {
     PENDING,
     IN_PROGRESS,
     COMPLETED,
-    CLOSED,
+    CLOSED
 }
