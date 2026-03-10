@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto.Department;
+package com.cts.edusphere.common.dto.department;
 
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
@@ -9,10 +9,10 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record DepartmentRequestDTO(
-        @NotBlank(groups = OnCreate.class, message = "Department name cannot be blank")
+        @NotBlank(groups = OnCreate.class, message = "department name cannot be blank")
         String departmentName,
 
-        @NotBlank(groups = OnCreate.class, message = "Department code cannot be blank")
+        @NotBlank(groups = OnCreate.class, message = "department code cannot be blank")
         String departmentCode,
 
         @NotBlank(groups = {OnCreate.class, OnUpdate.class}, message = "Contact info cannot be blank")

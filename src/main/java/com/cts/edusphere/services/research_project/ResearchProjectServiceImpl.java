@@ -1,4 +1,4 @@
-package com.cts.edusphere.services.researchProject;
+package com.cts.edusphere.services.research_project;
 
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
@@ -35,11 +35,11 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     public ResearchProjectResponse createProject(ResearchProjectRequest request) {
         try {
             Faculty lead = facultyRepository.findById(request.faculty().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Lead Faculty not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Lead faculty not found"));
 
             ResearchProject project = projectMapper.toEntity(request, lead, request.facultyMembers(), request.students());
             ResearchProject saved = projectRepository.save(project);
-            log.info("Research project '{}' created with Lead Faculty ID: {}", saved.getTitle(), lead.getId());
+            log.info("Research project '{}' created with Lead faculty ID: {}", saved.getTitle(), lead.getId());
             return projectMapper.toResponse(saved);
         } catch (ResourceNotFoundException e) {
             throw e;
@@ -54,7 +54,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
         Faculty coInvestigator = facultyRepository.findById(facultyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Faculty member not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("faculty member not found"));
 
         project.getFacultyMembers().add(coInvestigator);
         return projectMapper.toResponse(projectRepository.save(project));
@@ -73,7 +73,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
         Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("student not found"));
 
         project.getStudents().add(student);
         return projectMapper.toResponse(projectRepository.save(project));

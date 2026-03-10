@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.ComplianceResult;
 import com.cts.edusphere.enums.ComplianceType;
 import jakarta.persistence.*;
@@ -27,7 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ComplianceRecord extends BaseEntity{
+public class ComplianceRecord extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_by_user_id", nullable = false)
     private ComplianceOfficer recordedBy;

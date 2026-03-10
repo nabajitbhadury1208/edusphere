@@ -19,6 +19,5 @@ public interface DepartmentRepository extends JpaRepository<Department, UUID> {
     @Query("SELECT d FROM Department d WHERE d.status = 'ACTIVE'")
     List<Department> findAllActiveDepartments();
 
-    @Query("SELECT d FROM Department d WHERE d.head.id = :headId")
-    Optional<Department> findByHeadId(@Param("headId") UUID headId);
+    Optional<Department> findByHead_Id(UUID headId);
 }

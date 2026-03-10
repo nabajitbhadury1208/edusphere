@@ -1,4 +1,4 @@
-package com.cts.edusphere.modules;
+package com.cts.edusphere.core;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

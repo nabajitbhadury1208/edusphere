@@ -1,7 +1,9 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +21,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
 
-public class User extends BaseEntity{
+public class User extends BaseEntity {
     @NotBlank(message = "Name cannot be blank")
     @Column(nullable = false, name = "name")
     private String name;
@@ -41,6 +43,7 @@ public class User extends BaseEntity{
     private Status status;
 
    @NotBlank(message = "Password cannot be blank")
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
    @Column(nullable = false, name = "password")
    private String password;
 }

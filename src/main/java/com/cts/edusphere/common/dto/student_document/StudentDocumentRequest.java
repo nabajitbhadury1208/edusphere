@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record StudentDocumentRequest(
 
-        @NotNull(message = "Student is required")
+        @NotNull(message = "student is required")
         Student student,
 
         @NotNull(message = "Document Type is required")

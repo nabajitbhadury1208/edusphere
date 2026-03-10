@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record WorkLoadRequest(
 
-        @NotNull(message = "Faculty is required")
+        @NotNull(message = "faculty is required")
         Faculty faculty,
 
         @NotNull(message = "Course is required")

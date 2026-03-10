@@ -1,5 +1,6 @@
 package com.cts.edusphere.modules;
 
+import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.ReportScope;
 import com.cts.edusphere.enums.Status;
 import jakarta.persistence.*;

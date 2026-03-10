@@ -17,7 +17,7 @@ public record ResearchProjectRequest(
         @Size(min = 3, max = 100, message = "Title must be between 3 and 200 characters")
         String title,
 
-        @NotNull(message = "Faculty is required")
+        @NotNull(message = "faculty is required")
         Faculty faculty,
 
         @NotNull(message = "facultyMember cannot be null; send empty list if none")

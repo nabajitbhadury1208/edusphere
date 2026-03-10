@@ -74,7 +74,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/me")
+    @PostMapping("/me")
     public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request) {
         try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);

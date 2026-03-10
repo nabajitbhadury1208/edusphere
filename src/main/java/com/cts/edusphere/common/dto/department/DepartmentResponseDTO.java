@@ -1,4 +1,4 @@
-package com.cts.edusphere.common.dto.Department;
+package com.cts.edusphere.common.dto.department;
 
 import com.cts.edusphere.enums.Status;
 
