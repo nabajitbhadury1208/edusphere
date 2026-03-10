@@ -3,12 +3,15 @@ package com.cts.edusphere.controllers.report;
 
 import com.cts.edusphere.common.dto.report.ReportRequest;
 import com.cts.edusphere.common.dto.report.ReportResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.report.ReportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +25,7 @@ public class Report {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<ReportResponse> create(@Valid @RequestBody ReportRequest request) {
+    public ResponseEntity<ReportResponse> create(@Validated(OnCreate.class) @RequestBody ReportRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reportService.createReport(request));
     }
 
@@ -46,7 +49,7 @@ public class Report {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<ReportResponse> update(@PathVariable UUID id, @Valid @RequestBody ReportRequest request) {
+    public ResponseEntity<ReportResponse> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody ReportRequest request) {
         return ResponseEntity.ok(reportService.updateReport(id, request));
     }
 
