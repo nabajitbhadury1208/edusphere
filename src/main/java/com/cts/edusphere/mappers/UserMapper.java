@@ -21,22 +21,12 @@ public class UserMapper {
         return User.builder()
                 .name(request.name())
                 .email(request.email())
-                .role(request.role())
+                .roles(request.roles())
                 .phone(request.phone())
                 .status(Status.ACTIVE)
                 .build();
     }
 
-    public User toEntity(UserRequestDto dto) {
-        if (dto == null) return null;
-
-        return User.builder()
-                .name(dto.name())
-                .phone(dto.phone())
-                .role(dto.role())
-                .status(dto.status() != null ? dto.status() : Status.ACTIVE)
-                .build();
-    }
 
     public UserResponseDto toResponse(User user) {
         if (user == null) {
@@ -48,7 +38,7 @@ public class UserMapper {
                 user.getName(),
                 user.getEmail(),
                 user.getPhone(),
-                user.getRole(),
+                user.getRoles(),
                 user.getStatus()
         );
     }

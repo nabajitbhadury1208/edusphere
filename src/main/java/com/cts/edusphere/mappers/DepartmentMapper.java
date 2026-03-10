@@ -18,8 +18,8 @@ public class DepartmentMapper {
                 department.getDepartmentCode(),
                 department.getContactInfo(),
                 department.getStatus(),
-                department.getHead() != null ? department.getHead().getId() : null,
-                department.getHead() != null ? department.getHead().getName() : null,
+                department.getDepartmentHead() != null ? department.getDepartmentHead().getId() : null,
+                department.getDepartmentHead() != null ? department.getDepartmentHead().getName() : null,
                 department.getCreatedAt(),
                 department.getUpdatedAt()
         );

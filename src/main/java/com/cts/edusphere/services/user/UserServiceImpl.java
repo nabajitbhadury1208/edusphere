@@ -3,6 +3,7 @@ package com.cts.edusphere.services.user;
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
@@ -12,9 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -70,8 +69,8 @@ public class UserServiceImpl {
         }
 
         if (isAdmin) {
-            if (request.role() != null) {
-                user.setRole(request.role());
+            if (request.roles() != null) {
+                user.setRoles(new HashSet<>(request.roles()));
             }
             if (request.status() != null) {
                 user.setStatus(request.status());
@@ -98,7 +97,7 @@ public class UserServiceImpl {
                 throw new EmailAlreadyExistsException("Email " + request.email() + " is already in use");
             }
             User user = User.builder().name(request.name()).email(request.email()).phone(request.phone())
-                    .password(passwordEncoder.encode(request.password())).role(request.role()).status(Status.ACTIVE)
+                    .password(passwordEncoder.encode(request.password())).roles(request.roles()).status(Status.ACTIVE)
                     .build();
             return userRepository.save(user);
         } catch (Exception e) {

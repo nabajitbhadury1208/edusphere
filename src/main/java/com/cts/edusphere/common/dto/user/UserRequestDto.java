@@ -7,6 +7,7 @@ import com.cts.edusphere.enums.Status;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
 import java.util.UUID;
 
 public record UserRequestDto(
@@ -18,7 +19,9 @@ public record UserRequestDto(
         @Pattern(regexp = "^\\+?[0-9]{7,15}$", message = "Phone number should be valid", groups = {OnCreate.class, OnUpdate.class})
         String phone,
 
-        Role role,
+
+        Set<Role> roles,
+
         Status status
 ) {
 }
