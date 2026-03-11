@@ -1,7 +1,7 @@
 package com.cts.edusphere.controllers.faculty;
 
-import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.faculty.FacultyService;
@@ -33,7 +33,7 @@ public class FacultyController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<List<FacultyResponseDTO>> getAllFaculties() {
         log.info("Fetching all faculty members");
         List<FacultyResponseDTO> faculties = facultyService.getAllFaculties();
@@ -41,7 +41,7 @@ public class FacultyController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'HEAD') or (hasRole('FACULTY') and #id == principal.userId)")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD') or (hasRole('FACULTY') and #id == principal.userId)")
     public ResponseEntity<FacultyResponseDTO> getFacultyById(@PathVariable UUID id) {
         log.info("Fetching faculty details for ID: {}", id);
         FacultyResponseDTO responseDTO = facultyService.getFacultyById(id);

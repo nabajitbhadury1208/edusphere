@@ -86,7 +86,7 @@ public class CourseServiceImpl implements CourseService {
       if (courseRequest.departmentId() != null) {
         existingCourse.setDepartment(departmentRepository.findById(courseRequest.departmentId())
             .orElseThrow(() -> new DepartmentNotFoundException(
-                "Department with id " + courseRequest.departmentId() + " doesn't exist")));
+                "department with id " + courseRequest.departmentId() + " doesn't exist")));
 
       }
 

@@ -1,9 +1,10 @@
-package com.cts.edusphere.common.dto.Faculty;
+package com.cts.edusphere.common.dto.faculty;
 
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 public record FacultyResponseDTO(
@@ -11,7 +12,7 @@ public record FacultyResponseDTO(
         String name,
         String email,
         String phone,
-        Role role,
+        Set<Role> roles,
         Status status,
         String position,
         UUID departmentId,
@@ -19,4 +20,5 @@ public record FacultyResponseDTO(
         Instant joinDate,
         Instant createdAt,
         Instant updatedAt
-) {}
+) {
+}

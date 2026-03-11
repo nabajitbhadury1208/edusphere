@@ -1,7 +1,7 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.Department.DepartmentRequestDTO;
-import com.cts.edusphere.common.dto.Department.DepartmentResponseDTO;
+import com.cts.edusphere.common.dto.department.DepartmentRequestDTO;
+import com.cts.edusphere.common.dto.department.DepartmentResponseDTO;
 import com.cts.edusphere.modules.Department;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +18,8 @@ public class DepartmentMapper {
                 department.getDepartmentCode(),
                 department.getContactInfo(),
                 department.getStatus(),
-                department.getHead() != null ? department.getHead().getId() : null,
-                department.getHead() != null ? department.getHead().getName() : null,
+                department.getDepartmentHead() != null ? department.getDepartmentHead().getId() : null,
+                department.getDepartmentHead() != null ? department.getDepartmentHead().getName() : null,
                 department.getCreatedAt(),
                 department.getUpdatedAt()
         );

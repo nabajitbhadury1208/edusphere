@@ -1,5 +1,7 @@
 package com.cts.edusphere.common.dto.report;
 
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.ReportScope;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.modules.Department;
@@ -10,20 +12,20 @@ import jakarta.validation.constraints.Size;
 
 public record ReportRequest(
 
-        @NotBlank
+        @NotBlank(groups = {OnCreate.class, OnUpdate.class})
         @Size(min = 3, max = 200, message = "Metrics must be between 3 and 200 characters")
         String metrics,
 
-        @NotNull(message = "Status is required")
+        @NotNull(groups = OnCreate.class,message = "Status is required")
         Status status,
 
-        @NotNull(message = "Scope is required")
+        @NotNull(groups = OnCreate.class,message = "Scope is required")
         ReportScope scope,
 
-        @NotNull(message = "Department is required")
+        @NotNull(groups = OnCreate.class,message = "Department is required")
         Department department,
 
-        @NotNull
+        @NotNull(groups = OnCreate.class)
         User generatedBy
 ) {
 }

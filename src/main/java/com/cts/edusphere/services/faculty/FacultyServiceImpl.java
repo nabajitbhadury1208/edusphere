@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.faculty;
 
-import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,15 +36,15 @@ public class FacultyServiceImpl implements FacultyService {
     public FacultyResponseDTO createFaculty(FacultyRequestDTO requestDTO) {
         try {
             Department department = departmentRepository.findById(requestDTO.departmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + requestDTO.departmentId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("department not found with id: " + requestDTO.departmentId()));
 
             Faculty faculty = facultyMapper.toEntity(requestDTO);
-            faculty.setRole(Role.FACULTY);
+            faculty.setRoles(Set.of(Role.FACULTY));
             faculty.setPassword(passwordEncoder.encode(faculty.getPassword()));
             faculty.setDepartment(department);
 
             Faculty savedFaculty = facultyRepository.save(faculty);
-            log.info("Faculty created successfully with ID: {}", savedFaculty.getId());
+            log.info("faculty created successfully with ID: {}", savedFaculty.getId());
             return facultyMapper.toResponseDTO(savedFaculty);
         } catch (ResourceNotFoundException e) {
             throw e;
@@ -58,7 +59,7 @@ public class FacultyServiceImpl implements FacultyService {
     public FacultyResponseDTO getFacultyById(UUID id) {
         try {
             Faculty faculty = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("faculty not found with id: " + id));
             return facultyMapper.toResponseDTO(faculty);
         } catch (ResourceNotFoundException e) {
             throw e;
@@ -86,7 +87,7 @@ public class FacultyServiceImpl implements FacultyService {
     public List<FacultyResponseDTO> getFacultiesByDepartment(UUID departmentId) {
         try {
             Department department = departmentRepository.findById(departmentId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + departmentId));
+                    .orElseThrow(() -> new ResourceNotFoundException("department not found with id: " + departmentId));
 
             return department.getFaculties().stream()
                     .map(facultyMapper::toResponseDTO)
@@ -106,7 +107,7 @@ public class FacultyServiceImpl implements FacultyService {
     public FacultyResponseDTO updateFaculty(UUID id, FacultyRequestDTO requestDTO) {
         try {
             Faculty faculty = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("faculty not found with id: " + id));
 
             if (requestDTO.name() != null) faculty.setName(requestDTO.name());
             if (requestDTO.email() != null) faculty.setEmail(requestDTO.email());
@@ -117,12 +118,12 @@ public class FacultyServiceImpl implements FacultyService {
 
             if (requestDTO.departmentId() != null) {
                 Department department = departmentRepository.findById(requestDTO.departmentId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + requestDTO.departmentId()));
+                        .orElseThrow(() -> new ResourceNotFoundException("department not found with id: " + requestDTO.departmentId()));
                 faculty.setDepartment(department);
             }
 
             Faculty updatedFaculty = facultyRepository.save(faculty);
-            log.info("Faculty partially updated: {}", id);
+            log.info("faculty partially updated: {}", id);
             return facultyMapper.toResponseDTO(updatedFaculty);
         } catch (ResourceNotFoundException e) {
             throw e;
@@ -136,9 +137,9 @@ public class FacultyServiceImpl implements FacultyService {
     public void deleteFaculty(UUID id) {
         try {
             Faculty faculty = facultyRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Faculty not found with id: " + id));
+                    .orElseThrow(() -> new ResourceNotFoundException("faculty not found with id: " + id));
             facultyRepository.delete(faculty);
-            log.info("Faculty deleted successfully: {}", id);
+            log.info("faculty deleted successfully: {}", id);
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {

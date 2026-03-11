@@ -21,7 +21,7 @@ public class AuditMapper {
     public AuditResponseDTO toResponseDTO(Audit entity) {
         return new AuditResponseDTO(
                 entity.getId(),
-                entity.getOfficer().getId(),
+                entity.getComplianceOfficer().getId(),
                 entity.getScope(),
                 entity.getFindings(),
                 entity.getAuditDate(),

@@ -11,6 +11,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -26,9 +28,11 @@ public class User extends BaseEntity {
     @Column(nullable = false, name = "name")
     private String name;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
+    @Column(name = "status", nullable = false)
+    private Set<Role> roles;
 
     @Email
     @Column(unique = true, nullable = false)
@@ -42,8 +46,8 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Status status;
 
-   @NotBlank(message = "Password cannot be blank")
-   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-   @Column(nullable = false, name = "password")
-   private String password;
+    @NotBlank(message = "Password cannot be blank")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false, name = "password")
+    private String password;
 }

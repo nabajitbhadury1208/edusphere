@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
@@ -34,7 +36,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
     }
 
-    public String generateAccessToken(String userId, String name, Role role, TokenType type) {
+    public String generateAccessToken(String userId, String name, Set<Role> roles, TokenType type) {
 
         String typeClaim = switch (type) {
             case ACCESS -> "access";
@@ -49,7 +51,7 @@ public class JwtService {
                 .claim("userId", userId)
                 .claim("name", name)
                 .claim("type", typeClaim)
-                .claim("role", role)
+                .claim("roles", roles.stream().map(Enum::name).collect(Collectors.toList()))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey())
@@ -66,21 +68,22 @@ public class JwtService {
         } catch (ExpiredJwtException e) {
             log.error("JWT token has expired: {}", e.getMessage());
             throw new InvalidTokenException("JWT token has expired");
-        }
-        catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException | IllegalArgumentException e) {
             log.error("JWT validation failed: {}", e.getMessage());
             throw new InvalidTokenException("Invalid JWT token");
         }
     }
 
-    private UserPrincipal buildUserPrincipal(Claims claims){
+    private UserPrincipal buildUserPrincipal(Claims claims) {
         String userId = claims.getSubject();
         String name = claims.get("name", String.class);
-        String role = claims.get("role", String.class);
-        if(role == null){
+        List<String> roleStr = claims.get("roles", List.class);
+        if (roleStr == null || roleStr.isEmpty()) {
             throw new InvalidTokenException("Missing role claim in token");
         }
-        List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+        List<SimpleGrantedAuthority> authorities = roleStr.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .toList();
         return new UserPrincipal(UUID.fromString(userId), name, authorities);
     }
 

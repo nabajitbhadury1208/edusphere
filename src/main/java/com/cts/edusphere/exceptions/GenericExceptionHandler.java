@@ -305,21 +305,15 @@ public class GenericExceptionHandler {
 
     @ExceptionHandler(DepartmentNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDepartmentNotFoundException(
-            MethodArgumentNotValidException ex,
+            DepartmentNotFoundException ex,
             WebRequest request
     ) {
-        logger.warn("DepartmentNotFoundException: {}", ex.getMessage());
-        Map<String, String> errors = new HashMap<>();
-        ex
-                .getBindingResult()
-                .getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
-                );
+
         return buildErrorResponse(
                 "Fetching department failed",
                 HttpStatus.BAD_REQUEST,
                 request,
-                errors
+                null
         );
     }
 
@@ -421,6 +415,16 @@ public class GenericExceptionHandler {
                 request,
                 errors
         );
+    }
+    @ExceptionHandler(CannotDeleteException.class)
+    public ResponseEntity<ErrorResponse> handleCannotDeleteException(MethodArgumentNotValidException ex, WebRequest request){
+        Map<String, String> errors = new HashMap<>();
+        ex
+                .getBindingResult()
+                .getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
+                );
+        return buildErrorResponse("Deletion failed", HttpStatus.EXPECTATION_FAILED, request, errors);
     }
 
 }

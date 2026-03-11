@@ -1,7 +1,7 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.modules.Student;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ public class StudentMapper {
                 student.getName(),
                 student.getEmail(),
                 student.getPhone(),
-                student.getRole(),
+                student.getRoles(),
                 student.getStatus(),
                 student.getDob(),
                 student.getGender(),

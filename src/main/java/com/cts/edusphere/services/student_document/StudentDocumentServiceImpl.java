@@ -30,7 +30,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
     @Transactional
     public StudentDocumentResponse uploadDocument(MultipartFile file, UUID studentId, String docType) {
         Student student = studentRepository.findById(studentId).orElseThrow(
-                () -> new ResourceNotFoundException("Student not found with id: " + studentId)
+                () -> new ResourceNotFoundException("student not found with id: " + studentId)
         );
 
         DocType type = DocType.valueOf(docType.toUpperCase());
@@ -55,7 +55,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
     @Override
     public List<StudentDocumentResponse> getAllDocumentsByStudentId(UUID studentId) {
         studentRepository.findById(studentId).orElseThrow(
-                () -> new ResourceNotFoundException("Student not found with id: " + studentId)
+                () -> new ResourceNotFoundException("student not found with id: " + studentId)
         );
         return studentDocumentRepository.findStudentDocumentById(studentId)
                 .stream()

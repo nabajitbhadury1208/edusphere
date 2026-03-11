@@ -1,8 +1,8 @@
 package com.cts.edusphere.controllers.department;
 
-import com.cts.edusphere.common.dto.Department.DepartmentRequestDTO;
-import com.cts.edusphere.common.dto.Department.DepartmentResponseDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.department.DepartmentRequestDTO;
+import com.cts.edusphere.common.dto.department.DepartmentResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.department.DepartmentService;
@@ -50,7 +50,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
             @PathVariable UUID id,
             @Validated(OnUpdate.class) @RequestBody DepartmentRequestDTO requestDTO) {
@@ -64,7 +64,7 @@ public class DepartmentController {
     public ResponseEntity<DepartmentResponseDTO> changeDepartmentHead(
             @PathVariable UUID id,
             @RequestParam UUID headId) {
-        log.info("Changing head for department ID: {} to Faculty ID: {}", id, headId);
+        log.info("Changing head for department ID: {} to faculty ID: {}", id, headId);
         DepartmentResponseDTO responseDTO = departmentService.changeDepartmentHead(id, headId);
         return ResponseEntity.ok(responseDTO);
     }
