@@ -1,6 +1,7 @@
 package com.cts.edusphere.controllers.student_documents;
 import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
 import com.cts.edusphere.common.storage.StorageService;
+import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.services.student_document.StudentDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
@@ -21,13 +23,13 @@ public class StudentDocumentsController {
         private final StudentDocumentService studentDocumentService;
         private final StorageService storageService;
 
-    @PostMapping("/upload")
+    @PostMapping("/me/upload")
     public ResponseEntity<StudentDocumentResponse> uploadDocument(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("studentId") UUID studentId,
+            @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam("docType") String docType) {
 
-        StudentDocumentResponse response = studentDocumentService.uploadDocument(file, studentId, docType);
+        StudentDocumentResponse response = studentDocumentService.uploadDocument(file, principal.userId(), docType);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -64,5 +66,17 @@ public class StudentDocumentsController {
     public ResponseEntity<Void> deleteDocument(@PathVariable UUID id) {
         studentDocumentService.deleteDocument(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me/docs")
+    public ResponseEntity<List<StudentDocumentResponse>> getMyDocuments(
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        log.info("Fetching documents for logged-in user: {}", principal.userId());
+
+        List<StudentDocumentResponse> responses = studentDocumentService
+                .getAllDocumentsByStudentId(principal.userId());
+
+        return ResponseEntity.ok(responses);
     }
 }

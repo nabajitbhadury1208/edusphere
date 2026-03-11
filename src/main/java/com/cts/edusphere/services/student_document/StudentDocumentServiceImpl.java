@@ -7,8 +7,10 @@ import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.StudentDocumentMapper;
 import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.modules.StudentDocument;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.StudentDocumentRepository;
 import com.cts.edusphere.repositories.StudentRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -22,21 +24,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StudentDocumentServiceImpl implements StudentDocumentService {
     private final StudentDocumentRepository studentDocumentRepository;
-    private final StudentRepository studentRepository;
+    private final UserRepository studentRepository;
     private final StorageService storageService;
     private final StudentDocumentMapper studentDocumentMapper;
 
     @Override
     @Transactional
     public StudentDocumentResponse uploadDocument(MultipartFile file, UUID studentId, String docType) {
-        Student student = studentRepository.findById(studentId).orElseThrow(
+        User studentUser = studentRepository.findById(studentId).orElseThrow(
                 () -> new ResourceNotFoundException("student not found with id: " + studentId)
         );
 
         DocType type = DocType.valueOf(docType.toUpperCase());
         String filePath = storageService.uploadFile(file);
         StudentDocument document = StudentDocument.builder()
-                .student(student)
+                .studentUser(studentUser)
                 .docType(type)
                 .fileUri(filePath)
                 .verificationStatus(false)
