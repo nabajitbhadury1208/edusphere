@@ -2,11 +2,14 @@ package com.cts.edusphere.services.department;
 
 import com.cts.edusphere.common.dto.department.DepartmentRequestDTO;
 import com.cts.edusphere.common.dto.department.DepartmentResponseDTO;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.DepartmentMapper;
 import com.cts.edusphere.modules.Department;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.DepartmentRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +33,7 @@ public class DepartmentServiceImplTest {
     private DepartmentRepository departmentRepository;
 
     @Mock
-    private DepartmentHeadRepository departmentHeadRepository;
+    private UserRepository userRepository;
 
     @Mock
     private DepartmentMapper departmentMapper;
@@ -41,7 +44,7 @@ public class DepartmentServiceImplTest {
     private UUID departmentId;
     private UUID headId;
     private Department department;
-    private DepartmentHead head;
+    private User head;
     private DepartmentRequestDTO departmentRequestDTO;
     private DepartmentResponseDTO departmentResponseDTO;
 
@@ -50,10 +53,10 @@ public class DepartmentServiceImplTest {
         headId = UUID.fromString("123e4567-e89b-12d3-a456-426614174111");
         departmentId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
-
-        head = new DepartmentHead();
+        head = new User();
         head.setId(headId);
         head.setName("Prof. Smith");
+        head.setRoles(java.util.Set.of(Role.DEPARTMENT_HEAD));
 
         department = new Department();
         department.setId(departmentId);
@@ -61,7 +64,7 @@ public class DepartmentServiceImplTest {
         department.setDepartmentCode("CS");
         department.setContactInfo("cs@university.edu");
         department.setStatus(Status.ACTIVE);
-        department.setHead(head);
+        department.setDepartmentHead(head);
         department.setCreatedAt(Instant.now());
         department.setUpdatedAt(Instant.now());
 
@@ -89,7 +92,7 @@ public class DepartmentServiceImplTest {
     @Test
     void testCreateDepartment_Success() {
         when(departmentMapper.toEntity(departmentRequestDTO)).thenReturn(department);
-        when(departmentHeadRepository.findById(headId)).thenReturn(Optional.of(head));
+        when(userRepository.findById(headId)).thenReturn(Optional.of(head));
         when(departmentRepository.save(any(Department.class))).thenReturn(department);
         when(departmentMapper.toResponseDTO(department)).thenReturn(departmentResponseDTO);
 
@@ -117,14 +120,14 @@ public class DepartmentServiceImplTest {
         DepartmentResponseDTO result = departmentService.createDepartment(dtoWithoutHead);
 
         assertNotNull(result);
-        verify(departmentHeadRepository, never()).findById(any());
+        verify(userRepository, never()).findById(any());
         verify(departmentRepository, times(1)).save(any(Department.class));
     }
 
     @Test
     void testCreateDepartment_HeadNotFound() {
         when(departmentMapper.toEntity(departmentRequestDTO)).thenReturn(department);
-        when(departmentHeadRepository.findById(headId)).thenReturn(Optional.empty());
+        when(userRepository.findById(headId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> departmentService.createDepartment(departmentRequestDTO));
         verify(departmentRepository, never()).save(any());
@@ -183,7 +186,7 @@ public class DepartmentServiceImplTest {
     @Test
     void testUpdateDepartment_Success() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
-        when(departmentHeadRepository.findById(headId)).thenReturn(Optional.of(head));
+        when(userRepository.findById(headId)).thenReturn(Optional.of(head));
         when(departmentRepository.save(any(Department.class))).thenReturn(department);
         when(departmentMapper.toResponseDTO(department)).thenReturn(departmentResponseDTO);
 
@@ -240,7 +243,7 @@ public class DepartmentServiceImplTest {
     @Test
     void testChangeDepartmentHead_Success() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
-        when(departmentHeadRepository.findById(headId)).thenReturn(Optional.of(head));
+        when(userRepository.findById(headId)).thenReturn(Optional.of(head));
         when(departmentRepository.save(any(Department.class))).thenReturn(department);
         when(departmentMapper.toResponseDTO(department)).thenReturn(departmentResponseDTO);
 
@@ -248,7 +251,7 @@ public class DepartmentServiceImplTest {
 
         assertNotNull(result);
         verify(departmentRepository, times(1)).findById(departmentId);
-        verify(departmentHeadRepository, times(1)).findById(headId);
+        verify(userRepository, times(1)).findById(headId);
         verify(departmentRepository, times(1)).save(any(Department.class));
     }
 
@@ -257,13 +260,13 @@ public class DepartmentServiceImplTest {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
-        verify(departmentHeadRepository, never()).findById(any());
+        verify(userRepository, never()).findById(any());
     }
 
     @Test
     void testChangeDepartmentHead_HeadNotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
-        when(departmentHeadRepository.findById(headId)).thenReturn(Optional.empty());
+        when(userRepository.findById(headId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
         verify(departmentRepository, never()).save(any());

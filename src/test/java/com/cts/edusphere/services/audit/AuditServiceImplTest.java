@@ -3,11 +3,14 @@ package com.cts.edusphere.services.audit;
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
 import com.cts.edusphere.enums.AuditStatus;
-import com.cts.edusphere.enums.ReportScope;
+import com.cts.edusphere.enums.Role;
+import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.AuditMapper;
 import com.cts.edusphere.modules.Audit;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.AuditRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +35,7 @@ class AuditServiceImplTest {
     private AuditRepository auditRepository;
 
     @Mock
-    private ComplianceOfficerRepository officerRepository;
+    private UserRepository userRepository;
 
     @Mock
     private AuditMapper auditMapper;
@@ -43,7 +46,7 @@ class AuditServiceImplTest {
     private UUID auditId;
     private UUID officerId;
     private Audit audit;
-    private ComplianceOfficer officer;
+    private User officer;
     private AuditRequestDTO auditRequestDTO;
     private AuditResponseDTO auditResponseDTO;
 
@@ -52,9 +55,11 @@ class AuditServiceImplTest {
         auditId = UUID.randomUUID();
         officerId = UUID.randomUUID();
 
-        officer = new ComplianceOfficer();
+        officer = new User();
         officer.setId(officerId);
         officer.setName("Compliance Officer");
+        officer.setRoles(java.util.Set.of(Role.COMPLIANCE_OFFICER));
+        officer.setStatus(Status.ACTIVE);
 
         audit = new Audit();
         audit.setId(auditId);
@@ -62,13 +67,13 @@ class AuditServiceImplTest {
         audit.setFindings("All systems compliant");
         audit.setAuditDate(LocalDate.now());
         audit.setStatus(AuditStatus.PENDING);
-        audit.setOfficer(officer);
+        audit.setComplianceOfficer(officer);
         audit.setCreatedAt(Instant.now());
         audit.setUpdatedAt(Instant.now());
 
         auditRequestDTO = new AuditRequestDTO(
                 officerId,
-                ReportScope.INSTITUTION.toString(),
+                "Academic Audit",
                 "All systems compliant",
                 LocalDate.now().toString()
         );
@@ -85,7 +90,7 @@ class AuditServiceImplTest {
 
     @Test
     void testCreateAudit_Success() {
-        when(officerRepository.findById(officerId)).thenReturn(Optional.of(officer));
+        when(userRepository.findById(officerId)).thenReturn(Optional.of(officer));
         when(auditMapper.toEntity(auditRequestDTO)).thenReturn(audit);
         when(auditRepository.save(any(Audit.class))).thenReturn(audit);
         when(auditMapper.toResponseDTO(audit)).thenReturn(auditResponseDTO);
@@ -94,16 +99,16 @@ class AuditServiceImplTest {
 
         assertNotNull(result);
         assertEquals(auditId, result.auditId());
-        verify(officerRepository, times(1)).findById(officerId);
+        verify(userRepository, times(1)).findById(officerId);
         verify(auditRepository, times(1)).save(any(Audit.class));
     }
 
     @Test
     void testCreateAudit_OfficerNotFound() {
-        when(officerRepository.findById(officerId)).thenReturn(Optional.empty());
+        when(userRepository.findById(officerId)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> auditService.createAudit(auditRequestDTO));
-        verify(officerRepository, times(1)).findById(officerId);
+        verify(userRepository, times(1)).findById(officerId);
         verify(auditRepository, never()).save(any());
     }
 

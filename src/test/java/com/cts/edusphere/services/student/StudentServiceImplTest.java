@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,18 +61,36 @@ public class StudentServiceImplTest {
         student.setDob(LocalDate.of(2000, 1, 15));
         student.setGender(Gender.FEMALE);
         student.setAddress("123 Main St");
-        student.setRole(Role.STUDENT);
+        student.setRoles(Set.of(Role.STUDENT));
         student.setStatus(Status.ACTIVE);
         student.setEnrollmentDate(Instant.now());
         student.setCreatedAt(Instant.now());
         student.setUpdatedAt(Instant.now());
 
-        studentRequestDTO = new StudentRequestDTO("Alice Johnson", "alice@example.com", "9876543210", "password123",
-                LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Status.ACTIVE);
+        studentRequestDTO = new StudentRequestDTO(
+                "Alice Johnson",
+                "alice@example.com",
+                "9876543210",
+                "password123",
+                LocalDate.of(2000, 1, 15),
+                Gender.FEMALE,
+                "123 Main St"
+        );
 
-        studentResponseDTO = new StudentResponseDTO(studentId, "Alice Johnson", "alice@example.com", "9876543210",
-                Role.STUDENT, Status.ACTIVE, LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Instant.now(),
-                Instant.now(), Instant.now());
+        studentResponseDTO = new StudentResponseDTO(
+                studentId,
+                "Alice Johnson",
+                "alice@example.com",
+                "9876543210",
+                Set.of(Role.STUDENT),
+                Status.ACTIVE,
+                LocalDate.of(2000, 1, 15),
+                Gender.FEMALE,
+                "123 Main St",
+                Instant.now(),
+                Instant.now(),
+                Instant.now()
+        );
     }
 
     @Test
@@ -183,3 +202,4 @@ public class StudentServiceImplTest {
         verify(studentRepository, never()).delete(any());
     }
 }
+
