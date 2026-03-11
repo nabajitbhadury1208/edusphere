@@ -215,7 +215,7 @@ public class DepartmentServiceImplTest {
         when(departmentRepository.save(any(Department.class))).thenReturn(department);
         when(departmentMapper.toResponseDTO(department)).thenReturn(departmentResponseDTO);
 
-        DepartmentResponseDTO result = departmentService.partiallyUpdateDepartment(departmentId, partialDTO);
+        DepartmentResponseDTO result = departmentService.updateDepartment(departmentId, partialDTO);
 
         assertNotNull(result);
         verify(departmentRepository, times(1)).findById(departmentId);
@@ -233,7 +233,7 @@ public class DepartmentServiceImplTest {
         );
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.partiallyUpdateDepartment(departmentId, partialDTO));
+        assertThrows(ResourceNotFoundException.class, () -> departmentService.updateDepartment(departmentId, partialDTO));
         verify(departmentRepository, never()).save(any());
     }
 
@@ -288,4 +288,3 @@ public class DepartmentServiceImplTest {
         verify(departmentRepository, never()).delete(any());
     }
 }
-
