@@ -42,9 +42,9 @@ public class ExamController {
 
   }
 
-  @PutMapping
-  @PreAuthorize("hasRole('ADMIN)")
-  public ResponseEntity<?> updateExam(@PathVariable UUID id,
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> updateExamById(@PathVariable UUID id,
       @Validated(OnUpdate.class) @RequestBody ExamRequest request) {
     ExamResponse updatedExam = examService.updateExam(id, request);
     return ResponseEntity.ok(updatedExam);

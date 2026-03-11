@@ -1,26 +1,26 @@
 package com.cts.edusphere.mappers;
 
 
-import com.cts.edusphere.common.dto.workload.WorkLoadRequest;
-import com.cts.edusphere.common.dto.workload.WorkLoadResponse;
+import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
+import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
 import com.cts.edusphere.modules.WorkLoad;
 import org.springframework.stereotype.Component;
 
 @Component
 public class WorkLoadMapper {
 
-    public WorkLoad toEntity(WorkLoadRequest request) {
+    public WorkLoad toEntity(WorkLoadRequestDto request) {
         return WorkLoad.builder()
-                .faculty(request.faculty())
-                .course(request.course())
+                .faculty(request.facultyId())
+                .course(request.courseId())
                 .hours(request.hours())
                 .semester(request.semester())
                 .status(request.status())
                 .build();
     }
 
-    public WorkLoadResponse toResponse(WorkLoad workLoad) {
-        return new WorkLoadResponse(
+    public WorkLoadResponseDto toResponse(WorkLoad workLoad) {
+        return new WorkLoadResponseDto(
                 workLoad.getFaculty(),
                 workLoad.getCourse(),
                 workLoad.getHours(),
