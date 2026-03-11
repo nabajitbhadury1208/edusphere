@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -36,10 +39,10 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
             User user = userService.registerUser(request);
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRoles(),
                     TokenType.ACCESS);
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
-                    user.getRole(), TokenType.REFRESH);
+                    user.getRoles(), TokenType.REFRESH);
 
             log.info("User registered successfully: {}", user.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
@@ -56,18 +59,21 @@ public class AuthController {
             var authRequest = new UsernamePasswordAuthenticationToken(request.email(), request.password());
             Authentication authentication = authenticationManager.authenticate(authRequest);
 
-            String role = authentication.getAuthorities().stream()
+            Set<Role> roles = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
-                    .filter(auth -> auth.startsWith("ROLE_"))
-                    .findFirst()
+                    .filter(auth -> auth != null && auth.startsWith("ROLE_"))
                     .map(auth -> auth.substring(5))
-                    .orElse("USER");
-            Role roleEnum = Role.valueOf(role);
-
+                    .map(Role::valueOf)
+                    .collect(Collectors.toSet());
+            if (roles.isEmpty()) {
+                log.error("No roles found for user: {}", request.email());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(Map.of("error", "Forbidden", "message", "User has no roles assigned"));
+            }
             User user = userService.getUserByEmail(request.email());
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roles,
                     TokenType.ACCESS);
-            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roleEnum,
+            String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roles,
                     TokenType.REFRESH);
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (DisabledException e) {
@@ -85,10 +91,10 @@ public class AuthController {
             UserPrincipal principal = jwtService.getUserPrincipalFromRefreshToken(request.refreshToken());
             User user = userService.getUserById(principal.userId());
 
-            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRole(),
+            String accessToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), user.getRoles(),
                     TokenType.ACCESS);
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(),
-                    user.getRole(), TokenType.REFRESH);
+                    user.getRoles(), TokenType.REFRESH);
 
             log.info("Token refreshed successfully for user: {}", user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
@@ -113,7 +119,7 @@ public class AuthController {
 
     @PatchMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request,
-            @AuthenticationPrincipal UserPrincipal principal) {
+                                                              @AuthenticationPrincipal UserPrincipal principal) {
         userService.changePassword(principal.userId(), request.currentPassword(), request.newPassword());
         log.info("Password changed successfully for user: {}", principal.userId());
         return ResponseEntity.ok(Map.of("message", "Password changed successfully"));

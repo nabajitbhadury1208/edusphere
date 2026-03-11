@@ -3,9 +3,9 @@ package com.cts.edusphere.enums;
 public enum Role {
     STUDENT,
     FACULTY,
-    HEAD,
+    DEPARTMENT_HEAD,
     ADMIN,
-    COMPLIANCE,
+    COMPLIANCE_OFFICER,
     REGULATOR
 }
 

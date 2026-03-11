@@ -13,8 +13,7 @@ import java.util.List;
         name = "department",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uc_department_code", columnNames = "department_code")
-        },
-        indexes = @Index(name = "idx_department_head", columnList = "head_id")
+        }, indexes = @Index(name = "idx_department_head", columnList = "head_id")
 )
 @Getter
 @Setter
@@ -31,7 +30,7 @@ public class Department extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "head_id", nullable = true)
-    private DepartmentHead head;
+    private User departmentHead;
 
     @Column(name = "contact_info", nullable = false)
     private String contactInfo;

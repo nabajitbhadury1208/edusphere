@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.Set;
+
 public record RegisterRequest(
         @NotBlank(message = "Name must not be blank") String name,
 
@@ -18,5 +20,5 @@ public record RegisterRequest(
         String phone,
 
         @NotNull(message = "Role must not be null")
-        Role role) {
+        Set<Role> roles) {
 }
