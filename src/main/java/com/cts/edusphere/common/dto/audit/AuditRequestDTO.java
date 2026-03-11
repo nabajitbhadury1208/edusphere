@@ -14,6 +14,7 @@ public record AuditRequestDTO(
 
         @NotBlank(groups = OnCreate.class, message = "Scope cannot be blank")
         String scope,
+        //TODO NB SCOPE IS ALSO AS STRING
 
         @NotBlank(groups = OnCreate.class, message = "Findings cannot be blank")
         String findings,
@@ -25,4 +26,5 @@ public record AuditRequestDTO(
                 message = "Audit date must be in the format YYYY-MM-DD"
         )
         String auditDate
+        //TODO NB PLEASE CHECK THIS DATE IS USED AS STRING
 ) {}

@@ -6,6 +6,8 @@ import com.cts.edusphere.modules.Faculty;
 
 import java.util.UUID;
 
+
+//TODO NB CHECK THIS THERE IS A API FOR CHECKING THE WORKLOAD BY DATA , BUT RESPONSE DOES NOT CONTAIN UUID
 public record WorkLoadResponseDto(
         UUID facultyId,
         UUID courseId,

@@ -36,8 +36,15 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         try {
             Faculty lead = facultyRepository.findById(request.facultyId())
                     .orElseThrow(() -> new ResourceNotFoundException("Lead faculty not found"));
+            List<Faculty> members = request.facultyMembers().stream()
+                    .map(facultyRepository::getReferenceById)
+                    .toList();
 
-            ResearchProject project = projectMapper.toEntity(request, lead, request.facultyMembers(), request.students());
+            List<Student> students = request.students().stream()
+                    .map(studentRepository::getReferenceById)
+                    .toList();
+            ResearchProject project = projectMapper.toEntity(request, lead, members, students);
+
             ResearchProject saved = projectRepository.save(project);
             log.info("Research project '{}' created with Lead faculty ID: {}", saved.getTitle(), lead.getId());
             return projectMapper.toResponse(saved);
@@ -45,7 +52,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
             throw e;
         } catch (Exception e) {
             log.error("Failed to create research project: {}", e.getMessage());
-            throw new InternalServerErrorException("Error occurred while creating project");
+            throw new InternalServerErrorException("Error occurred while creating project: " + e.getMessage());
         }
     }
 

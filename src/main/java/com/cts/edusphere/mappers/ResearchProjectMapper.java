@@ -14,31 +14,21 @@ import java.util.stream.Collectors;
 @Component
 public class ResearchProjectMapper {
 
-    public ResearchProject toEntity(ResearchProjectRequest request, Faculty leadFaculty, List<UUID> members, List<UUID> students) {
-//
+    public ResearchProject toEntity(ResearchProjectRequest request, Faculty leadFaculty, List<Faculty> members, List<Student> students) {
         return ResearchProject.builder()
                 .title(request.title())
-                .faculty(Faculty.builder().id(request.facultyId()).build())
-                .facultyMembers(
-                        request.facultyMembers().stream()
-                                .map(id -> Faculty.builder().id(id).build())
-                                .collect(Collectors.toList())
-                )
-                .students(
-                        request.students().stream()
-                                .map(id -> Student.builder().id(id).build())
-                                .collect(Collectors.toList())
-                )
+                .faculty(leadFaculty)
+                .facultyMembers(members)
+                .students(students)
                 .startDate(request.startDate())
                 .endDate(request.endDate())
                 .status(request.status())
                 .build();
-
-
     }
 
     public ResearchProjectResponse toResponse(ResearchProject project) {
         if (project == null) return null;
+
         return new ResearchProjectResponse(
                 project.getTitle(),
                 project.getFaculty(),

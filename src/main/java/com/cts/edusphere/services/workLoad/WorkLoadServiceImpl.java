@@ -33,12 +33,19 @@ public class WorkLoadServiceImpl implements WorkLoadService {
     public WorkLoadResponseDto createWorkLoad(WorkLoadRequestDto request) {
         try {
             WorkLoad workLoad = mapper.toEntity(request);
+            if (request.courseId() != null) {
+                workLoad.setCourse(courseRepository.getReferenceById(request.courseId()));
+            }
+            if (request.facultyId() != null) {
+                workLoad.setFaculty(userRepository.getReferenceById(request.facultyId()));
+            }
             WorkLoad savedWorkLoad = repository.save(workLoad);
+
             log.info("Workload record created successfully with ID: {}", savedWorkLoad.getId());
             return mapper.toResponse(savedWorkLoad);
         } catch (Exception e) {
             log.error("Error occurred while creating workload: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create workload record");
+            throw new InternalServerErrorException("Failed to create workload record: " + e.getMessage());
         }
     }
 

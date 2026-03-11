@@ -18,18 +18,19 @@ public class ThesisMapper {
 //        thesis.setStatus(request.status());
 //        return thesis;
           return Thesis.builder()
-                  .student((Student) User.builder().id(request.student()).build())
+                  .student(Student.builder().id(request.studentId()).build())
                   .title(request.title())
-                  .supervisor((Faculty) User.builder().id(request.supervisor()).build())
+                  .supervisor(Faculty.builder().id(request.supervisorId()).build())
+                  .submissionDate(request.submissionDate())
                   .status(request.status())
                   .build();
     }
 
     public ThesisResponseDto toResponse(Thesis thesis) {
         return new ThesisResponseDto(
-                thesis.getStudent(),
+                thesis.getStudent().getId(),
                 thesis.getTitle(),
-                thesis.getSupervisor(),
+                thesis.getSupervisor().getId(),
                 thesis.getSubmissionDate(),
                 thesis.getStatus()
         );

@@ -7,6 +7,8 @@ import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.ThesisMapper;
 import com.cts.edusphere.modules.Thesis;
 import com.cts.edusphere.repositories.ThesisRepository;
+import com.cts.edusphere.repositories.StudentRepository;
+import com.cts.edusphere.repositories.FacultyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,17 +26,26 @@ public class ThesisServiceImpl implements ThesisService {
 
     private final ThesisRepository thesisRepository;
     private final ThesisMapper thesisMapper;
+    private final StudentRepository studentRepository;
+    private final FacultyRepository facultyRepository;
 
     @Override
     public ThesisResponseDto createThesis(ThesisRequestDto request) {
         try {
             Thesis thesis = thesisMapper.toEntity(request);
+            if (request.studentId() != null) {
+                thesis.setStudent(studentRepository.getReferenceById(request.studentId()));
+            }
+            if (request.supervisorId() != null) {
+                thesis.setSupervisor(facultyRepository.getReferenceById(request.supervisorId()));
+            }
+
             Thesis savedThesis = thesisRepository.save(thesis);
             log.info("Thesis created successfully with ID: {}", savedThesis.getId());
             return thesisMapper.toResponse(savedThesis);
         } catch (Exception e) {
             log.error("Error occurred while creating thesis: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create thesis record");
+            throw new InternalServerErrorException("Failed to create thesis record: " + e.getMessage());
         }
     }
 
@@ -85,8 +96,17 @@ public class ThesisServiceImpl implements ThesisService {
             Thesis existing = thesisRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Thesis not found with id: " + id));
 
-            // Implement specific field updates here based on Thesis Entity
-            // if(request.title() != null) existing.setTitle(request.title());
+            // Update associations using proxies
+            if (request.studentId() != null) {
+                existing.setStudent(studentRepository.getReferenceById(request.studentId()));
+            }
+            if (request.supervisorId() != null) {
+                existing.setSupervisor(facultyRepository.getReferenceById(request.supervisorId()));
+            }
+
+            // Update other basic fields
+            if (request.title() != null) existing.setTitle(request.title());
+            if (request.status() != null) existing.setStatus(request.status());
 
             Thesis updatedThesis = thesisRepository.save(existing);
             log.info("Thesis record updated successfully: {}", id);

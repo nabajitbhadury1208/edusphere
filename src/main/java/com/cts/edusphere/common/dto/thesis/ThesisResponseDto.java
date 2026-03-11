@@ -5,11 +5,12 @@ import com.cts.edusphere.modules.Faculty;
 import com.cts.edusphere.modules.Student;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 public record ThesisResponseDto(
-        Student student,
+        UUID studentId,
         String title,
-        Faculty supervisor,
+        UUID supervisorId,
         LocalDate submissionDate,
         ThesisStatus status
 ) {

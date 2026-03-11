@@ -2,6 +2,7 @@ package com.cts.edusphere.modules;
 
 import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.ProjectStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -29,6 +30,7 @@ public class ResearchProject extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false)
+    @JsonIgnore
     private Faculty faculty;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -38,6 +40,7 @@ public class ResearchProject extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "faculty_id")
     )
     @Builder.Default
+    @JsonIgnore
     private List<Faculty> facultyMembers = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -47,6 +50,7 @@ public class ResearchProject extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     @Builder.Default
+    @JsonIgnore
     private List<Student> students = new ArrayList<>();
 
 

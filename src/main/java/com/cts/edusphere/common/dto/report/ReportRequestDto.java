@@ -28,6 +28,6 @@ public record ReportRequestDto(
         UUID departmentId,
 
         @NotNull(groups = OnCreate.class)
-        User generatedBy
+        UUID generatedBy
 ) {
 }
