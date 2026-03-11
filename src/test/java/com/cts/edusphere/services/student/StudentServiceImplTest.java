@@ -66,31 +66,12 @@ public class StudentServiceImplTest {
         student.setCreatedAt(Instant.now());
         student.setUpdatedAt(Instant.now());
 
-        studentRequestDTO = new StudentRequestDTO(
-                "Alice Johnson",
-                "alice@example.com",
-                "9876543210",
-                "password123",
-                LocalDate.of(2000, 1, 15),
-                Gender.FEMALE,
-                "123 Main St",
-                Status.ACTIVE
-        );
+        studentRequestDTO = new StudentRequestDTO("Alice Johnson", "alice@example.com", "9876543210", "password123",
+                LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Status.ACTIVE);
 
-        studentResponseDTO = new StudentResponseDTO(
-                studentId,
-                "Alice Johnson",
-                "alice@example.com",
-                "9876543210",
-                Role.STUDENT,
-                Status.ACTIVE,
-                LocalDate.of(2000, 1, 15),
-                Gender.FEMALE,
-                "123 Main St",
-                Instant.now(),
-                Instant.now(),
-                Instant.now()
-        );
+        studentResponseDTO = new StudentResponseDTO(studentId, "Alice Johnson", "alice@example.com", "9876543210",
+                Role.STUDENT, Status.ACTIVE, LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Instant.now(),
+                Instant.now(), Instant.now());
     }
 
     @Test
@@ -202,4 +183,3 @@ public class StudentServiceImplTest {
         verify(studentRepository, never()).delete(any());
     }
 }
-

@@ -235,7 +235,7 @@ public class FacultyServiceImplTest {
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
         when(facultyMapper.toResponseDTO(faculty)).thenReturn(facultyResponseDTO);
 
-        FacultyResponseDTO result = facultyService.partiallyUpdateFaculty(facultyId, partialDTO);
+        FacultyResponseDTO result = facultyService.updateFaculty(facultyId, partialDTO);
 
         assertNotNull(result);
         verify(facultyRepository, times(1)).findById(facultyId);
@@ -247,7 +247,7 @@ public class FacultyServiceImplTest {
         FacultyRequestDTO partialDTO = new FacultyRequestDTO("Updated Name", null, null, null, null, null, null);
         when(facultyRepository.findById(facultyId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.partiallyUpdateFaculty(facultyId, partialDTO));
+        assertThrows(ResourceNotFoundException.class, () -> facultyService.updateFaculty(facultyId, partialDTO));
         verify(facultyRepository, never()).save(any());
     }
 
@@ -270,4 +270,3 @@ public class FacultyServiceImplTest {
         verify(facultyRepository, never()).delete(any());
     }
 }
-
