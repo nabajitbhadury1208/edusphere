@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.faculty;
 
-import com.cts.edusphere.common.dto.Faculty.FacultyRequestDTO;
-import com.cts.edusphere.common.dto.Faculty.FacultyResponseDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
+import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,7 +71,7 @@ public class FacultyServiceImplTest {
         faculty.setPhone("1234567890");
         faculty.setPassword("password123");
         faculty.setPosition("Associate Professor");
-        faculty.setRole(Role.FACULTY);
+        faculty.setRoles(Set.of(Role.FACULTY));
         faculty.setStatus(Status.ACTIVE);
         faculty.setDepartment(department);
         faculty.setJoinDate(Instant.now());
