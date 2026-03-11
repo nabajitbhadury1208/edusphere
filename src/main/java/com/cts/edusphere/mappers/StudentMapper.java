@@ -40,7 +40,6 @@ public class StudentMapper {
                 .dob(dto.dob())
                 .gender(dto.gender())
                 .address(dto.address())
-                .status(dto.status())
                 .build();
     }
 }

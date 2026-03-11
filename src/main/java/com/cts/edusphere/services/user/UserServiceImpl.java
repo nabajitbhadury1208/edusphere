@@ -53,32 +53,28 @@ public class UserServiceImpl {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
-        boolean isAdmin = userPrincipal.authorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-
+        boolean isAdmin = userPrincipal.authorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
         boolean isSelfUpdate = userPrincipal.userId().equals(id);
 
         if (!isAdmin && !isSelfUpdate) {
             throw new InsufficientPermissionException("You do not have permission to update this user");
         }
 
-        if (request.name() != null) {
-            user.setName(request.name());
-        }
-        if (request.phone() != null) {
-            user.setPhone(request.phone());
+        if (!isAdmin && (request.roles() != null || request.status() != null)) {
+            throw new InsufficientPermissionException("Only administrators can modify roles or account status.");
         }
 
+
+        if (request.name() != null) user.setName(request.name());
+        if (request.phone() != null) user.setPhone(request.phone());
+
         if (isAdmin) {
-            if (request.roles() != null) {
-                user.setRoles(new HashSet<>(request.roles()));
-            }
-            if (request.status() != null) {
-                user.setStatus(request.status());
-            }
+            if (request.roles() != null) user.setRoles(new HashSet<>(request.roles()));
+            if (request.status() != null) user.setStatus(request.status());
         }
 
         return userRepository.save(user);
-
     }
 
     boolean existsByEmail(String email) {
@@ -129,7 +125,6 @@ public class UserServiceImpl {
         if (id.equals(principal.userId()) && status == Status.INACTIVE) {
             throw new IllegalArgumentException("Admins cannot deactivate their own account.");
         }
-
 
 
         user.setStatus(status);

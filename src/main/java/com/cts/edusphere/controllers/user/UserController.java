@@ -105,15 +105,14 @@ public class UserController {
             return ResponseEntity.status(500).build();
         }
     }
-// TODO: Add validation for status field in request body
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUserStatus(
             @PathVariable UUID id,
-            @RequestBody Map<String, Status> body,
+            @RequestBody UserRequestDto requestDto,
             @AuthenticationPrincipal UserPrincipal principal) {
         try {
-            Status status = body.get("status");
+            Status status = requestDto.status();
             if (status == null) {
                 return ResponseEntity.badRequest().build();
             }

@@ -3,7 +3,6 @@ package com.cts.edusphere.common.dto.student;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.Gender;
-import com.cts.edusphere.enums.Status;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 
@@ -32,9 +31,8 @@ public record StudentRequestDTO(
         Gender gender,
 
         @NotBlank(groups = {OnCreate.class}, message = "Address cannot be blank")
-        String address,
+        String address
 
-        @NotNull(groups = {OnCreate.class}, message = "Status cannot be null")
-        Status status
+
 ) {
 }
