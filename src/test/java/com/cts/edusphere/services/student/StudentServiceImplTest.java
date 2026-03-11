@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.student;
 
-import com.cts.edusphere.common.dto.Student.StudentRequestDTO;
-import com.cts.edusphere.common.dto.Student.StudentResponseDTO;
+import com.cts.edusphere.common.dto.student.StudentRequestDTO;
+import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
@@ -66,31 +66,12 @@ public class StudentServiceImplTest {
         student.setCreatedAt(Instant.now());
         student.setUpdatedAt(Instant.now());
 
-        studentRequestDTO = new StudentRequestDTO(
-                "Alice Johnson",
-                "alice@example.com",
-                "9876543210",
-                "password123",
-                LocalDate.of(2000, 1, 15),
-                Gender.FEMALE,
-                "123 Main St",
-                Status.ACTIVE
-        );
+        studentRequestDTO = new StudentRequestDTO("Alice Johnson", "alice@example.com", "9876543210", "password123",
+                LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Status.ACTIVE);
 
-        studentResponseDTO = new StudentResponseDTO(
-                studentId,
-                "Alice Johnson",
-                "alice@example.com",
-                "9876543210",
-                Role.STUDENT,
-                Status.ACTIVE,
-                LocalDate.of(2000, 1, 15),
-                Gender.FEMALE,
-                "123 Main St",
-                Instant.now(),
-                Instant.now(),
-                Instant.now()
-        );
+        studentResponseDTO = new StudentResponseDTO(studentId, "Alice Johnson", "alice@example.com", "9876543210",
+                Role.STUDENT, Status.ACTIVE, LocalDate.of(2000, 1, 15), Gender.FEMALE, "123 Main St", Instant.now(),
+                Instant.now(), Instant.now());
     }
 
     @Test
@@ -189,7 +170,7 @@ public class StudentServiceImplTest {
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
 
-        StudentResponseDTO result = studentService.partiallyUpdateStudent(studentId, partialDTO);
+        StudentResponseDTO result = studentService.updateStudent(studentId, partialDTO);
 
         assertNotNull(result);
         verify(studentRepository, times(1)).findById(studentId);
@@ -201,7 +182,8 @@ public class StudentServiceImplTest {
         StudentRequestDTO partialDTO = new StudentRequestDTO("Updated Name", null, null, null, null, null, null, null);
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> studentService.partiallyUpdateStudent(studentId, partialDTO));
+        assertThrows(ResourceNotFoundException.class,
+                () -> studentService.updateStudent(studentId, partialDTO));
         verify(studentRepository, never()).save(any());
     }
 
@@ -224,4 +206,3 @@ public class StudentServiceImplTest {
         verify(studentRepository, never()).delete(any());
     }
 }
-
