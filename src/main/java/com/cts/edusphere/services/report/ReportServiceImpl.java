@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.report;
 
-import com.cts.edusphere.common.dto.report.ReportRequest;
-import com.cts.edusphere.common.dto.report.ReportResponse;
+import com.cts.edusphere.common.dto.report.ReportRequestDto;
+import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.ReportMapper;
@@ -26,7 +26,7 @@ public class ReportServiceImpl implements ReportService {
     private final ReportMapper reportMapper;
 
     @Override
-    public ReportResponse createReport(ReportRequest request) {
+    public ReportResponseDto createReport(ReportRequestDto request) {
         try {
             Report report = reportMapper.toEntity(request);
             Report savedReport = reportRepository.save(report);
@@ -40,7 +40,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReportResponse> getAllReports() {
+    public List<ReportResponseDto> getAllReports() {
         try {
             return reportRepository.findAll().stream()
                     .map(reportMapper::toResponse)
@@ -53,7 +53,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReportResponse getReportById(UUID id) {
+    public ReportResponseDto getReportById(UUID id) {
         try {
             return reportRepository.findById(id)
                     .map(reportMapper::toResponse)
@@ -68,7 +68,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReportResponse> getReportsByDepartment(UUID departmentId) {
+    public List<ReportResponseDto> getReportsByDepartment(UUID departmentId) {
         try {
             return reportRepository.findByDepartmentId(departmentId).stream()
                     .map(reportMapper::toResponse)
@@ -80,7 +80,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ReportResponse updateReport(UUID id, ReportRequest request) {
+    public ReportResponseDto updateReport(UUID id, ReportRequestDto request) {
         try {
             Report existing = reportRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));

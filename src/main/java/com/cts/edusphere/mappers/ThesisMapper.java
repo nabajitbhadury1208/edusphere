@@ -1,14 +1,13 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.thesis.ThesisRequest;
-import com.cts.edusphere.common.dto.thesis.ThesisResponse;
+import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
+import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.modules.Thesis;
-import jakarta.persistence.Column;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ThesisMapper {
-    public Thesis toEntity(ThesisRequest request) {
+    public Thesis toEntity(ThesisRequestDto request) {
         Thesis thesis = new Thesis();
         thesis.setStudent(request.student());
         thesis.setTitle(request.title());
@@ -17,8 +16,8 @@ public class ThesisMapper {
         return thesis;
     }
 
-    public ThesisResponse toResponse(Thesis thesis) {
-        return new ThesisResponse(
+    public ThesisResponseDto toResponse(Thesis thesis) {
+        return new ThesisResponseDto(
                 thesis.getStudent(),
                 thesis.getTitle(),
                 thesis.getSupervisor(),

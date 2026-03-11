@@ -1,8 +1,8 @@
 package com.cts.edusphere.controllers.report;
 
 
-import com.cts.edusphere.common.dto.report.ReportRequest;
-import com.cts.edusphere.common.dto.report.ReportResponse;
+import com.cts.edusphere.common.dto.report.ReportRequestDto;
+import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.report.ReportService;
@@ -25,31 +25,31 @@ public class Report {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<ReportResponse> create(@Validated(OnCreate.class) @RequestBody ReportRequest request) {
+    public ResponseEntity<ReportResponseDto> create(@Validated(OnCreate.class) @RequestBody ReportRequestDto request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reportService.createReport(request));
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE', 'REGULATOR')")
-    public ResponseEntity<List<ReportResponse>> getAll() {
+    public ResponseEntity<List<ReportResponseDto>> getAll() {
         return ResponseEntity.ok(reportService.getAllReports());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE', 'REGULATOR')")
-    public ResponseEntity<ReportResponse> getById(@PathVariable UUID id) {
+    public ResponseEntity<ReportResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(reportService.getReportById(id));
     }
 
     @GetMapping("/department/{departmentId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'COMPLIANCE', 'REGULATOR')")
-    public ResponseEntity<List<ReportResponse>> getByDept(@PathVariable UUID departmentId) {
+    public ResponseEntity<List<ReportResponseDto>> getByDept(@PathVariable UUID departmentId) {
         return ResponseEntity.ok(reportService.getReportsByDepartment(departmentId));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<ReportResponse> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody ReportRequest request) {
+    public ResponseEntity<ReportResponseDto> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody ReportRequestDto request) {
         return ResponseEntity.ok(reportService.updateReport(id, request));
     }
 

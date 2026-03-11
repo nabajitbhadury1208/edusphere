@@ -6,7 +6,7 @@ import com.cts.edusphere.modules.Student;
 
 import java.time.LocalDate;
 
-public record ThesisResponse(
+public record ThesisResponseDto(
         Student student,
         String title,
         Faculty supervisor,

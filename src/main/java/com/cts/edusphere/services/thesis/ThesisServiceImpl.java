@@ -1,7 +1,7 @@
 package com.cts.edusphere.services.thesis;
 
-import com.cts.edusphere.common.dto.thesis.ThesisRequest;
-import com.cts.edusphere.common.dto.thesis.ThesisResponse;
+import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
+import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.ThesisMapper;
@@ -26,7 +26,7 @@ public class ThesisServiceImpl implements ThesisService {
     private final ThesisMapper thesisMapper;
 
     @Override
-    public ThesisResponse createThesis(ThesisRequest request) {
+    public ThesisResponseDto createThesis(ThesisRequestDto request) {
         try {
             Thesis thesis = thesisMapper.toEntity(request);
             Thesis savedThesis = thesisRepository.save(thesis);
@@ -40,7 +40,7 @@ public class ThesisServiceImpl implements ThesisService {
 
     @Override
     @Transactional(readOnly = true)
-    public ThesisResponse getThesisById(UUID id) {
+    public ThesisResponseDto getThesisById(UUID id) {
         try {
             return thesisRepository.findById(id)
                     .map(thesisMapper::toResponse)
@@ -55,7 +55,7 @@ public class ThesisServiceImpl implements ThesisService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ThesisResponse> getThesisByStudent(UUID studentId) {
+    public List<ThesisResponseDto> getThesisByStudent(UUID studentId) {
         try {
             return thesisRepository.findByStudentId(studentId).stream()
                     .map(thesisMapper::toResponse)
@@ -68,7 +68,7 @@ public class ThesisServiceImpl implements ThesisService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ThesisResponse> getThesisBySupervisor(UUID facultyId) {
+    public List<ThesisResponseDto> getThesisBySupervisor(UUID facultyId) {
         try {
             return thesisRepository.findBySupervisorId(facultyId).stream()
                     .map(thesisMapper::toResponse)
@@ -80,7 +80,7 @@ public class ThesisServiceImpl implements ThesisService {
     }
 
     @Override
-    public ThesisResponse updateThesis(UUID id, ThesisRequest request) {
+    public ThesisResponseDto updateThesis(UUID id, ThesisRequestDto request) {
         try {
             Thesis existing = thesisRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Thesis not found with id: " + id));

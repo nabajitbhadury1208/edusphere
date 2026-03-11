@@ -1,13 +1,12 @@
 package com.cts.edusphere.common.dto.thesis;
 
 import com.cts.edusphere.common.validation.OnCreate;
-import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.ThesisStatus;
 import com.cts.edusphere.modules.Faculty;
 import com.cts.edusphere.modules.Student;
 import jakarta.validation.constraints.NotNull;
 
-public record ThesisRequest(
+public record ThesisRequestDto(
 
         @NotNull(groups = OnCreate.class, message = "Student is required")
         Student student,

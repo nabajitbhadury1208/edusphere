@@ -1,13 +1,13 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.report.ReportRequest;
-import com.cts.edusphere.common.dto.report.ReportResponse;
+import com.cts.edusphere.common.dto.report.ReportRequestDto;
+import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.modules.Report;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ReportMapper {
-    public Report toEntity(ReportRequest request) {
+    public Report toEntity(ReportRequestDto request) {
         Report report = new Report();
         report.setMetrics(request.metrics());
         report.setStatus(request.status());
@@ -17,8 +17,8 @@ public class ReportMapper {
         return report;
     }
 
-    public ReportResponse toResponse(Report report) {
-        return new ReportResponse(
+    public ReportResponseDto toResponse(Report report) {
+        return new ReportResponseDto(
                 report.getId(),
                 report.getMetrics(),
                 report.getStatus(),

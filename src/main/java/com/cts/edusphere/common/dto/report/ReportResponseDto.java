@@ -7,7 +7,7 @@ import com.cts.edusphere.modules.User;
 
 import java.util.UUID;
 
-public record ReportResponse(
+public record ReportResponseDto(
         UUID id,
         String metrics,
         Status status,
