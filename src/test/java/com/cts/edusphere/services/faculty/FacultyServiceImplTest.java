@@ -70,7 +70,7 @@ public class FacultyServiceImplTest {
         faculty.setPhone("1234567890");
         faculty.setPassword("password123");
         faculty.setPosition("Associate Professor");
-        faculty.setRole(Role.FACULTY);
+        faculty.setRoles(java.util.Set.of(Role.FACULTY));
         faculty.setStatus(Status.ACTIVE);
         faculty.setDepartment(department);
         faculty.setJoinDate(Instant.now());
@@ -92,7 +92,7 @@ public class FacultyServiceImplTest {
                 "John Doe",
                 "john@example.com",
                 "1234567890",
-                Role.FACULTY,
+                java.util.Set.of(Role.FACULTY),
                 Status.ACTIVE,
                 "Associate Professor",
                 UUID.fromString("123e4567-e89b-12d3-a456-426614174000"),
@@ -118,7 +118,6 @@ public class FacultyServiceImplTest {
         assertEquals("john@example.com", result.email());
         verify(departmentRepository, times(1)).findById(departmentId);
         verify(facultyRepository, times(1)).save(any(Faculty.class));
-        verify(facultyMapper, times(1)).toEntity(facultyRequestDTO);
     }
 
     @Test
