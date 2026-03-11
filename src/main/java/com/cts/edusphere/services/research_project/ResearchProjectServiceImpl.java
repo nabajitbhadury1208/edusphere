@@ -34,7 +34,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     @Override
     public ResearchProjectResponse createProject(ResearchProjectRequest request) {
         try {
-            Faculty lead = facultyRepository.findById(request.faculty().getId())
+            Faculty lead = facultyRepository.findById(request.facultyId())
                     .orElseThrow(() -> new ResourceNotFoundException("Lead faculty not found"));
 
             ResearchProject project = projectMapper.toEntity(request, lead, request.facultyMembers(), request.students());

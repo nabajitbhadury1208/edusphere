@@ -4,9 +4,11 @@ import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.modules.Course;
 import com.cts.edusphere.modules.Faculty;
 
+import java.util.UUID;
+
 public record WorkLoadResponseDto(
-        Faculty faculty,
-        Course course,
+        UUID facultyId,
+        UUID courseId,
         Integer hours,
         String semester,
         Status status

@@ -6,16 +6,18 @@ import com.cts.edusphere.modules.Faculty;
 import com.cts.edusphere.modules.Student;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.UUID;
+
 public record ThesisRequestDto(
 
         @NotNull(groups = OnCreate.class, message = "Student is required")
-        Student student,
+        UUID student,
 
         @NotNull(groups = OnCreate.class,message = "Title is required")
         String title,
 
         @NotNull(groups = OnCreate.class,message = "supervisor is required")
-        Faculty supervisor,
+        UUID supervisor,
 
         @NotNull(groups = OnCreate.class,message = "Thesis status is required")
         ThesisStatus status

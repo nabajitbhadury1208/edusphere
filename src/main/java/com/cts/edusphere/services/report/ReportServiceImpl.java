@@ -6,6 +6,7 @@ import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorExcepti
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.ReportMapper;
 import com.cts.edusphere.modules.Report;
+import com.cts.edusphere.repositories.DepartmentRepository;
 import com.cts.edusphere.repositories.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final ReportMapper reportMapper;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public ReportResponseDto createReport(ReportRequestDto request) {
@@ -88,7 +90,7 @@ public class ReportServiceImpl implements ReportService {
             if (request.metrics() != null) existing.setMetrics(request.metrics());
             if (request.status() != null) existing.setStatus(request.status());
             if (request.scope() != null) existing.setScope(request.scope());
-            if (request.department() != null) existing.setDepartment(request.department());
+            if (request.departmentId() != null) existing.setDepartment(departmentRepository.getReferenceById(request.departmentId()));
 
             Report updatedReport = reportRepository.save(existing);
             log.info("Report record updated successfully: {}", id);

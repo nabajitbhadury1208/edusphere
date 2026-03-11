@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public record ResearchProjectRequest(
 
@@ -17,13 +18,13 @@ public record ResearchProjectRequest(
         String title,
 
         @NotNull(message = "Faculty is required")
-        Faculty faculty,
+        UUID facultyId,
 
         @NotNull(message = "facultyMember cannot be null; send empty list if none")
-        List<Faculty> facultyMembers,
+        List<UUID> facultyMembers,
 
         @NotNull(message = "student cannot be null; send empty list if none")
-        List<Student> students,
+        List<UUID> students,
 
         @NotNull(message = "startDate is required")
         LocalDate startDate,

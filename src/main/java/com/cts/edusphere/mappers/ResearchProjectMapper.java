@@ -5,23 +5,36 @@ import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
 import com.cts.edusphere.modules.Faculty;
 import com.cts.edusphere.modules.ResearchProject;
 import com.cts.edusphere.modules.Student;
+import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class ResearchProjectMapper {
 
-    public ResearchProject toEntity(ResearchProjectRequest request, Faculty leadFaculty, List<Faculty> members, List<Student> students) {
-        if (request == null) return null;
-        ResearchProject project = new ResearchProject();
-        project.setTitle(request.title());
-        project.setFaculty(leadFaculty);
-        project.setFacultyMembers(members);
-        project.setStudents(students);
-        project.setStartDate(request.startDate());
-        project.setEndDate(request.endDate());
-        project.setStatus(request.status());
-        return project;
+    public ResearchProject toEntity(ResearchProjectRequest request, Faculty leadFaculty, List<UUID> members, List<UUID> students) {
+//
+        return ResearchProject.builder()
+                .title(request.title())
+                .faculty(Faculty.builder().id(request.facultyId()).build())
+                .facultyMembers(
+                        request.facultyMembers().stream()
+                                .map(id -> Faculty.builder().id(id).build())
+                                .collect(Collectors.toList())
+                )
+                .students(
+                        request.students().stream()
+                                .map(id -> Student.builder().id(id).build())
+                                .collect(Collectors.toList())
+                )
+                .startDate(request.startDate())
+                .endDate(request.endDate())
+                .status(request.status())
+                .build();
+
+
     }
 
     public ResearchProjectResponse toResponse(ResearchProject project) {

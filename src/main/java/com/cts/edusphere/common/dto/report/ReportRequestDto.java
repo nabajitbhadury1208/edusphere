@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.util.UUID;
+
 public record ReportRequestDto(
 
         @NotBlank(groups = {OnCreate.class, OnUpdate.class})
@@ -23,7 +25,7 @@ public record ReportRequestDto(
         ReportScope scope,
 
         @NotNull(groups = OnCreate.class,message = "Department is required")
-        Department department,
+        UUID departmentId,
 
         @NotNull(groups = OnCreate.class)
         User generatedBy

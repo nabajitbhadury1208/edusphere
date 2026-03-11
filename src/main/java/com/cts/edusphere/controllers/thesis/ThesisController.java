@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/thesis")
 @RequiredArgsConstructor
-public class Thesis {
+public class ThesisController {
     private final ThesisService thesisService;
 
     @PostMapping
