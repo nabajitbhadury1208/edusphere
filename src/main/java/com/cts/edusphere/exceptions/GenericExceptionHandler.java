@@ -416,5 +416,15 @@ public class GenericExceptionHandler {
                 errors
         );
     }
+    @ExceptionHandler(CannotDeleteException.class)
+    public ResponseEntity<ErrorResponse> handleCannotDeleteException(MethodArgumentNotValidException ex, WebRequest request){
+        Map<String, String> errors = new HashMap<>();
+        ex
+                .getBindingResult()
+                .getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
+                );
+        return buildErrorResponse("Deletion failed", HttpStatus.EXPECTATION_FAILED, request, errors);
+    }
 
 }

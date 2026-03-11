@@ -17,7 +17,7 @@ public class StudentMapper {
                 student.getName(),
                 student.getEmail(),
                 student.getPhone(),
-                student.getRole(),
+                student.getRoles(),
                 student.getStatus(),
                 student.getDob(),
                 student.getGender(),

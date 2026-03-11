@@ -6,8 +6,6 @@ import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.DepartmentMapper;
 import com.cts.edusphere.modules.Department;
-import com.cts.edusphere.modules.DepartmentHead;
-import com.cts.edusphere.repositories.DepartmentHeadRepository;
 import com.cts.edusphere.repositories.DepartmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

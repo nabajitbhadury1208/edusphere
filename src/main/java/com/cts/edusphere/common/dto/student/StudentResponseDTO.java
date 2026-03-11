@@ -6,6 +6,7 @@ import com.cts.edusphere.enums.Status;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Set;
 import java.util.UUID;
 
 public record StudentResponseDTO(
@@ -13,7 +14,7 @@ public record StudentResponseDTO(
         String name,
         String email,
         String phone,
-        Role role,
+        Set<Role> roles,
         Status status,
         LocalDate dob,
         Gender gender,

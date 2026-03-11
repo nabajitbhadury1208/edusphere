@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,7 +34,7 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) {
         try {
             Student student = studentMapper.toEntity(requestDTO);
-            student.setRole(Role.STUDENT);
+            student.setRoles(Set.of(Role.STUDENT));
             student.setPassword(passwordEncoder.encode(student.getPassword()));
 
             Student savedStudent = studentRepository.save(student);

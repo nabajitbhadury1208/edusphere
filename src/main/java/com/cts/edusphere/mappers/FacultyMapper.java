@@ -17,7 +17,7 @@ public class FacultyMapper {
                 faculty.getName(),
                 faculty.getEmail(),
                 faculty.getPhone(),
-                faculty.getRole(),
+                faculty.getRoles(),
                 faculty.getStatus(),
                 faculty.getPosition(),
                 faculty.getDepartment() != null ? faculty.getDepartment().getId() : null,

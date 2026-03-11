@@ -2,13 +2,14 @@ package com.cts.edusphere.services.audit;
 
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.AuditMapper;
 import com.cts.edusphere.modules.Audit;
-import com.cts.edusphere.modules.ComplianceOfficer;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.AuditRepository;
-import com.cts.edusphere.repositories.ComplianceOfficerRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,17 +26,17 @@ import java.util.stream.Collectors;
 public class AuditServiceImpl implements AuditService {
 
     private final AuditRepository auditRepository;
-    private final ComplianceOfficerRepository officerRepository;
     private final AuditMapper auditMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public AuditResponseDTO createAudit(AuditRequestDTO dto) {
         try {
-            ComplianceOfficer officer = findOfficerById(dto.officerId());
+            User complianceOfficer = findOfficerById(dto.officerId());
 
             Audit audit = auditMapper.toEntity(dto);
-            audit.setOfficer(officer);
+            audit.setComplianceOfficer(complianceOfficer);
 
             Audit savedAudit = auditRepository.save(audit);
             log.info("Audit record created successfully with ID: {}", savedAudit.getId());
@@ -88,8 +89,8 @@ public class AuditServiceImpl implements AuditService {
             audit.setFindings(dto.findings());
             audit.setAuditDate(LocalDate.parse(dto.auditDate()));
 
-            if (!audit.getOfficer().getId().equals(dto.officerId())) {
-                audit.setOfficer(findOfficerById(dto.officerId()));
+            if (!audit.getComplianceOfficer().getId().equals(dto.officerId())) {
+                audit.setComplianceOfficer(findOfficerById(dto.officerId()));
             }
 
             Audit updatedAudit = auditRepository.save(audit);
@@ -120,9 +121,12 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
-    private ComplianceOfficer findOfficerById(UUID officerId) {
-        // This is called within other try-catch blocks, but we throw specific exception here
-        return officerRepository.findById(officerId)
+    private User findOfficerById(UUID officerId) {
+        User officer = userRepository.findById(officerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Compliance Officer not found with id: " + officerId));
+        if(!officer.getRoles().contains(Role.COMPLIANCE_OFFICER) && !officer.getRoles().contains(Role.ADMIN)) {
+            throw new ResourceNotFoundException("User with id: " + officerId + " is not a compliance officer");
+        }
+        return officer;
     }
 }
