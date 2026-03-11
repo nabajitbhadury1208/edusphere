@@ -9,7 +9,7 @@ import java.util.UUID;
 @Repository
 public interface ComplianceRecordRepository extends JpaRepository<ComplianceRecord, UUID> {
     // Nested property navigation: recordedBy.id
-    List<ComplianceRecord> findByRecordedBy_Id(UUID userId);
+    List<ComplianceRecord> findByComplianceOfficer_Id(UUID userId);
 
     // Search records for a specific module instance
     List<ComplianceRecord> findByEntityId(UUID entityId);

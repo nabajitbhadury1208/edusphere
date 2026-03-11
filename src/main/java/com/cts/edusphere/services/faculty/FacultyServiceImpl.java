@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -38,7 +39,7 @@ public class FacultyServiceImpl implements FacultyService {
                     .orElseThrow(() -> new ResourceNotFoundException("department not found with id: " + requestDTO.departmentId()));
 
             Faculty faculty = facultyMapper.toEntity(requestDTO);
-            faculty.setRole(Role.FACULTY);
+            faculty.setRoles(Set.of(Role.FACULTY));
             faculty.setPassword(passwordEncoder.encode(faculty.getPassword()));
             faculty.setDepartment(department);
 

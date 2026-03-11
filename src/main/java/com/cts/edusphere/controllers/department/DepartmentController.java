@@ -50,7 +50,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
             @PathVariable UUID id,
             @Validated(OnUpdate.class) @RequestBody DepartmentRequestDTO requestDTO) {

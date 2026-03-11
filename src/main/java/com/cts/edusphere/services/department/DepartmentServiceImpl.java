@@ -2,13 +2,14 @@ package com.cts.edusphere.services.department;
 
 import com.cts.edusphere.common.dto.department.DepartmentRequestDTO;
 import com.cts.edusphere.common.dto.department.DepartmentResponseDTO;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.DepartmentMapper;
 import com.cts.edusphere.modules.Department;
-import com.cts.edusphere.modules.DepartmentHead;
-import com.cts.edusphere.repositories.DepartmentHeadRepository;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.DepartmentRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
-    private final DepartmentHeadRepository departmentHeadRepository;
+    private final UserRepository userRepository;
     private final DepartmentMapper departmentMapper;
 
     @Override
@@ -34,9 +35,12 @@ public class DepartmentServiceImpl implements DepartmentService {
             Department department = departmentMapper.toEntity(requestDTO);
 
             if (requestDTO.headId() != null) {
-                DepartmentHead head = departmentHeadRepository.findById(requestDTO.headId())
+                User departmentHead = userRepository.findById(requestDTO.headId())
                         .orElseThrow(() -> new ResourceNotFoundException("department Head not found with id: " + requestDTO.headId()));
-                department.setHead(head);
+                if (!departmentHead.getRoles().contains(Role.DEPARTMENT_HEAD) && !departmentHead.getRoles().contains(Role.ADMIN)) {
+                    throw new ResourceNotFoundException("User with id: " + requestDTO.headId() + " is not a department head");
+                }
+                department.setDepartmentHead(departmentHead);
             }
 
             Department savedDepartment = departmentRepository.save(department);
@@ -79,7 +83,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
 
-
     @Override
     public DepartmentResponseDTO updateDepartment(UUID id, DepartmentRequestDTO requestDTO) {
         try {
@@ -92,9 +95,13 @@ public class DepartmentServiceImpl implements DepartmentService {
             if (requestDTO.status() != null) department.setStatus(requestDTO.status());
 
             if (requestDTO.headId() != null) {
-                DepartmentHead head = departmentHeadRepository.findById(requestDTO.headId())
+
+                User departmentHead = userRepository.findById(requestDTO.headId())
                         .orElseThrow(() -> new ResourceNotFoundException("department Head not found with id: " + requestDTO.headId()));
-                department.setHead(head);
+                if (!departmentHead.getRoles().contains(Role.DEPARTMENT_HEAD) && !departmentHead.getRoles().contains(Role.ADMIN)) {
+                    throw new ResourceNotFoundException("User with id: " + requestDTO.headId() + " is not a department head");
+                }
+                department.setDepartmentHead(departmentHead);
             }
 
             Department updatedDepartment = departmentRepository.save(department);
@@ -114,10 +121,10 @@ public class DepartmentServiceImpl implements DepartmentService {
             Department department = departmentRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("department not found with id: " + id));
 
-            DepartmentHead head = departmentHeadRepository.findById(headId)
+            User departmentHead = userRepository.findById(headId)
                     .orElseThrow(() -> new ResourceNotFoundException("department Head not found with id: " + headId));
 
-            department.setHead(head);
+            department.setDepartmentHead(departmentHead);
             Department updatedDepartment = departmentRepository.save(department);
             log.info("department head changed for department: {}", id);
             return departmentMapper.toResponseDTO(updatedDepartment);

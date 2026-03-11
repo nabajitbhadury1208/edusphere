@@ -1,7 +1,7 @@
 package com.cts.edusphere.controllers.user;
 
-import com.cts.edusphere.common.dto.user.UserRequest;
-import com.cts.edusphere.common.dto.user.UserResponse;
+import com.cts.edusphere.common.dto.user.UserRequestDto;
+import com.cts.edusphere.common.dto.user.UserResponseDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.mappers.UserMapper;
 import com.cts.edusphere.services.user.UserServiceImpl;
@@ -25,7 +25,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
         try {
             var user = userService.getUserById(principal.userId());
             return ResponseEntity.ok(userMapper.toResponse(user));
@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) {
         try {
             var user = userService.getUserById(id);
             return ResponseEntity.ok(userMapper.toResponse(user));
@@ -64,7 +64,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         try {
             var users = userService.getAllUsers();
             return ResponseEntity.ok(userMapper.toResponseList(users));
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     @PostMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequest request) {
+    public ResponseEntity<UserResponseDto> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequestDto request) {
         try {
             var updatedUser = userService.updateUserById(principal.userId(), request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));
@@ -90,7 +90,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequest request, @AuthenticationPrincipal UserPrincipal principal) {
+    public ResponseEntity<UserResponseDto> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequestDto request, @AuthenticationPrincipal UserPrincipal principal) {
         try {
             var updatedUser = userService.updateUserById(id, request, principal);
             return ResponseEntity.ok(userMapper.toResponse(updatedUser));

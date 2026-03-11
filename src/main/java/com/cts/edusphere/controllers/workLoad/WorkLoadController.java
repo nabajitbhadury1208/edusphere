@@ -3,12 +3,15 @@ package com.cts.edusphere.controllers.workLoad;
 
 import com.cts.edusphere.common.dto.workload.WorkLoadRequest;
 import com.cts.edusphere.common.dto.workload.WorkLoadResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.workLoad.WorkLoadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +26,7 @@ public class WorkLoadController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD')")
-    public ResponseEntity<WorkLoadResponse> create(@Valid @RequestBody WorkLoadRequest request) {
+    public ResponseEntity<WorkLoadResponse> create(@Validated(OnCreate.class) @RequestBody WorkLoadRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createWorkLoad(request));
     }
 
@@ -47,7 +50,7 @@ public class WorkLoadController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD')")
-    public ResponseEntity<WorkLoadResponse> update(@PathVariable UUID id, @Valid @RequestBody WorkLoadRequest request) {
+    public ResponseEntity<WorkLoadResponse> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody WorkLoadRequest request) {
         return ResponseEntity.ok(service.updateWorkLoad(id, request));
     }
 

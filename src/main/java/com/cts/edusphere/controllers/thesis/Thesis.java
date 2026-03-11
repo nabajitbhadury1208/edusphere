@@ -3,10 +3,13 @@ package com.cts.edusphere.controllers.thesis;
 
 import com.cts.edusphere.common.dto.thesis.ThesisRequest;
 import com.cts.edusphere.common.dto.thesis.ThesisResponse;
+import com.cts.edusphere.common.validation.OnCreate;
+import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.thesis.ThesisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +23,7 @@ public class Thesis {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY', 'STUDENT')")
-    public ResponseEntity<ThesisResponse> create(@RequestBody ThesisRequest request) {
+    public ResponseEntity<ThesisResponse> create(@Validated(OnCreate.class)@RequestBody ThesisRequest request) {
         return ResponseEntity.ok(thesisService.createThesis(request));
     }
 
@@ -44,7 +47,7 @@ public class Thesis {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY')")
-    public ResponseEntity<ThesisResponse> update(@PathVariable UUID id, @RequestBody ThesisRequest request) {
+    public ResponseEntity<ThesisResponse> update(@Validated(OnUpdate.class)@PathVariable UUID id, @RequestBody ThesisRequest request) {
         return ResponseEntity.ok(thesisService.updateThesis(id, request));
     }
 

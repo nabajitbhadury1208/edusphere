@@ -55,14 +55,14 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.removeFacultyMember(id, facultyId));
     }
 
-    // Sl No 8: Add student
+    // Sl No 8: Add Student
     @PostMapping("/{id}/students")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
     public ResponseEntity<ResearchProjectResponse> addStudent(@PathVariable UUID id, @RequestParam UUID studentId) {
         return ResponseEntity.ok(projectService.addStudent(id, studentId));
     }
 
-    // Sl No 9: Remove student
+    // Sl No 9: Remove Student
     @DeleteMapping("/{id}/students/{studentId}")
     @PreAuthorize("hasRole('ADMIN') or (hasRole('FACULTY'))")
     public ResponseEntity<ResearchProjectResponse> removeStudent(@PathVariable UUID id, @PathVariable UUID studentId) {

@@ -31,7 +31,7 @@ import java.util.UUID;
 public class ComplianceRecord extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_by_user_id", nullable = false)
-    private ComplianceOfficer recordedBy;
+    private User complianceOfficer;
 
     @Column(name = "entity_id", nullable = false)
     private UUID entityId;
