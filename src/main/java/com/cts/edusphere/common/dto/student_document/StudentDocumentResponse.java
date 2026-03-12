@@ -8,7 +8,8 @@ import java.util.UUID;
 
 public record StudentDocumentResponse(
         UUID studentDocumentId,
-        User student,
+        UUID studentId,
+        String studentName,
         DocType docType,
         String fileUri,
         boolean verificationStatus

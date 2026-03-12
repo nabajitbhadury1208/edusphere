@@ -23,10 +23,11 @@ public class StudentDocumentMapper {
 
     public StudentDocumentResponse toResponse(StudentDocument entity) {
         if (entity == null) return null;
-
+        User user = entity.getStudentUser();
         return new StudentDocumentResponse(
                 entity.getId(),
-                entity.getStudentUser(),
+                user!= null ? user.getId() : null,
+                user != null ? user.getName() : null,
                 entity.getDocType(),
                 entity.getFileUri(),
                 entity.isVerificationStatus()

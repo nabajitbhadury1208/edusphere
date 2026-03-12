@@ -10,7 +10,7 @@ public interface StorageService {
     void init();
     void deleteAllFiles();
 
-    String uploadFile(MultipartFile file);
+    String uploadFile(MultipartFile file, String subFolder);
 
     Stream<Path> loadAllFiles();
     Path loadFile(String filename);
