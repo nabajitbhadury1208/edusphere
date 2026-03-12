@@ -162,7 +162,7 @@ public class StudentServiceImplTest {
     @Test
     void testUpdateStudent_Success() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
-        when(passwordEncoder.encode(studentRequestDTO.password())).thenReturn("encodedPassword");
+        //when(passwordEncoder.encode(studentRequestDTO.password())).thenReturn("encodedPassword");
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
 
