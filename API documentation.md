@@ -42,15 +42,15 @@
 
 ## User API
 
-| Sl No | Method   | Endpoint                    | Description                        | Role                         |
-|:------|:---------|:----------------------------|:-----------------------------------|:-----------------------------|
-| 1     | `POST`   | `/users`                    | Create a new user                  | Admin                        |
-| 2     | `GET`    | `/users`                    | Get all users                      | Admin                        |
-| 3     | `GET`    | `/users/{id}`               | Get a user by id                   | Admin                        |
-| 4     | `PUT`    | `/users/{id}`               | Fully update a user by id          | Admin                        |
-| 5     | `PATCH`  | `/users/{id}`               | Partially update a user by id      | Admin                        |
-| 6     | `PATCH`  | `/users/{id}/status`        | Activate / Deactivate a user       | Admin                        |
-| 7     | `DELETE` | `/users/{id}`               | Delete a user by id                | Admin                        |
+| Sl No | Method   | Endpoint             | Description                        | Role                         |
+|:------|:---------|:---------------------|:-----------------------------------|:-----------------------------|
+| 1     | `GET`    | `/users`             | Create a new user                  | Admin                        |
+| 2     | `GET`    | `/users/me`          | Get all users                      | Admin                        |
+| 3     | `GET`    | `/users/{id}`        | Get a user by id                   | Admin                        |
+| 4     | `POST`   | `/users/{id}`        | Fully update a user by id          | Admin                        |
+| 5     | `POST`   | `/users/me`          | Partially update a user by id      | Admin                        |
+| 6     | `PATCH`  | `/users/{id}/status` | Activate / Deactivate a user       | Admin                        |
+| 7     | `DELETE` | `/users/{id}`        | Delete a user by id                | Admin                        |
 
 ---
 
@@ -62,8 +62,7 @@
 | 2     | `GET`    | `/students`                 | Get all students                   | Admin, DeptHead                         |
 | 3     | `GET`    | `/students/{id}`            | Get a student by id                | Admin, DeptHead, Student (own)          |
 | 4     | `PUT`    | `/students/{id}`            | Fully update a student by id       | Admin                                   |
-| 5     | `PATCH`  | `/students/{id}`            | Partially update a student by id   | Admin, Student (own profile)            |
-| 6     | `DELETE` | `/students/{id}`            | Delete a student by id             | Admin                                   |
+| 5     | `DELETE` | `/students/{id}`            | Delete a student by id             | Admin                                   |
 
 ---
 
@@ -75,24 +74,21 @@
 | 2     | `GET`    | `/faculties`                | Get all faculties                  | Admin, DeptHead                         |
 | 3     | `GET`    | `/faculties/{id}`           | Get a faculty by id                | Admin, DeptHead, Faculty (own)          |
 | 4     | `PUT`    | `/faculties/{id}`           | Fully update a faculty by id       | Admin                                   |
-| 5     | `PATCH`  | `/faculties/{id}`           | Partially update a faculty by id   | Admin, Faculty (own profile)            |
-| 6     | `DELETE` | `/faculties/{id}`           | Delete a faculty by id             | Admin                                   |
+| 5     | `DELETE` | `/faculties/{id}`           | Delete a faculty by id             | Admin                                   |
 
 ---
 
 ## Department API
 
-| Sl No | Method   | Endpoint                            | Description                                    | Role                         |
-|:------|:---------|:------------------------------------|:-----------------------------------------------|:-----------------------------|
-| 1     | `POST`   | `/departments`                      | Create a new department                        | Admin                        |
-| 2     | `GET`    | `/departments`                      | Get all departments                            | Admin, DeptHead              |
-| 3     | `GET`    | `/departments/{id}`                 | Get a department by id                         | Admin, DeptHead              |
-| 4     | `PUT`    | `/departments/{id}`                 | Fully update a department by id                | Admin                        |
-| 5     | `PATCH`  | `/departments/{id}`                 | Partially update a department by id            | Admin                        |
-| 6     | `DELETE` | `/departments/{id}`                 | Delete a department by id                      | Admin                        |
-| 7     | `PATCH`  | `/departments/{id}/head`            | Change the department head                     | Admin                        |
-| 8     | `GET`    | `/departments/{id}/faculty`         | Get all faculties of a department              | Admin, DeptHead              |
-| 9     | `GET`    | `/departments/{id}/courses`         | Get all courses of a department                | Admin, DeptHead, Faculty     |
+| Sl No | Method   | Endpoint                    | Description                              | Role                         |
+|:------|:---------|:----------------------------|:-----------------------------------------|:-----------------------------|
+| 1     | `POST`   | `/departments`              | Create a new department                  | Admin                        |
+| 2     | `GET`    | `/departments`              | Get all departments                      | Admin, DeptHead              |
+| 3     | `GET`    | `/departments/{id}`         | Get a department by id                   | Admin, DeptHead              |
+| 4     | `PUT`    | `/departments/{id}`         | Fully update a department by id          | Admin                        |
+| 5     | `DELETE` | `/departments/{id}`         | Delete a department by id                | Admin                        |
+| 6     | `PATCH`  | `/departments/{id}/head`    | Change the department head               | Admin                        |
+| 7     | `GET`    | `/departments/{id}/faculty` | Get all faculties of a department        | Admin, DeptHead              |
 
 ---
 
@@ -104,9 +100,8 @@
 | 2     | `GET`    | `/courses`                  | Get all courses                    | Admin, DeptHead, Faculty, Student           |
 | 3     | `GET`    | `/courses/{id}`             | Get a course by id                 | Admin, DeptHead, Faculty, Student           |
 | 4     | `PUT`    | `/courses/{id}`             | Fully update a course by id        | Admin                                       |
-| 5     | `PATCH`  | `/courses/{id}`             | Partially update a course by id    | Admin                                       |
-| 6     | `PATCH`  | `/courses/{id}/status`      | Activate / Deactivate a course     | Admin                                       |
-| 7     | `DELETE` | `/courses/{id}`             | Delete a course by id              | Admin                                       |
+| 5     | `PUT`    | `/courses/{id}/status`      | Activate / Deactivate a course     | Admin                                       |
+| 6     | `DELETE` | `/courses/{id}`             | Delete a course by id              | Admin                                       |
 
 ---
 
@@ -131,10 +126,8 @@
 | 2     | `GET`    | `/exams`                            | Get all exams                      | Admin, Faculty, DeptHead                    |
 | 3     | `GET`    | `/exams/{id}`                       | Get an exam by id                  | Admin, Faculty, Student                     |
 | 4     | `PUT`    | `/exams/{id}`                       | Fully update an exam by id         | Admin, Faculty                              |
-| 5     | `PATCH`  | `/exams/{id}`                       | Partially update an exam by id     | Admin, Faculty                              |
-| 6     | `PATCH`  | `/exams/{id}/status`                | Activate / Deactivate an exam      | Admin, Faculty                              |
-| 7     | `DELETE` | `/exams/{id}`                       | Delete an exam by id               | Admin                                       |
-| 8     | `GET`    | `/exams/course/{courseId}`          | Get all exams for a course         | Admin, Faculty, Student                     |
+| 5     | `DELETE` | `/exams/{id}`                       | Delete an exam by id               | Admin                                       |
+| 6     | `GET`    | `/exams/course/{courseId}`          | Get all exams for a course         | Admin, Faculty, Student                     |
 
 ---
 
@@ -147,7 +140,7 @@
 | 3     | `GET`    | `/grades/{id}`                      | Get a grade by id                        | Admin, Faculty, Compliance                        |
 | 4     | `GET`    | `/grades/students/{studentId}`      | Get all grades of a student              | Admin, Faculty, DeptHead, Student (own), Compliance |
 | 5     | `GET`    | `/grades/exam/{examId}`             | Get all grades for an exam               | Admin, Faculty, Compliance                        |
-| 6     | `PATCH`  | `/grades/{id}`                      | Update a grade by id                     | Admin, Faculty                                    |
+| 6     | `PUT`    | `/grades/{id}`                      | Update a grade by id                     | Admin, Faculty                                    |
 | 7     | `DELETE` | `/grades/{id}`                      | Delete a grade by id                     | Admin                                             |
 
 ---
@@ -160,7 +153,7 @@
 | 2     | `GET`    | `/workload`                                 | Get all workloads                        | Admin, DeptHead, Compliance       |
 | 3     | `GET`    | `/workload/{id}`                            | Get a workload by id                     | Admin, DeptHead, Faculty (own)    |
 | 4     | `GET`    | `/workload/faculty/{facultyId}`             | Get workloads for a faculty              | Admin, DeptHead, Faculty (own), Compliance |
-| 5     | `PATCH`  | `/workload/{id}`                            | Update a workload by id                  | Admin, DeptHead                   |
+| 5     | `PUT`    | `/workload/{id}`                            | Update a workload by id                  | Admin, DeptHead                   |
 | 6     | `DELETE` | `/workload/{id}`                            | Delete a workload by id                  | Admin                             |
 
 ---
@@ -174,20 +167,22 @@
 | 3     | `GET`    | `/thesis/student/{studentId}`               | Get all theses for a student             | Admin, Faculty, DeptHead, Student (own), Compliance |
 | 4     | `GET`    | `/thesis/supervisor/{facultyId}`            | Get all theses supervised by a faculty   | Admin, DeptHead, Faculty (own), Compliance   |
 | 5     | `PUT`    | `/thesis/{id}`                              | Fully update a thesis by id              | Admin, Faculty                               |
-| 6     | `PATCH`  | `/thesis/{id}`                              | Partially update a thesis by id          | Admin, Faculty, Student (own)                |
-| 7     | `DELETE` | `/thesis/{id}`                              | Delete a thesis by id                    | Admin                                        |
+| 6     | `DELETE` | `/thesis/{id}`                              | Delete a thesis by id                    | Admin                                        |
 
 ---
 
 ## Student Documents API
 
-| Sl No | Method   | Endpoint                                          | Description                               | Role                                   |
-|:------|:---------|:--------------------------------------------------|:------------------------------------------|:---------------------------------------|
-| 1     | `POST`   | `/student-documents`                              | Upload a new student document             | Admin, Student (own)                   |
-| 2     | `GET`    | `/student-documents/{id}`                         | Get a student document by id              | Admin, Student (own), Compliance       |
-| 3     | `GET`    | `/student-documents/student/{studentId}`          | Get all documents for a student           | Admin, DeptHead, Student (own), Compliance |
-| 4     | `PATCH`  | `/student-documents/{id}/verify`                  | Verify a student document                 | Admin, Compliance                      |
-| 5     | `DELETE` | `/student-documents/{id}`                         | Delete a student document by id           | Admin                                  |
+| Sl No | Method   | Endpoint                                 | Description                     | Role                                   |
+|:------|:---------|:-----------------------------------------|:--------------------------------|:---------------------------------------|
+| 1     | `POST`   | `/student-documents/me/upload`           | Upload a new student document   | Admin, Student (own)                   |
+| 2     | `GET`    | `/student-documents/{id}`                | Get a student document by id    | Admin, Student (own), Compliance       |
+| 3     | `GET`    | `/student-documents/student/{studentId}` | Get all documents for a student | Admin, DeptHead, Student (own), Compliance |
+| 4     | `GET`    | `/student-documents/all`                 | Get all student document        | Admin, Compliance                      |
+| 5     | `DELETE` | `/student-documents/{id}`                | Delete a student document by id | Admin                      
+| 6     | `GET`    | `/student-documents/me/docs`             | Delete a student document by id | Admin                      
+| 7     | `PATCH`  | `/student-documents/{id}/verify`         | Delete a student document by id | Admin                      
+| 8     | `GET`    | `/student-documents/download/{id}`       | Delete a student document by id | Admin                      
 
 ---
 
@@ -198,25 +193,23 @@
 | 1     | `POST`   | `/research-projects`                                        | Create a new research project            | Admin, Faculty                                    |
 | 2     | `GET`    | `/research-projects`                                        | Get all research projects                | Admin, DeptHead, Faculty, Compliance, Regulator   |
 | 3     | `GET`    | `/research-projects/{id}`                                   | Get a research project by id             | Admin, DeptHead, Faculty, Student (enrolled), Compliance |
-| 4     | `PATCH`  | `/research-projects/{id}/status`                            | Update a research project status         | Admin, Faculty (own)                              |
-| 5     | `PATCH`  | `/research-projects/{id}/verify`                            | Verify a research project                | Admin, Compliance                                 |
-| 6     | `POST`   | `/research-projects/{id}/faculty`                           | Assign a co-investigator faculty         | Admin, Faculty (own)                              |
-| 7     | `DELETE` | `/research-projects/{id}/faculty/{facultyId}`               | Remove a co-investigator faculty         | Admin, Faculty (own)                              |
-| 8     | `POST`   | `/research-projects/{id}/students`                          | Add a student to a research project      | Admin, Faculty (own)                              |
-| 9     | `DELETE` | `/research-projects/{id}/students/{studentId}`              | Remove a student from a research project | Admin, Faculty (own)                              |
-| 10    | `DELETE` | `/research-projects/{id}`                                   | Delete a research project by id          | Admin                                             |
+| 4     | `POST`   | `/research-projects/{id}/faculty`                           | Assign a co-investigator faculty         | Admin, Faculty (own)                              |
+| 5     | `DELETE` | `/research-projects/{id}/faculty/{facultyId}`               | Remove a co-investigator faculty         | Admin, Faculty (own)                              |
+| 6     | `POST`   | `/research-projects/{id}/students`                          | Add a student to a research project      | Admin, Faculty (own)                              |
+| 7     | `DELETE` | `/research-projects/{id}/students/{studentId}`              | Remove a student from a research project | Admin, Faculty (own)                              |
+| 8     | `DELETE` | `/research-projects/{id}`                                   | Delete a research project by id          | Admin                                             |
 
 ---
 
 ## Notifications API
 
-| Sl No | Method   | Endpoint                            | Description                              | Role                              |
-|:------|:---------|:------------------------------------|:-----------------------------------------|:----------------------------------|
-| 1     | `POST`   | `/notifications`                    | Create a new notification                | Admin                             |
-| 2     | `GET`    | `/notifications/me`                 | Get notifications for the current user   | All                               |
-| 3     | `PATCH`  | `/notifications/{id}/read`          | Mark a notification as read              | All                               |
-| 4     | `PATCH`  | `/notifications/read-all`           | Mark all notifications as read           | All                               |
-| 5     | `DELETE` | `/notifications/{id}`               | Delete a notification by id              | Admin                             |
+| Sl No | Method   | Endpoint                               | Description                    | Role                              |
+|:------|:---------|:---------------------------------------|:-------------------------------|:----------------------------------|
+| 1     | `POST`   | `/notifications`                       | Create a new notification      | Admin                             |
+| 2     | `GET`    | `/notifications/{userId}`              | Get notifications by user id   | All                               |
+| 3     | `PATCH`  | `/notifications/{notificationId}/read` | Mark a notification as read    | All                               |
+| 4     | `PATCH`  | `/notifications/{userId}/read-all`     | Mark all notifications as read | All                               |
+| 5     | `DELETE` | `/notifications/{notificationId}`      | Delete a notification by id    | Admin                             |
 
 ---
 
@@ -243,8 +236,7 @@
 | 2     | `GET`    | `/audits`                   | Get all audits                     | Admin, Compliance, Regulator       |
 | 3     | `GET`    | `/audits/{id}`              | Get an audit by id                 | Admin, Compliance, Regulator       |
 | 4     | `PUT`    | `/audits/{id}`              | Fully update an audit by id        | Admin, Compliance                  |
-| 5     | `PATCH`  | `/audits/{id}/status`       | Update the audit status            | Admin, Compliance                  |
-| 6     | `DELETE` | `/audits/{id}`              | Delete an audit by id              | Admin                              |
+| 5     | `DELETE` | `/audits/{id}`              | Delete an audit by id              | Admin                              |
 
 ---
 
@@ -271,5 +263,4 @@
 | 3     | `GET`    | `/reports/{id}`                             | Get a report by id                 | Admin, Compliance, Regulator                |
 | 4     | `GET`    | `/reports/department/{departmentId}`        | Get reports for a department       | Admin, DeptHead, Compliance, Regulator      |
 | 5     | `PUT`    | `/reports/{id}`                             | Fully update a report by id        | Admin, Compliance                           |
-| 6     | `PATCH`  | `/reports/{id}/status`                      | Update a report status             | Admin, Compliance                           |
-| 7     | `DELETE` | `/reports/{id}`                             | Delete a report by id              | Admin                                       |
+| 6     | `DELETE` | `/reports/{id}`                             | Delete a report by id              | Admin                                       |
