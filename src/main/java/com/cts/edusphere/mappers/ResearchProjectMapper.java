@@ -7,6 +7,7 @@ import com.cts.edusphere.modules.ResearchProject;
 import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,9 +18,9 @@ public class ResearchProjectMapper {
     public ResearchProject toEntity(ResearchProjectRequest request, Faculty leadFaculty, List<Faculty> members, List<Student> students) {
         return ResearchProject.builder()
                 .title(request.title())
-                .faculty(leadFaculty)
-                .facultyMembers(members)
-                .students(students)
+                .facultyLead(leadFaculty)
+                .associatedFacultyMembers(members)
+                .participatedStudents(students)
                 .startDate(request.startDate())
                 .endDate(request.endDate())
                 .status(request.status())
@@ -29,14 +30,22 @@ public class ResearchProjectMapper {
     public ResearchProjectResponse toResponse(ResearchProject project) {
         if (project == null) return null;
 
+        List<UUID> facultyIds = project.getAssociatedFacultyMembers().stream()
+                .map(Faculty::getId)
+                .toList();
+
+        List<UUID> studentIds = project.getParticipatedStudents().stream()
+                .map(Student::getId)
+                .toList();
+
         return new ResearchProjectResponse(
                 project.getTitle(),
-                project.getFaculty(),
+                project.getFacultyLead().getId(),
                 project.getStatus(),
                 project.getEndDate(),
                 project.getStartDate(),
-                project.getFacultyMembers(),
-                project.getStudents()
+                facultyIds,
+                studentIds
         );
     }
 }

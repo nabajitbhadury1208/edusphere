@@ -31,7 +31,7 @@ public class ResearchProject extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false)
     @JsonIgnore
-    private Faculty faculty;
+    private Faculty facultyLead;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -41,7 +41,7 @@ public class ResearchProject extends BaseEntity {
     )
     @Builder.Default
     @JsonIgnore
-    private List<Faculty> facultyMembers = new ArrayList<>();
+    private List<Faculty> associatedFacultyMembers = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -49,9 +49,10 @@ public class ResearchProject extends BaseEntity {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
+
     @Builder.Default
     @JsonIgnore
-    private List<Student> students = new ArrayList<>();
+    private List<Student> participatedStudents = new ArrayList<>();
 
 
     @Column(nullable = false, name = "start_date")

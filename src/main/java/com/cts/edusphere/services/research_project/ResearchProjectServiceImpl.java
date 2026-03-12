@@ -63,7 +63,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         Faculty coInvestigator = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResourceNotFoundException("faculty member not found"));
 
-        project.getFacultyMembers().add(coInvestigator);
+        project.getAssociatedFacultyMembers().add(coInvestigator);
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -71,7 +71,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     public ResearchProjectResponse removeFacultyMember(UUID projectId, UUID facultyId) {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-        project.getFacultyMembers().removeIf(f -> f.getId().equals(facultyId));
+        project.getAssociatedFacultyMembers().removeIf(f -> f.getId().equals(facultyId));
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -82,7 +82,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("student not found"));
 
-        project.getStudents().add(student);
+        project.getParticipatedStudents().add(student);
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -90,7 +90,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     public ResearchProjectResponse removeStudent(UUID projectId, UUID studentId) {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-        project.getStudents().removeIf(s -> s.getId().equals(studentId));
+        project.getParticipatedStudents().removeIf(s -> s.getId().equals(studentId));
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
