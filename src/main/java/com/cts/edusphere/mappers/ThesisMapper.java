@@ -11,12 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ThesisMapper {
     public Thesis toEntity(ThesisRequestDto request) {
-//        Thesis thesis = new Thesis();
-//        thesis.setStudent(request.student());
-//        thesis.setTitle(request.title());
-//        thesis.setSupervisor(request.supervisor());
-//        thesis.setStatus(request.status());
-//        return thesis;
           return Thesis.builder()
                   .student(Student.builder().id(request.studentId()).build())
                   .title(request.title())
