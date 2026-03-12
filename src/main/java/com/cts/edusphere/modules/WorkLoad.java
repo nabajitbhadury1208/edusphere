@@ -24,7 +24,7 @@ public class WorkLoad extends BaseEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id", nullable = false)
-    private Faculty faculty;
+    private User faculty;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", nullable = false)

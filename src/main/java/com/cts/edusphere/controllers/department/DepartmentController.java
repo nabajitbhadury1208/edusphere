@@ -50,7 +50,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN', 'DEPARTMENT_HEAD')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
             @PathVariable UUID id,
             @Validated(OnUpdate.class) @RequestBody DepartmentRequestDTO requestDTO) {
@@ -59,7 +59,7 @@ public class DepartmentController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @PatchMapping("/{id}/head")
+    @PatchMapping("/{id}/head") //TODO NB CHECK THE MAPPING CONVENTIONS.
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDTO> changeDepartmentHead(
             @PathVariable UUID id,
@@ -69,7 +69,7 @@ public class DepartmentController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @GetMapping("/{id}/faculty")
+    @GetMapping("/{id}/faculty") //TODO NB PLEASE CHECK THE MAPPING CONVENTION
     public ResponseEntity<List<FacultyResponseDTO>> getDepartmentFaculties(@PathVariable UUID id) {
         log.info("Fetching all faculty members for department: {}", id);
         List<FacultyResponseDTO> faculties = facultyService.getFacultiesByDepartment(id);

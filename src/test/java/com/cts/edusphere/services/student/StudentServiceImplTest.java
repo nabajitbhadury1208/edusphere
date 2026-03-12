@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,7 +61,7 @@ public class StudentServiceImplTest {
         student.setDob(LocalDate.of(2000, 1, 15));
         student.setGender(Gender.FEMALE);
         student.setAddress("123 Main St");
-        student.setRoles(java.util.Set.of(Role.STUDENT));
+        student.setRoles(Set.of(Role.STUDENT));
         student.setStatus(Status.ACTIVE);
         student.setEnrollmentDate(Instant.now());
         student.setCreatedAt(Instant.now());
@@ -73,8 +74,7 @@ public class StudentServiceImplTest {
                 "password123",
                 LocalDate.of(2000, 1, 15),
                 Gender.FEMALE,
-                "123 Main St",
-                Status.ACTIVE
+                "123 Main St"
         );
 
         studentResponseDTO = new StudentResponseDTO(
@@ -82,7 +82,7 @@ public class StudentServiceImplTest {
                 "Alice Johnson",
                 "alice@example.com",
                 "9876543210",
-                java.util.Set.of(Role.STUDENT),
+                Set.of(Role.STUDENT),
                 Status.ACTIVE,
                 LocalDate.of(2000, 1, 15),
                 Gender.FEMALE,
@@ -162,6 +162,7 @@ public class StudentServiceImplTest {
     @Test
     void testUpdateStudent_Success() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
+        when(passwordEncoder.encode(studentRequestDTO.password())).thenReturn("encodedPassword");
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
 

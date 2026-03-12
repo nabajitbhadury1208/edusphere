@@ -45,7 +45,7 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, String subFolder) {
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file.");
@@ -57,6 +57,11 @@ public class FileSystemStorageService implements StorageService {
             }
             if (filename.lastIndexOf(".") > 0) {
                 extension = filename.substring(filename.lastIndexOf("."));
+            }
+
+            Path targetDir = this.rootLocation.resolve(subFolder).normalize();
+            if (!Files.exists(targetDir)) {
+                Files.createDirectories(targetDir);
             }
 
             String generatedFilename = UUID.randomUUID().toString() + extension;

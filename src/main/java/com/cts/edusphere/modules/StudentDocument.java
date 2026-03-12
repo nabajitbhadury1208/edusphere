@@ -21,8 +21,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class StudentDocument extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User studentUser;
 
     @Column(nullable = false, name = "doc_type")
     @Enumerated(EnumType.STRING)

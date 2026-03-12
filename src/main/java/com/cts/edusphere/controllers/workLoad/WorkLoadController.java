@@ -1,8 +1,8 @@
 package com.cts.edusphere.controllers.workLoad;
 
 
-import com.cts.edusphere.common.dto.workload.WorkLoadRequest;
-import com.cts.edusphere.common.dto.workload.WorkLoadResponse;
+import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
+import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.services.workLoad.WorkLoadService;
@@ -26,31 +26,31 @@ public class WorkLoadController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD')")
-    public ResponseEntity<WorkLoadResponse> create(@Validated(OnCreate.class) @RequestBody WorkLoadRequest request) {
+    public ResponseEntity<WorkLoadResponseDto> create(@Validated(OnCreate.class) @RequestBody WorkLoadRequestDto request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createWorkLoad(request));
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'COMPLIANCE')")
-    public ResponseEntity<List<WorkLoadResponse>> getAll() {
+    public ResponseEntity<List<WorkLoadResponseDto>> getAll() {
         return ResponseEntity.ok(service.getAllWorkLoads());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'FACULTY')")
-    public ResponseEntity<WorkLoadResponse> getById(@PathVariable UUID id) {
+    public ResponseEntity<WorkLoadResponseDto> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.getWorkLoadById(id));
     }
 
     @GetMapping("/faculty/{facultyId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'FACULTY', 'COMPLIANCE')")
-    public ResponseEntity<List<WorkLoadResponse>> getByFaculty(@PathVariable UUID facultyId) {
+    public ResponseEntity<List<WorkLoadResponseDto>> getByFaculty(@PathVariable UUID facultyId) {
         return ResponseEntity.ok(service.getWorkLoadsByFaculty(facultyId));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD')")
-    public ResponseEntity<WorkLoadResponse> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody WorkLoadRequest request) {
+    public ResponseEntity<WorkLoadResponseDto> update(@Validated(OnUpdate.class)@PathVariable UUID id, @Valid @RequestBody WorkLoadRequestDto request) {
         return ResponseEntity.ok(service.updateWorkLoad(id, request));
     }
 

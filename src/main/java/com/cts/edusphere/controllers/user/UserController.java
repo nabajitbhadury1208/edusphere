@@ -3,17 +3,20 @@ package com.cts.edusphere.controllers.user;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.common.dto.user.UserResponseDto;
 import com.cts.edusphere.config.security.UserPrincipal;
+import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.mappers.UserMapper;
 import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -88,7 +91,7 @@ public class UserController {
         }
     }
 
-    @PatchMapping("/{id}")
+    @PostMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequestDto request, @AuthenticationPrincipal UserPrincipal principal) {
         try {
@@ -102,4 +105,27 @@ public class UserController {
             return ResponseEntity.status(500).build();
         }
     }
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserResponseDto> updateUserStatus(
+            @PathVariable UUID id,
+            @RequestBody UserRequestDto requestDto,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        try {
+            Status status = requestDto.status();
+            if (status == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            var updatedUser = userService.updateUserStatus(id, status, principal);
+            return ResponseEntity.ok(userMapper.toResponse(updatedUser));
+        } catch (IllegalArgumentException e) {
+            log.warn("Unauthorized status change: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (Exception e) {
+            log.error("Error updating user status: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

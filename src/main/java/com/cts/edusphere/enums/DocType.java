@@ -2,5 +2,11 @@ package com.cts.edusphere.enums;
 
 public enum DocType {
     IDPROOF,
-    TRANSCRIPT
+    TRANSCRIPT,
+    MARKSSHEET,
+    CERTIFICATE,
+    OFFERLETTER,
+    BONAFIDE,
+    FEE_RECEIPT,
+    OTHER
 }

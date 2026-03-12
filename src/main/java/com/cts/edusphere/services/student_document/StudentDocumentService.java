@@ -14,6 +14,10 @@ public interface StudentDocumentService {
 
     List<StudentDocumentResponse> getAllDocumentsByStudentId(UUID studentId);
 
+    List<StudentDocumentResponse> getMyDocumentsByType(UUID studentId, String docType);
+
+    List<StudentDocumentResponse> getAllDocuments();
+
     StudentDocumentResponse verifyDocument(UUID id, boolean status);
 
     void deleteDocument(UUID id);

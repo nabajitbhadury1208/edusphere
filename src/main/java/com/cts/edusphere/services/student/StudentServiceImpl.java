@@ -3,6 +3,7 @@ package com.cts.edusphere.services.student;
 import com.cts.edusphere.common.dto.student.StudentRequestDTO;
 import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Role;
+import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.StudentMapper;
@@ -30,12 +31,12 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    // TODO: Fix This
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) {
         try {
             Student student = studentMapper.toEntity(requestDTO);
             student.setRoles(Set.of(Role.STUDENT));
             student.setPassword(passwordEncoder.encode(student.getPassword()));
+            student.setStatus(Status.ACTIVE);
 
             Student savedStudent = studentRepository.save(student);
             log.info("student record created successfully with ID: {}", savedStudent.getId());
@@ -87,7 +88,6 @@ public class StudentServiceImpl implements StudentService {
             if (requestDTO.dob() != null) student.setDob(requestDTO.dob());
             if (requestDTO.gender() != null) student.setGender(requestDTO.gender());
             if (requestDTO.address() != null) student.setAddress(requestDTO.address());
-            if (requestDTO.status() != null) student.setStatus(requestDTO.status());
 
             Student updatedStudent = studentRepository.save(student);
             log.info("student record updated successfully: {}", id);

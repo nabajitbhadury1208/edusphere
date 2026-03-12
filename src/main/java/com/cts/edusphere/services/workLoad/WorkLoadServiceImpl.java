@@ -1,11 +1,13 @@
 package com.cts.edusphere.services.workLoad;
 
-import com.cts.edusphere.common.dto.workload.WorkLoadRequest;
-import com.cts.edusphere.common.dto.workload.WorkLoadResponse;
+import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
+import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.WorkLoadMapper;
 import com.cts.edusphere.modules.WorkLoad;
+import com.cts.edusphere.repositories.CourseRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import com.cts.edusphere.repositories.WorkLoadRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,23 +26,32 @@ public class WorkLoadServiceImpl implements WorkLoadService {
 
     private final WorkLoadRepository repository;
     private final WorkLoadMapper mapper;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
     @Override
-    public WorkLoadResponse createWorkLoad(WorkLoadRequest request) {
+    public WorkLoadResponseDto createWorkLoad(WorkLoadRequestDto request) {
         try {
             WorkLoad workLoad = mapper.toEntity(request);
+            if (request.courseId() != null) {
+                workLoad.setCourse(courseRepository.getReferenceById(request.courseId()));
+            }
+            if (request.facultyId() != null) {
+                workLoad.setFaculty(userRepository.getReferenceById(request.facultyId()));
+            }
             WorkLoad savedWorkLoad = repository.save(workLoad);
+
             log.info("Workload record created successfully with ID: {}", savedWorkLoad.getId());
             return mapper.toResponse(savedWorkLoad);
         } catch (Exception e) {
             log.error("Error occurred while creating workload: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create workload record");
+            throw new InternalServerErrorException("Failed to create workload record: " + e.getMessage());
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<WorkLoadResponse> getAllWorkLoads() {
+    public List<WorkLoadResponseDto> getAllWorkLoads() {
         try {
             return repository.findAll().stream()
                     .map(mapper::toResponse)
@@ -53,7 +64,7 @@ public class WorkLoadServiceImpl implements WorkLoadService {
 
     @Override
     @Transactional(readOnly = true)
-    public WorkLoadResponse getWorkLoadById(UUID id) {
+    public WorkLoadResponseDto getWorkLoadById(UUID id) {
         try {
             return repository.findById(id)
                     .map(mapper::toResponse)
@@ -68,7 +79,7 @@ public class WorkLoadServiceImpl implements WorkLoadService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<WorkLoadResponse> getWorkLoadsByFaculty(UUID facultyId) {
+    public List<WorkLoadResponseDto> getWorkLoadsByFaculty(UUID facultyId) {
         try {
             return repository.findByFacultyId(facultyId).stream()
                     .map(mapper::toResponse)
@@ -80,13 +91,13 @@ public class WorkLoadServiceImpl implements WorkLoadService {
     }
 
     @Override
-    public WorkLoadResponse updateWorkLoad(UUID id, WorkLoadRequest request) {
+    public WorkLoadResponseDto updateWorkLoad(UUID id, WorkLoadRequestDto request) {
         try {
             WorkLoad existing = repository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Workload not found with id: " + id));
 
-            if (request.faculty() != null) existing.setFaculty(request.faculty());
-            if (request.course() != null) existing.setCourse(request.course());
+            if (request.facultyId() != null) existing.setFaculty(userRepository.getReferenceById(request.facultyId()));
+            if (request.courseId() != null) existing.setCourse(courseRepository.getReferenceById(request.courseId()));
             if (request.hours() != null) existing.setHours(request.hours());
             if (request.semester() != null) existing.setSemester(request.semester());
             if (request.status() != null) existing.setStatus(request.status());

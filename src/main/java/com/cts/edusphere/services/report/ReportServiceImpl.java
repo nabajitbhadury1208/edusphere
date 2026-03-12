@@ -1,12 +1,14 @@
 package com.cts.edusphere.services.report;
 
-import com.cts.edusphere.common.dto.report.ReportRequest;
-import com.cts.edusphere.common.dto.report.ReportResponse;
+import com.cts.edusphere.common.dto.report.ReportRequestDto;
+import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.ReportMapper;
 import com.cts.edusphere.modules.Report;
+import com.cts.edusphere.repositories.DepartmentRepository;
 import com.cts.edusphere.repositories.ReportRepository;
+import com.cts.edusphere.repositories.UserRepository; // Added
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,23 +26,36 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final ReportMapper reportMapper;
+    private final DepartmentRepository departmentRepository;
+    private final UserRepository userRepository; // Added
 
     @Override
-    public ReportResponse createReport(ReportRequest request) {
+    public ReportResponseDto createReport(ReportRequestDto request) {
         try {
             Report report = reportMapper.toEntity(request);
+
+            // Fetch proxies to satisfy @Version and avoid Detached Entity errors
+            if (request.departmentId() != null) {
+                report.setDepartment(departmentRepository.getReferenceById(request.departmentId()));
+            }
+
+            // Map the generator ID to a managed Proxy
+            if (request.generatedBy() != null) {
+                report.setGeneratedBy(userRepository.getReferenceById(request.generatedBy()));
+            }
+
             Report savedReport = reportRepository.save(report);
             log.info("Report created successfully with ID: {}", savedReport.getId());
             return reportMapper.toResponse(savedReport);
         } catch (Exception e) {
             log.error("Error occurred while creating report: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create report record");
+            throw new InternalServerErrorException("Failed to create report record: " + e.getMessage());
         }
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReportResponse> getAllReports() {
+    public List<ReportResponseDto> getAllReports() {
         try {
             return reportRepository.findAll().stream()
                     .map(reportMapper::toResponse)
@@ -53,7 +68,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public ReportResponse getReportById(UUID id) {
+    public ReportResponseDto getReportById(UUID id) {
         try {
             return reportRepository.findById(id)
                     .map(reportMapper::toResponse)
@@ -68,7 +83,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ReportResponse> getReportsByDepartment(UUID departmentId) {
+    public List<ReportResponseDto> getReportsByDepartment(UUID departmentId) {
         try {
             return reportRepository.findByDepartmentId(departmentId).stream()
                     .map(reportMapper::toResponse)
@@ -80,7 +95,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ReportResponse updateReport(UUID id, ReportRequest request) {
+    public ReportResponseDto updateReport(UUID id, ReportRequestDto request) {
         try {
             Report existing = reportRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
@@ -88,7 +103,14 @@ public class ReportServiceImpl implements ReportService {
             if (request.metrics() != null) existing.setMetrics(request.metrics());
             if (request.status() != null) existing.setStatus(request.status());
             if (request.scope() != null) existing.setScope(request.scope());
-            if (request.department() != null) existing.setDepartment(request.department());
+
+            if (request.departmentId() != null) {
+                existing.setDepartment(departmentRepository.getReferenceById(request.departmentId()));
+            }
+
+            if (request.generatedBy() != null) {
+                existing.setGeneratedBy(userRepository.getReferenceById(request.generatedBy()));
+            }
 
             Report updatedReport = reportRepository.save(existing);
             log.info("Report record updated successfully: {}", id);

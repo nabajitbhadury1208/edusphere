@@ -291,4 +291,3 @@ public class DepartmentServiceImplTest {
         verify(departmentRepository, never()).delete(any());
     }
 }
-
