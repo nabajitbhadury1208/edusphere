@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,82 +29,99 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class NotificationServiceImpl implements NotificationService {
 
-  private final NotificationRepository notificationRepository;
-  private final UserRepository userRepository;
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
+    // Many => Multiple messages; multicast() => multiple listeners;
+    // onBackpressureBuffer() => for handling backpressure, it stores in buffer to
+    // try later
+    private final Sinks.Many<NotificationResponse> notificationSink = Sinks.many().multicast().onBackpressureBuffer();
 
-  // private final UserServiceImpl us
+    public Flux<NotificationResponse> subscribeToNofications(UUID userId) {
+        Flux<NotificationResponse> existingNotifs = Flux.fromIterable(notificationRepository.findByUser_Id(userId))
+                .map(NotificationMapper::toDTO);
+        ;
 
-  @Override
-  public NotificationResponse createNotification(UUID userId, NotificationRequest notificationRequest) {
-    try {
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new UserNotFoundException("User with id {} not found " + userId));
+        Flux<NotificationResponse> liveNotifs = notificationSink.asFlux()
+                .filter(notif -> notif.userId().equals(userId));
 
-      Notification notification = NotificationMapper.toEntity(notificationRequest, user);
-
-      log.info("Created notification with id: " + notification.getId());
-
-      return (NotificationMapper.toDTO(notificationRepository.save(notification)));
-    } catch (Exception e) {
-      log.error("Error creating notification");
-      throw new InternalServerErrorException("Error creating notification");
+        return Flux.concat(existingNotifs, liveNotifs).doOnSubscribe(s -> log.info("User {} subscribed", userId));
     }
-  }
 
-  @Override
-  public List<NotificationResponse> getAllNotificationsForUserId(UUID userId) {
-    try {
-      List<Notification> notifications = notificationRepository.findByUser_Id(userId);
+    @Override
+    public NotificationResponse createNotification(UUID userId, NotificationRequest notificationRequest) {
+        try {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new UserNotFoundException("User with id {} not found " + userId));
 
-      if (notifications.isEmpty()) {
-        throw new NoNotificationFoundWithUserId("No notifications found with user id " + userId);
-      }
+            Notification notification = NotificationMapper.toEntity(notificationRequest, user);
+            NotificationResponse notificationResponse = NotificationMapper
+                    .toDTO(notificationRepository.save(notification));
 
-      log.info("Successfully fetched notifications for user with id: " + userId);
-      return notifications.stream().map(NotificationMapper::toDTO).toList();
+            notificationSink.tryEmitNext(notificationResponse);
 
-    } catch (Exception e) {
-      log.error("Error getting notifications for user with id {}", userId);
-      throw new InternalServerErrorException("Error getting all notifications");
+            log.info("Created notification and sent to id: {} ", notification.getId());
+
+            return (notificationResponse);
+        } catch (Exception e) {
+            log.error("Error creating notification");
+            throw new InternalServerErrorException("Error creating notification");
+        }
     }
-  }
 
-  @Override
-  public void markNotificationAsRead(UUID notificationId) {
-    try {
-      Notification notification = notificationRepository.findById(notificationId)
-          .orElseThrow(() -> new NoNotificationFoundWithId("No notification found with id " + notificationId));
+    @Override
+    public List<NotificationResponse> getAllNotificationsForUserId(UUID userId) {
+        try {
+            List<Notification> notifications = notificationRepository.findByUser_Id(userId);
 
-      notification.setRead(true);
+            if (notifications.isEmpty()) {
+                throw new NoNotificationFoundWithUserId("No notifications found with user id " + userId);
+            }
 
-      notificationRepository.save(notification);
+            log.info("Successfully fetched notifications for user with id: " + userId);
+            return notifications.stream().map(NotificationMapper::toDTO).toList();
 
-      log.info("Marked notification with id: {id} as read", notificationId);
-    } catch (Exception e) {
-      log.error("Error marking notification of id {}  as read", notificationId);
-      throw new InternalServerErrorException("Error marking notification of id " + notificationId + " as read");
+        } catch (Exception e) {
+            log.error("Error getting notifications for user with id {}", userId);
+            throw new InternalServerErrorException("Error getting all notifications");
+        }
     }
-  }
 
-  @Override
-  public void markAllNotificationsAsRead(UUID userId) {
-    try {
-      notificationRepository.markAllAsReadByUserId(userId);
-      log.info("Marked all notifications of user with id {} as read", userId);
-    } catch (Exception e) {
-      log.error("Error getting all notifications");
-      throw new InternalServerErrorException("Error getting all notifications");
-    }
-  }
+    @Override
+    public void markNotificationAsRead(UUID notificationId) {
+        try {
+            Notification notification = notificationRepository.findById(notificationId).orElseThrow(
+                    () -> new NoNotificationFoundWithId("No notification found with id " + notificationId));
 
-  @Override
-  public void deleteNotificationById(UUID notificationId) {
-    try {
-      notificationRepository.deleteById(notificationId);
-      log.info("Deleted notification with id {}" + notificationId);
-    } catch (Exception e) {
-      log.error("Error deleting notifications of id: {}", notificationId);
-      throw new InternalServerErrorException("Error deleting notifcation");
+            notification.setRead(true);
+
+            notificationRepository.save(notification);
+
+            log.info("Marked notification with id: {} as read", notificationId);
+        } catch (Exception e) {
+            log.error("Error marking notification of id {}  as read", notificationId);
+            throw new InternalServerErrorException("Error marking notification of id " + notificationId + " as read");
+        }
     }
-  }
+
+    @Override
+    public void markAllNotificationsAsRead(UUID userId) {
+        try {
+            notificationRepository.markAllAsReadByUserId(userId);
+            log.info("Marked all notifications of user with id {} as read", userId);
+        } catch (Exception e) {
+            log.error("Error getting all notifications");
+            throw new InternalServerErrorException("Error getting all notifications");
+        }
+    }
+
+    @Override
+    public void deleteNotificationById(UUID notificationId) {
+        try {
+            notificationRepository.deleteById(notificationId);
+            log.info("Deleted notification with id {}" + notificationId);
+        } catch (Exception e) {
+            log.error("Error deleting notifications of id: {}", notificationId);
+            throw new InternalServerErrorException("Error deleting notifcation");
+        }
+    }
 }
