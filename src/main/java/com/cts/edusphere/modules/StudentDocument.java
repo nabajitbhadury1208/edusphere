@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Table(
         name = "student_document",
         indexes = {
-                @Index(name = "idx_student_document_student", columnList = "student_id"),
+                @Index(name = "idx_student_document_student", columnList = "user_id"),
         }
 )
 @AttributeOverride(name = "id", column = @Column(name = "document_id"))
@@ -22,7 +22,7 @@ import lombok.experimental.SuperBuilder;
 public class StudentDocument extends BaseEntity {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User studentUser;
+    private Student studentUser;
 
     @Column(nullable = false, name = "doc_type")
     @Enumerated(EnumType.STRING)

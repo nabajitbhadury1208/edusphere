@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StudentDocumentMapper {
 
-    public StudentDocument toEntity(StudentDocumentRequest request, User studentUser, String fileUri) {
+    public StudentDocument toEntity(StudentDocumentRequest request, Student studentUser, String fileUri) {
         if (request == null) return null;
 
         return StudentDocument.builder()

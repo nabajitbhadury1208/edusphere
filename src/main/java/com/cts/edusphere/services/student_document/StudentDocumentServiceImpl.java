@@ -5,9 +5,11 @@ import com.cts.edusphere.common.storage.StorageService;
 import com.cts.edusphere.enums.DocType;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.StudentDocumentMapper;
+import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.modules.StudentDocument;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.StudentDocumentRepository;
+import com.cts.edusphere.repositories.StudentRepository;
 import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -24,19 +26,20 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class StudentDocumentServiceImpl implements StudentDocumentService {
     private final StudentDocumentRepository studentDocumentRepository;
-    private final UserRepository studentRepository;
+    private final StudentRepository studentRepository;
     private final StorageService storageService;
     private final StudentDocumentMapper studentDocumentMapper;
 
     @Override
     @Transactional
     public StudentDocumentResponse uploadDocument(MultipartFile file, UUID studentId, String docType) {
-        User studentUser = studentRepository.findById(studentId).orElseThrow(
+        Student studentUser = studentRepository.findById(studentId).orElseThrow(
                 () -> new ResourceNotFoundException("student not found with id: " + studentId)
         );
 
+
         DocType type;
-        try{
+        try {
             type = DocType.valueOf(docType.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid document type: " + String.join(", ", getDocTypeNames()));
@@ -78,7 +81,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
                 () -> new ResourceNotFoundException("student not found with id: " + studentId)
         );
         DocType type;
-        try{
+        try {
             type = DocType.valueOf(docType.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid document type: " + String.join(", ", getDocTypeNames()));
@@ -91,7 +94,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
 
     @Override
     public List<StudentDocumentResponse> getAllDocuments() {
-        return studentDocumentRepository.findAllOrderedByCreatedAt().stream().map(studentDocumentMapper ::toResponse).toList();
+        return studentDocumentRepository.findAllOrderedByCreatedAt().stream().map(studentDocumentMapper::toResponse).toList();
     }
 
 
@@ -128,7 +131,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
 
     private List<String> getDocTypeNames() {
         List<String> names = new ArrayList<>();
-        for (DocType t : DocType.values()){
+        for (DocType t : DocType.values()) {
             names.add(t.name());
         }
         return names;

@@ -52,7 +52,11 @@ public class CurriculumServiceImpl implements CurriculumService {
     @Override
     public void updateCurriculumById(UUID id, CurriculumRequest curriculumRequest) {
         Curriculum curriculum = curriculumRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Curriculum not found with id: " + id));
-        Course course = courseRepository.findById(curriculumRequest.courseId()).orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + curriculumRequest.courseId()));
+       if(curriculumRequest.courseId() != null){
+           Course course = courseRepository.findById(curriculumRequest.courseId()).orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + curriculumRequest.courseId()));
+
+           curriculum.setCourse(course);
+       }
 
         if(curriculumRequest.description() != null) {
             curriculum.setDescription(curriculumRequest.description());
@@ -63,7 +67,6 @@ public class CurriculumServiceImpl implements CurriculumService {
         if(curriculumRequest.status() != null) {
             curriculum.setStatus(curriculumRequest.status());
         }
-        curriculum.setCourse(course);
 
         curriculumRepository.save(curriculum);
     }
