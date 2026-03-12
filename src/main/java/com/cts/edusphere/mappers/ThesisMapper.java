@@ -1,27 +1,36 @@
 package com.cts.edusphere.mappers;
 
-import com.cts.edusphere.common.dto.thesis.ThesisRequest;
-import com.cts.edusphere.common.dto.thesis.ThesisResponse;
+import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
+import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
+import com.cts.edusphere.modules.Faculty;
+import com.cts.edusphere.modules.Student;
 import com.cts.edusphere.modules.Thesis;
-import jakarta.persistence.Column;
+import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ThesisMapper {
-    public Thesis toEntity(ThesisRequest request) {
-        Thesis thesis = new Thesis();
-        thesis.setStudent(request.student());
-        thesis.setTitle(request.title());
-        thesis.setSupervisor(request.supervisor());
-        thesis.setStatus(request.status());
-        return thesis;
+    public Thesis toEntity(ThesisRequestDto request) {
+//        Thesis thesis = new Thesis();
+//        thesis.setStudent(request.student());
+//        thesis.setTitle(request.title());
+//        thesis.setSupervisor(request.supervisor());
+//        thesis.setStatus(request.status());
+//        return thesis;
+          return Thesis.builder()
+                  .student(Student.builder().id(request.studentId()).build())
+                  .title(request.title())
+                  .supervisor(Faculty.builder().id(request.supervisorId()).build())
+                  .submissionDate(request.submissionDate())
+                  .status(request.status())
+                  .build();
     }
 
-    public ThesisResponse toResponse(Thesis thesis) {
-        return new ThesisResponse(
-                thesis.getStudent(),
+    public ThesisResponseDto toResponse(Thesis thesis) {
+        return new ThesisResponseDto(
+                thesis.getStudent().getId(),
                 thesis.getTitle(),
-                thesis.getSupervisor(),
+                thesis.getSupervisor().getId(),
                 thesis.getSubmissionDate(),
                 thesis.getStatus()
         );

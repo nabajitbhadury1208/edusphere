@@ -2,6 +2,7 @@ package com.cts.edusphere.modules;
 
 import com.cts.edusphere.core.BaseEntity;
 import com.cts.edusphere.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,6 +28,7 @@ public class Course extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "department_id", nullable = false)
+    @JsonIgnore
     private Department department;
 
     @Column(nullable = false)

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -283,25 +284,25 @@ public class GenericExceptionHandler {
         );
     }
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> handleValidation(
-    MethodArgumentNotValidException ex,
-    WebRequest request
-  ) {
-    logger.warn("MethodArgumentNotValidException: {}", ex.getMessage());
-    Map<String, String> errors = new HashMap<>();
-    ex
-      .getBindingResult()
-      .getFieldErrors()
-      .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
-      );
-    return buildErrorResponse(
-      "Validation failed",
-      HttpStatus.BAD_REQUEST,
-      request,
-      errors
-    );
-  }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidation(
+            MethodArgumentNotValidException ex,
+            WebRequest request
+    ) {
+        logger.warn("MethodArgumentNotValidException: {}", ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        ex
+                .getBindingResult()
+                .getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
+                );
+        return buildErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST,
+                request,
+                errors
+        );
+    }
 
     @ExceptionHandler(DepartmentNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDepartmentNotFoundException(
@@ -416,8 +417,9 @@ public class GenericExceptionHandler {
                 errors
         );
     }
+
     @ExceptionHandler(CannotDeleteException.class)
-    public ResponseEntity<ErrorResponse> handleCannotDeleteException(MethodArgumentNotValidException ex, WebRequest request){
+    public ResponseEntity<ErrorResponse> handleCannotDeleteException(MethodArgumentNotValidException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex
                 .getBindingResult()
@@ -425,6 +427,12 @@ public class GenericExceptionHandler {
                 .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
                 );
         return buildErrorResponse("Deletion failed", HttpStatus.EXPECTATION_FAILED, request, errors);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<Map<String, String>> handleLockedException(LockedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Your account has been deactivated. Please contact an admin."));
     }
 
 }

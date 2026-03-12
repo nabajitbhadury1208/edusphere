@@ -22,57 +22,57 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExamController {
 
-    private final ExamService examService;
+  private final ExamService examService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createExam(@Validated(OnCreate.class) @RequestBody ExamRequest request){
+  @PostMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> createExam(@Validated(OnCreate.class) @RequestBody ExamRequest request) {
 
-            ExamResponse response = examService.createExam(request);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+    ExamResponse response = examService.createExam(request);
+    return new ResponseEntity<>(response, HttpStatus.CREATED);
 
-    }
+  }
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllExams(){
+  @GetMapping
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> getAllExams() {
 
-            List<ExamResponse> exams=examService.getAllExams();
-            return ResponseEntity.ok(exams);
+    List<ExamResponse> exams = examService.getAllExams();
+    return ResponseEntity.ok(exams);
 
-    }
+  }
 
-    @PutMapping
-    @PreAuthorize("hasRole('ADMIN)")
-    public ResponseEntity<?> updateExam(@PathVariable UUID id, @Validated(OnUpdate.class) @RequestBody ExamRequest request){
-        ExamResponse updatedExam = examService.updateExam(id,request);
-        return ResponseEntity.ok(updatedExam);
-    }
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> updateExamById(@PathVariable UUID id,
+      @Validated(OnUpdate.class) @RequestBody ExamRequest request) {
+    ExamResponse updatedExam = examService.updateExam(id, request);
+    return ResponseEntity.ok(updatedExam);
+  }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getExamById(@PathVariable UUID id){
+  @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> getExamById(@PathVariable UUID id) {
 
-            ExamResponse exam=examService.getExamById(id);
-            return ResponseEntity.ok(exam);
+    ExamResponse exam = examService.getExamById(id);
+    return ResponseEntity.ok(exam);
 
-    }
+  }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteExam(@PathVariable UUID id){
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> deleteExam(@PathVariable UUID id) {
 
-           examService.deleteExam(id);
-            return ResponseEntity.noContent().build();
+    examService.deleteExam(id);
+    return ResponseEntity.noContent().build();
 
-    }
+  }
 
+  @GetMapping("/course/{courseId}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<?> getExamsByCourse(@PathVariable UUID courseId) {
 
-    @GetMapping("/course/{courseId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getExamsByCourse(@PathVariable UUID courseId){
-
-            List<ExamResponse> exams=examService.getExamsByCourse(courseId);
-            return ResponseEntity.ok(exams);
-    }
+    List<ExamResponse> exams = examService.getExamsByCourse(courseId);
+    return ResponseEntity.ok(exams);
+  }
 }
