@@ -3,7 +3,6 @@ package com.cts.edusphere.services.user;
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
-import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
