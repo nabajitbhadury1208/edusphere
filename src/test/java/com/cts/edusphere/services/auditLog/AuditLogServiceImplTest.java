@@ -55,7 +55,7 @@ public class AuditLogServiceImplTest {
         auditLog.setUser(user);
         auditLog.setAction("CREATE");
         auditLog.setResource("Faculty");
-        auditLog.setTimestamp(Instant.now());
+        // auditLog.setTimestamp(Instant.now());
         auditLog.setCreatedAt(Instant.now());
         auditLog.setUpdatedAt(Instant.now());
 
@@ -64,8 +64,8 @@ public class AuditLogServiceImplTest {
                 userId,
                 "CREATE",
                 "Faculty",
-                null,
-                Instant.now()
+                null
+                // Instant.now()
         );
     }
 
