@@ -4,9 +4,12 @@ import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.mappers.AuditLogMapper;
 import com.cts.edusphere.modules.AuditLog;
+import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.AuditLogRepository;
+import com.cts.edusphere.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,11 +27,18 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
     private final AuditLogMapper auditLogMapper;
+    private final UserRepository userRepository;
 
-        @Override
-    public String createLog(AuditLogRequestDTO auditLogRequestDTO) {
+    @Override
+    @Transactional
+    public String createLog(AuditLogRequestDTO auditLogRequestDTO, UUID userId) {
         try {
-            AuditLog auditLog = auditLogMapper.toEntity(auditLogRequestDTO);
+            if (userId == null) {
+                log.warn("Cannot create audit log: userId is null. (Action: {})", auditLogRequestDTO.action());
+                return "Skipped audit: No user context";
+            }
+            User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found for creation of audit log"));
+            AuditLog auditLog = auditLogMapper.toEntity(auditLogRequestDTO, user);
             auditLogRepository.save(auditLog);
             return "Successfully created audit";
         } catch (Exception e) {

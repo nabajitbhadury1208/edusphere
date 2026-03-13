@@ -33,7 +33,4 @@ public class AuditLog extends BaseEntity {
     @Column(nullable = false)
     private String resource;
 
-    @Column(nullable = false)
-    private Instant timestamp;
-
 }

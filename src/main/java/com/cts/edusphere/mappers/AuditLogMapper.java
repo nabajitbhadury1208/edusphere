@@ -6,6 +6,7 @@ import com.cts.edusphere.modules.AuditLog;
 
 import java.time.Instant;
 
+import com.cts.edusphere.modules.User;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,18 +17,16 @@ public class AuditLogMapper {
                 entity.getUser() != null ? entity.getUser().getId() : null,
                 entity.getAction(),
                 entity.getResource(),
-                null,
-                entity.getTimestamp()
+                entity.getCreatedAt()
         );
     }
 
-    public AuditLog toEntity(AuditLogRequestDTO auditLogRequestDTO) {
+    public AuditLog toEntity(AuditLogRequestDTO auditLogRequestDTO, User user) {
         return AuditLog
-            .builder()
-            .id(auditLogRequestDTO.userId())
-            .action(auditLogRequestDTO.action())
-            .resource(auditLogRequestDTO.resource())
-            .timestamp(Instant.now())
-            .build();
+                .builder()
+                .user(user)
+                .action(auditLogRequestDTO.action())
+                .resource(auditLogRequestDTO.resource())
+                .build();
     }
 }

@@ -46,30 +46,39 @@ public class AspectConfig {
 
     // Runs after controller has done its job
     @AfterReturning(pointcut = "controllerMethods()", returning = "result")
-    public void logAfter(JoinPoint joinPoint, Object result) {
-        String action = joinPoint.getSignature().getName();
-        String resource = joinPoint.getSignature().getClass().getSimpleName();
-
-        AuditLogRequestDTO auditLogRequestDTO = new AuditLogRequestDTO(getUserId(), action, resource);
-        auditLogService.createLog(auditLogRequestDTO);
-
-        log.info("{} called the method {}(). Returned with a success", resource, action);
+    public void logAfter(JoinPoint joinPoint) {
+       handleAudit(joinPoint, null);
 
     }
 
     @AfterThrowing(pointcut = "controllerMethods()")
     public void logAfterThrow(JoinPoint joinPoint, Throwable ex) {
+       handleAudit(joinPoint, ex);
+    }
+
+    private void handleAudit(JoinPoint joinPoint, Throwable ex) {
+        UUID userId = getUserId();
         String action = joinPoint.getSignature().getName();
-        String resource = joinPoint.getSignature().getClass().getSimpleName();
-        String exceptionName = ex.getClass().getSimpleName();
-        String exceptionMssg = ex.getMessage();
 
-        log.info("{}: {} called the method {}. Returned with an exception -> {}", exceptionName, resource, action,
-                exceptionMssg);
+        String resource = joinPoint.getTarget().getClass().getSimpleName();
 
-        AuditLogRequestDTO auditLogRequestDTO = new AuditLogRequestDTO(getUserId(), action, resource);
+        if (userId == null) {
+            log.info("Anonymous action: {} on {}. Skipping database audit log.", action, resource);
+            return;
+        }
 
-        auditLogService.createLog(auditLogRequestDTO);
+        if (ex != null) {
+            action = action + " (FAILED: " + ex.getClass().getSimpleName() + ")";
+            log.error("Method {} failed with: {}", action, ex.getMessage());
+        }
+
+        try {
+            AuditLogRequestDTO auditLogRequestDTO = new AuditLogRequestDTO(userId, action, resource);
+            auditLogService.createLog(auditLogRequestDTO, userId);
+            log.info("{} successfully logged action: {}", resource, action);
+        } catch (Exception e) {
+            log.error("Failed to persist audit log: {}", e.getMessage());
+        }
     }
 
     UUID getUserId() {
