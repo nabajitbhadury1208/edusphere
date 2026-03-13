@@ -2,7 +2,7 @@ package com.cts.edusphere.common.dto.report;
 
 import com.cts.edusphere.enums.ReportScope;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.modules.User;
+import com.cts.edusphere.modules.user.User;
 
 import java.util.UUID;
 

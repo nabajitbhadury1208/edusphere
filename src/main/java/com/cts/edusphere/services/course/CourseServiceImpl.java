@@ -13,10 +13,10 @@ import com.cts.edusphere.exceptions.genericexceptions.CourseAlreadyExistsExcepti
 import com.cts.edusphere.exceptions.genericexceptions.CourseNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.DepartmentNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.mappers.CoursesMapper;
-import com.cts.edusphere.modules.Course;
-import com.cts.edusphere.repositories.CourseRepository;
-import com.cts.edusphere.repositories.DepartmentRepository;
+import com.cts.edusphere.mappers.courses.CoursesMapper;
+import com.cts.edusphere.modules.courses.Course;
+import com.cts.edusphere.repositories.course.CourseRepository;
+import com.cts.edusphere.repositories.department.DepartmentRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

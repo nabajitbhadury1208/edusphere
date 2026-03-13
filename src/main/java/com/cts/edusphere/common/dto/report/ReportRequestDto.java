@@ -4,8 +4,6 @@ import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.enums.ReportScope;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.modules.Department;
-import com.cts.edusphere.modules.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
