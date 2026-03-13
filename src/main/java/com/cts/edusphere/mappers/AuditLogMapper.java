@@ -1,7 +1,11 @@
 package com.cts.edusphere.mappers;
 
+import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.modules.AuditLog;
+
+import java.time.Instant;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,5 +19,15 @@ public class AuditLogMapper {
                 null,
                 entity.getTimestamp()
         );
+    }
+
+    public AuditLog toEntity(AuditLogRequestDTO auditLogRequestDTO) {
+        return AuditLog
+            .builder()
+            .id(auditLogRequestDTO.userId())
+            .action(auditLogRequestDTO.action())
+            .resource(auditLogRequestDTO.resource())
+            .timestamp(Instant.now())
+            .build();
     }
 }

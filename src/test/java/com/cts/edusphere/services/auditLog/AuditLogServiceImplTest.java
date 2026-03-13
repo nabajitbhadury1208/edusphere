@@ -6,6 +6,8 @@ import com.cts.edusphere.mappers.AuditLogMapper;
 import com.cts.edusphere.modules.AuditLog;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.AuditLogRepository;
+import com.cts.edusphere.services.audit_log.AuditLogServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -193,4 +195,3 @@ public class AuditLogServiceImplTest {
         verify(auditLogRepository, times(1)).findByResourceContainingIgnoreCase("faculty");
     }
 }
-

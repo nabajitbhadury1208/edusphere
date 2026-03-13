@@ -4,7 +4,7 @@ import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.config.security.JwtAuthenticationFilter;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.services.auditLog.AuditLogService;
+import com.cts.edusphere.services.audit_log.AuditLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

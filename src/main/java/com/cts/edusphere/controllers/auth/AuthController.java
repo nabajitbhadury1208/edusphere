@@ -6,6 +6,7 @@ import com.cts.edusphere.config.security.TokenType;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.modules.User;
+import com.cts.edusphere.services.notification.NotificationService;
 import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserServiceImpl userService;
+    private final NotificationService notificationService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
@@ -45,6 +47,9 @@ public class AuthController {
                     user.getRoles(), TokenType.REFRESH);
 
             log.info("User registered successfully: {}", user.getId());
+
+            notificationService.subscribeToNofications(user.getId());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(accessToken, refreshToken));
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
@@ -75,6 +80,8 @@ public class AuthController {
                     TokenType.ACCESS);
             String refreshToken = jwtService.generateAccessToken(user.getId().toString(), user.getName(), roles,
                     TokenType.REFRESH);
+
+            notificationService.subscribeToNofications(user.getId());
             return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
         } catch (DisabledException e) {
             throw e; // let GenericExceptionHandler return 403

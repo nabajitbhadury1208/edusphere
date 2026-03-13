@@ -1,9 +1,11 @@
-package com.cts.edusphere.services.auditLog;
+package com.cts.edusphere.services.audit_log;
 
+import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.AuditLogMapper;
+import com.cts.edusphere.modules.AuditLog;
 import com.cts.edusphere.repositories.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,19 @@ public class AuditLogServiceImpl implements AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
     private final AuditLogMapper auditLogMapper;
+
+        @Override
+    public String createLog(AuditLogRequestDTO auditLogRequestDTO) {
+        try {
+            AuditLog auditLog = auditLogMapper.toEntity(auditLogRequestDTO);
+            auditLogRepository.save(auditLog);
+            return "Successfully created audit";
+        } catch (Exception e) {
+            log.error("Error occurred while creating audit log: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to save audit log");
+        }
+    }
+
 
     @Override
     public List<AuditLogResponseDTO> getAllLogs() {
@@ -72,4 +87,5 @@ public class AuditLogServiceImpl implements AuditLogService {
             throw new InternalServerErrorException("Failed to retrieve resource audit logs");
         }
     }
+
 }
