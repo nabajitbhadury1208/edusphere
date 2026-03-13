@@ -3,11 +3,11 @@ package com.cts.edusphere.services.curriculum;
 import com.cts.edusphere.common.dto.curriculum.CurriculumRequest;
 import com.cts.edusphere.common.dto.curriculum.CurriculumResponse;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.CurriculumMapper;
-import com.cts.edusphere.modules.Course;
-import com.cts.edusphere.modules.Curriculum;
-import com.cts.edusphere.repositories.CourseRepository;
-import com.cts.edusphere.repositories.CurriculumRepository;
+import com.cts.edusphere.mappers.curriculum.CurriculumMapper;
+import com.cts.edusphere.modules.courses.Course;
+import com.cts.edusphere.modules.curriculum.Curriculum;
+import com.cts.edusphere.repositories.course.CourseRepository;
+import com.cts.edusphere.repositories.curriculum.CurriculumRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

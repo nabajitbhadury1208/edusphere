@@ -1,13 +1,35 @@
 package com.cts.edusphere.services.user;
 
+<<<<<<< HEAD
+=======
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+>>>>>>> 18523cbfa97bf255af796968a5276ce9234982b5
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
+<<<<<<< HEAD
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.User;
 import com.cts.edusphere.repositories.UserRepository;
+=======
+import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.user.UserRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+>>>>>>> 18523cbfa97bf255af796968a5276ce9234982b5
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

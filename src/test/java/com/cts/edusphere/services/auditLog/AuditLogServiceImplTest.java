@@ -2,10 +2,10 @@ package com.cts.edusphere.services.auditLog;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.AuditLogMapper;
-import com.cts.edusphere.modules.AuditLog;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.AuditLogRepository;
+import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
+import com.cts.edusphere.modules.audit_log.AuditLog;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.services.audit_log.AuditLogServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;

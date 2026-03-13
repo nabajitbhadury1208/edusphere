@@ -5,7 +5,7 @@ import com.cts.edusphere.config.security.JwtService;
 import com.cts.edusphere.config.security.TokenType;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
-import com.cts.edusphere.modules.User;
+import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.services.notification.NotificationService;
 import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 

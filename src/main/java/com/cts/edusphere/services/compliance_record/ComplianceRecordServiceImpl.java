@@ -3,11 +3,11 @@ package com.cts.edusphere.services.compliance_record;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.ComplianceRecordMapper;
-import com.cts.edusphere.modules.ComplianceRecord;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.ComplianceRecordRepository;
-import com.cts.edusphere.repositories.UserRepository;
+import com.cts.edusphere.mappers.compliance_record.ComplianceRecordMapper;
+import com.cts.edusphere.modules.compliance_record.ComplianceRecord;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.compliance.ComplianceRecordRepository;
+import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

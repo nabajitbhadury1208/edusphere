@@ -1,8 +1,8 @@
 package com.cts.edusphere.config.security;
 
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.UserRepository;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

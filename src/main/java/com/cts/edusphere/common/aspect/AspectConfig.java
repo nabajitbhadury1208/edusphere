@@ -15,11 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.config.security.UserPrincipal;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
-import com.cts.edusphere.modules.User;
 import com.cts.edusphere.services.audit_log.AuditLogService;
-import com.cts.edusphere.services.user.UserServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
