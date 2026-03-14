@@ -6,11 +6,11 @@ import com.cts.edusphere.enums.AuditStatus;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.AuditMapper;
-import com.cts.edusphere.modules.Audit;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.AuditRepository;
-import com.cts.edusphere.repositories.UserRepository;
+import com.cts.edusphere.mappers.audit.AuditMapper;
+import com.cts.edusphere.modules.audit.Audit;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.audit.AuditRepository;
+import com.cts.edusphere.repositories.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -203,4 +203,3 @@ class AuditServiceImplTest {
         verify(auditRepository, never()).deleteById(any());
     }
 }
-

@@ -6,9 +6,9 @@ import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.StudentMapper;
-import com.cts.edusphere.modules.Student;
-import com.cts.edusphere.repositories.StudentRepository;
+import com.cts.edusphere.mappers.student.StudentMapper;
+import com.cts.edusphere.modules.student.Student;
+import com.cts.edusphere.repositories.student.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -162,7 +162,7 @@ public class StudentServiceImplTest {
     @Test
     void testUpdateStudent_Success() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.of(student));
-        when(passwordEncoder.encode(studentRequestDTO.password())).thenReturn("encodedPassword");
+        //when(passwordEncoder.encode(studentRequestDTO.password())).thenReturn("encodedPassword");
         when(studentRepository.save(any(Student.class))).thenReturn(student);
         when(studentMapper.toResponseDTO(student)).thenReturn(studentResponseDTO);
 

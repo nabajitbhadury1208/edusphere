@@ -4,13 +4,13 @@ import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.ResearchProjectMapper;
-import com.cts.edusphere.modules.Faculty;
-import com.cts.edusphere.modules.ResearchProject;
-import com.cts.edusphere.modules.Student;
-import com.cts.edusphere.repositories.FacultyRepository;
-import com.cts.edusphere.repositories.ResearchProjectRepository;
-import com.cts.edusphere.repositories.StudentRepository;
+import com.cts.edusphere.mappers.research_project.ResearchProjectMapper;
+import com.cts.edusphere.modules.faculty.Faculty;
+import com.cts.edusphere.modules.research_project.ResearchProject;
+import com.cts.edusphere.modules.student.Student;
+import com.cts.edusphere.repositories.faculty.FacultyRepository;
+import com.cts.edusphere.repositories.research_project.ResearchProjectRepository;
+import com.cts.edusphere.repositories.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         Faculty coInvestigator = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResourceNotFoundException("faculty member not found"));
 
-        project.getFacultyMembers().add(coInvestigator);
+        project.getAssociatedFacultyMembers().add(coInvestigator);
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -71,7 +71,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     public ResearchProjectResponse removeFacultyMember(UUID projectId, UUID facultyId) {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-        project.getFacultyMembers().removeIf(f -> f.getId().equals(facultyId));
+        project.getAssociatedFacultyMembers().removeIf(f -> f.getId().equals(facultyId));
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -82,7 +82,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResourceNotFoundException("student not found"));
 
-        project.getStudents().add(student);
+        project.getParticipatedStudents().add(student);
         return projectMapper.toResponse(projectRepository.save(project));
     }
 
@@ -90,7 +90,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     public ResearchProjectResponse removeStudent(UUID projectId, UUID studentId) {
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project not found"));
-        project.getStudents().removeIf(s -> s.getId().equals(studentId));
+        project.getParticipatedStudents().removeIf(s -> s.getId().equals(studentId));
         return projectMapper.toResponse(projectRepository.save(project));
     }
 

@@ -3,11 +3,10 @@ package com.cts.edusphere.services.user;
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
-import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.UserRepository;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,25 +16,29 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Override
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public User getUserById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
     }
 
+    @Override
     public User createUser(User user) {
         return userRepository.save(user);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -49,6 +52,7 @@ public class UserServiceImpl {
         userRepository.deleteById(id);
     }
 
+    @Override
     public User updateUserById(UUID id, UserRequestDto request, UserPrincipal userPrincipal) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
@@ -77,14 +81,17 @@ public class UserServiceImpl {
         return userRepository.save(user);
     }
 
-    boolean existsByEmail(String email) {
+    @Override
+    public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    Optional<User> findByEmail(String email) {
+    @Override
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Override
     @Transactional
     public User registerUser(RegisterRequest request) {
 
@@ -101,6 +108,7 @@ public class UserServiceImpl {
         }
     }
 
+    @Override
     @Transactional
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
         try {
@@ -117,6 +125,7 @@ public class UserServiceImpl {
         }
     }
 
+    @Override
     @Transactional
     public User updateUserStatus(UUID id, Status status, UserPrincipal principal) {
         User user = userRepository.findById(id)

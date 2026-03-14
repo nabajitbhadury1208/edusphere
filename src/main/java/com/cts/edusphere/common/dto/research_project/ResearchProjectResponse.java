@@ -1,19 +1,18 @@
 package com.cts.edusphere.common.dto.research_project;
 
 import com.cts.edusphere.enums.ProjectStatus;
-import com.cts.edusphere.modules.Faculty;
-import com.cts.edusphere.modules.Student;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public record ResearchProjectResponse(
         String title,
-        Faculty faculty,
+        UUID facultyId,
         ProjectStatus status,
         LocalDate endDate,
         LocalDate startDate,
-        List<Faculty> facultyMembers,
-        List<Student> students
+        List<UUID> facultyMembersIdList,
+        List<UUID> studentsList
 ) {
 }

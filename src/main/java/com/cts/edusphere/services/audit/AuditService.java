@@ -11,4 +11,4 @@ public interface AuditService {
     AuditResponseDTO getAuditById(UUID id);
     AuditResponseDTO updateAudit(UUID id, AuditRequestDTO dto);
     void deleteAudit(UUID id);
-}
+}   

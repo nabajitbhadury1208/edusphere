@@ -4,7 +4,7 @@ import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.common.dto.user.UserResponseDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.mappers.UserMapper;
+import com.cts.edusphere.mappers.user.UserMapper;
 import com.cts.edusphere.services.user.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
