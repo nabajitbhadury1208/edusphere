@@ -4,13 +4,11 @@ import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
 import com.cts.edusphere.common.storage.StorageService;
 import com.cts.edusphere.enums.DocType;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.StudentDocumentMapper;
-import com.cts.edusphere.modules.Student;
-import com.cts.edusphere.modules.StudentDocument;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.StudentDocumentRepository;
-import com.cts.edusphere.repositories.StudentRepository;
-import com.cts.edusphere.repositories.UserRepository;
+import com.cts.edusphere.mappers.student_document.StudentDocumentMapper;
+import com.cts.edusphere.modules.student.Student;
+import com.cts.edusphere.modules.student_document.StudentDocument;
+import com.cts.edusphere.repositories.student_document.StudentDocumentRepository;
+import com.cts.edusphere.repositories.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor

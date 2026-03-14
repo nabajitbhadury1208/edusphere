@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AuditLogService {
-    String createLog(AuditLogRequestDTO auditLogRequestDTO);
+    String createLog(AuditLogRequestDTO auditLogRequestDTO, UUID userId);
     List<AuditLogResponseDTO> getAllLogs();
     AuditLogResponseDTO getLogById(UUID id);
     List<AuditLogResponseDTO> getLogsByUser(UUID userId);

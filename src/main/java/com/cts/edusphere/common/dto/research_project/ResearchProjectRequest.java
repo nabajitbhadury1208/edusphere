@@ -1,8 +1,6 @@
 package com.cts.edusphere.common.dto.research_project;
 
 import com.cts.edusphere.enums.ProjectStatus;
-import com.cts.edusphere.modules.Faculty;
-import com.cts.edusphere.modules.Student;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

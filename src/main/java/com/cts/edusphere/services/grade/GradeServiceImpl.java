@@ -2,16 +2,15 @@ package com.cts.edusphere.services.grade;
 
 import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
-import com.cts.edusphere.enums.GradeStatus;
 import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.GradeMapper;
-import com.cts.edusphere.modules.Exam;
-import com.cts.edusphere.modules.Grade;
-import com.cts.edusphere.modules.Student;
-import com.cts.edusphere.repositories.ExamRepository;
-import com.cts.edusphere.repositories.GradeRepository;
-import com.cts.edusphere.repositories.StudentRepository;
+import com.cts.edusphere.mappers.grade.GradeMapper;
+import com.cts.edusphere.modules.exam.Exam;
+import com.cts.edusphere.modules.grade.Grade;
+import com.cts.edusphere.modules.student.Student;
+import com.cts.edusphere.repositories.exam.ExamRepository;
+import com.cts.edusphere.repositories.grade.GradeRepository;
+import com.cts.edusphere.repositories.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
