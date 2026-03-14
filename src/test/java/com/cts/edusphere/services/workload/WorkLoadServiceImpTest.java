@@ -5,13 +5,13 @@ import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.WorkLoadMapper;
-import com.cts.edusphere.modules.Course;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.modules.WorkLoad;
-import com.cts.edusphere.repositories.CourseRepository;
-import com.cts.edusphere.repositories.UserRepository;
-import com.cts.edusphere.repositories.WorkLoadRepository;
+import com.cts.edusphere.mappers.work_load.WorkLoadMapper;
+import com.cts.edusphere.modules.courses.Course;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.modules.work_load.WorkLoad;
+import com.cts.edusphere.repositories.course.CourseRepository;
+import com.cts.edusphere.repositories.user.UserRepository;
+import com.cts.edusphere.repositories.work_load.WorkLoadRepository;
 import com.cts.edusphere.services.workLoad.WorkLoadServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +32,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class WorkLoadServiceImplTest {
 
-    @Mock private WorkLoadRepository repository;
-    @Mock private WorkLoadMapper mapper;
-    @Mock private UserRepository userRepository;
-    @Mock private CourseRepository courseRepository;
+    @Mock
+    private WorkLoadRepository repository;
+    @Mock
+    private WorkLoadMapper mapper;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private CourseRepository courseRepository;
 
     @InjectMocks
     private WorkLoadServiceImpl workLoadService;
