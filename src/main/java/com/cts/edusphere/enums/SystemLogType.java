@@ -1,0 +1,12 @@
+package com.cts.edusphere.enums;
+
+public enum SystemLogType {
+    API_ACCESS,
+    DATABASE_EXCEPTION,
+    UNAUTHORIZED_ACCESS,
+    ROLE_VIOLATION,
+    INVALID_TOKEN,
+    VALIDATION_FAILURE,
+    INTERNAL_ERROR,
+    EXTERNAL_SERVICE_ERROR
+}

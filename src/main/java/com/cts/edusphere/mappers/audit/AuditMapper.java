@@ -11,17 +11,21 @@ import java.time.LocalDate;
 public class AuditMapper {
     public Audit toEntity(AuditRequestDTO dto) {
         return Audit.builder()
+                .entityType(dto.entityType())
+                .entityId(dto.entityId())
                 .scope(dto.scope())
                 .findings(dto.findings())
-                .auditDate(LocalDate.parse(dto.auditDate()))
-                .status(AuditStatus.PENDING) // Default status for new audits
+                .auditDate(null)
+                .status(AuditStatus.PENDING)
                 .build();
     }
 
     public AuditResponseDTO toResponseDTO(Audit entity) {
         return new AuditResponseDTO(
                 entity.getId(),
-                entity.getComplianceOfficer().getId(),
+                entity.getComplianceOfficer() != null ? entity.getComplianceOfficer().getId() : null,
+                entity.getEntityType(),
+                entity.getEntityId(),
                 entity.getScope(),
                 entity.getFindings(),
                 entity.getAuditDate(),

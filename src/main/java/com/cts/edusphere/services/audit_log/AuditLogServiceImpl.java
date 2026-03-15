@@ -1,17 +1,19 @@
 package com.cts.edusphere.services.audit_log;
 
-import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
 import com.cts.edusphere.modules.audit_log.AuditLog;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +22,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
 public class AuditLogServiceImpl implements AuditLogService {
@@ -29,24 +30,43 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final AuditLogMapper auditLogMapper;
     private final UserRepository userRepository;
 
-    @Override
-    @Transactional
-    public String createLog(AuditLogRequestDTO auditLogRequestDTO, UUID userId) {
-        try {
-            if (userId == null) {
-                log.warn("Cannot create audit log: userId is null. (Action: {})", auditLogRequestDTO.action());
-                return "Skipped audit: No user context";
-            }
-            User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found for creation of audit log"));
-            AuditLog auditLog = auditLogMapper.toEntity(auditLogRequestDTO, user);
-            auditLogRepository.save(auditLog);
-            return "Successfully created audit";
-        } catch (Exception e) {
-            log.error("Error occurred while creating audit log: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to save audit log");
-        }
+    @Autowired
+    public AuditLogServiceImpl(
+            @Lazy AuditLogRepository auditLogRepository,
+            AuditLogMapper auditLogMapper,
+            UserRepository userRepository) {
+        this.auditLogRepository = auditLogRepository;
+        this.auditLogMapper = auditLogMapper;
+        this.userRepository = userRepository;
     }
 
+
+    @Override
+    @Transactional
+    public void logSystemEvent(SystemLogType logType, Severity severity,
+                               String action, String resource,
+                               String details, UUID userId) {
+        try {
+            User user = null;
+            if (userId != null) {
+                user = userRepository.findById(userId).orElse(null);
+            }
+
+            AuditLog log = AuditLog.builder()
+                    .user(user)
+                    .action(action != null ? action : "SYSTEM")
+                    .resource(resource != null ? resource : "SYSTEM")
+
+                    .logType(logType)
+                    .severity(severity != null ? severity : Severity.INFO)
+                    .details(details)
+                    .build();
+
+            auditLogRepository.save(log);
+        } catch (Exception e) {
+            log.error("Failed to persist system audit log: {}", e.getMessage());
+        }
+    }
 
     @Override
     public List<AuditLogResponseDTO> getAllLogs() {
@@ -55,7 +75,7 @@ public class AuditLogServiceImpl implements AuditLogService {
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("Error occurred while fetching all audit logs: {}", e.getMessage());
+            log.error("Error fetching all audit logs: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs");
         }
     }
@@ -69,8 +89,8 @@ public class AuditLogServiceImpl implements AuditLogService {
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while fetching audit log with ID {}: {}", id, e.getMessage());
-            throw new InternalServerErrorException("Failed to retrieve audit log entry");
+            log.error("Error fetching audit log {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve audit log");
         }
     }
 
@@ -81,7 +101,7 @@ public class AuditLogServiceImpl implements AuditLogService {
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("Error occurred while fetching audit logs for user {}: {}", userId, e.getMessage());
+            log.error("Error fetching audit logs for user {}: {}", userId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve user audit logs");
         }
     }
@@ -93,9 +113,32 @@ public class AuditLogServiceImpl implements AuditLogService {
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            log.error("Error occurred while fetching audit logs for resource {}: {}", resource, e.getMessage());
+            log.error("Error fetching audit logs for resource {}: {}", resource, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve resource audit logs");
         }
     }
 
+    @Override
+    public List<AuditLogResponseDTO> getLogsBySeverity(Severity severity) {
+        try {
+            return auditLogRepository.findBySeverity(severity).stream()
+                    .map(auditLogMapper::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error fetching audit logs by severity {}: {}", severity, e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve audit logs by severity");
+        }
+    }
+
+    @Override
+    public List<AuditLogResponseDTO> getLogsByType(SystemLogType logType) {
+        try {
+            return auditLogRepository.findByLogType(logType).stream()
+                    .map(auditLogMapper::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error fetching audit logs by type {}: {}", logType, e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve audit logs by type");
+        }
+    }
 }

@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.student;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.student.StudentRequestDTO;
 import com.cts.edusphere.common.dto.student.StudentResponseDTO;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
@@ -31,6 +33,8 @@ public class StudentServiceImpl implements StudentService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional
+    @ComplianceAudit(entityType = AuditEntityType.STUDENT_CREATED, scope = "Verify new student eligibility and documentation")
     public StudentResponseDTO createStudent(StudentRequestDTO requestDTO) {
         try {
             Student student = studentMapper.toEntity(requestDTO);

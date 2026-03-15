@@ -1,5 +1,7 @@
 package com.cts.edusphere.exceptions;
 
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 
 import java.nio.file.AccessDeniedException;
@@ -7,8 +9,11 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.cts.edusphere.services.audit_log.AuditLogService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +32,18 @@ public class GenericExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(
             GenericExceptionHandler.class
     );
+
+    @Autowired
+    @Lazy
+    private AuditLogService auditLogService;
+
+    private void logSecurityEvent(SystemLogType logType, Severity severity, String details){
+        try{
+            auditLogService.logSystemEvent(logType, severity, "EXCEPTION_HANDLER", "GenericExceptionHandler", details, null);
+        } catch (Exception e){
+            logger.error("Failed to write security level audit log {}", e.getMessage());
+        }
+    }
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(
             String message,
@@ -294,8 +311,8 @@ public class GenericExceptionHandler {
         ex
                 .getBindingResult()
                 .getFieldErrors()
-                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage())
-                );
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        logSecurityEvent(SystemLogType.VALIDATION_FAILURE, Severity.WARN, ex.getMessage());
         return buildErrorResponse(
                 "Validation failed",
                 HttpStatus.BAD_REQUEST,

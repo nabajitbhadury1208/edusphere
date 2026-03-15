@@ -1,6 +1,8 @@
 package com.cts.edusphere.controllers.auditLog;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.services.audit_log.AuditLogService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/audit-logs")
 @RequiredArgsConstructor
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')")
 public class AuditLogController {
 
     private final AuditLogService auditLogService;
@@ -50,5 +53,17 @@ public class AuditLogController {
         log.info("Fetching audit logs for resource: {}", resource);
         List<AuditLogResponseDTO> logs = auditLogService.getLogsByResource(resource);
         return ResponseEntity.ok(logs);
+    }
+
+    @GetMapping("/severity/{severity}")
+    public ResponseEntity<List<AuditLogResponseDTO>> getAuditLogsBySeverity(@PathVariable Severity severity) {
+        log.info("Fetching system logs by severity {}", severity);
+        return ResponseEntity.ok(auditLogService.getLogsBySeverity(severity));
+    }
+
+    @GetMapping("/type/{logType}")
+    public ResponseEntity<List<AuditLogResponseDTO>> getAuditLogsByType(@PathVariable SystemLogType logType) {
+        log.info("Fetching system logs by severity {}", logType);
+        return ResponseEntity.ok(auditLogService.getLogsByType(logType));
     }
 }

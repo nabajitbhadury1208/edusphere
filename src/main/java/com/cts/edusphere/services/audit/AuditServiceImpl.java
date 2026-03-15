@@ -2,6 +2,7 @@ package com.cts.edusphere.services.audit;
 
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -31,21 +32,27 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     @Transactional
-    public AuditResponseDTO createAudit(AuditRequestDTO dto) {
+    public AuditResponseDTO reviewAudit(UUID auditId,AuditRequestDTO dto) {
         try {
+            Audit audit = auditRepository.findById(auditId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Audit record not found"));
             User complianceOfficer = findOfficerById(dto.officerId());
 
-            Audit audit = auditMapper.toEntity(dto);
             audit.setComplianceOfficer(complianceOfficer);
+            audit.setFindings(dto.findings());
+            audit.setAuditDate(LocalDate.now());
+            if(dto.status() != null){
+                audit.setStatus(dto.status());
+            }
 
             Audit savedAudit = auditRepository.save(audit);
-            log.info("Audit record created successfully with ID: {}", savedAudit.getId());
+            log.info("Audit record reviewed successfully with ID: {}", savedAudit.getId());
             return auditMapper.toResponseDTO(savedAudit);
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating audit record: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create audit record");
+            log.error("Error occurred while reviewing audit record: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to review audit record");
         }
     }
 
@@ -77,34 +84,8 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
-    @Override
-    @Transactional
-    public AuditResponseDTO updateAudit(UUID id, AuditRequestDTO dto) {
-        try {
-            Audit audit = auditRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Audit record not found with id: " + id));
 
-            // Update fields
-            audit.setScope(dto.scope());
-            audit.setFindings(dto.findings());
-            audit.setAuditDate(LocalDate.parse(dto.auditDate()));
 
-            if (!audit.getComplianceOfficer().getId().equals(dto.officerId())) {
-                audit.setComplianceOfficer(findOfficerById(dto.officerId()));
-            }
-
-            Audit updatedAudit = auditRepository.save(audit);
-            log.info("Audit record with ID {} updated successfully", id);
-            return auditMapper.toResponseDTO(updatedAudit);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error occurred while updating audit record with ID {}: {}", id, e.getMessage());
-            throw new InternalServerErrorException("Failed to update audit record");
-        }
-    }
-
-    @Override
     @Transactional
     public void deleteAudit(UUID id) {
         try {
@@ -118,6 +99,18 @@ public class AuditServiceImpl implements AuditService {
         } catch (Exception e) {
             log.error("Error occurred while deleting audit record with ID {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to delete audit record");
+        }
+    }
+
+    @Override
+    public List<AuditResponseDTO> getAuditsByEntityType(AuditEntityType entityType) {
+        try{
+            return auditRepository.findByEntityType(entityType).stream()
+                    .map(auditMapper ::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e){
+            log.error("Error fetching audits by entity type {}: {}", entityType, e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve audits by entity type");
         }
     }
 

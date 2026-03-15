@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.faculty;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
 import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
@@ -33,6 +35,7 @@ public class FacultyServiceImpl implements FacultyService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @ComplianceAudit(entityType = AuditEntityType.FACULTY_CREATED, scope = "Verify new faculty background check and credentials")
     public FacultyResponseDTO createFaculty(FacultyRequestDTO requestDTO) {
         try {
             Department department = departmentRepository.findById(requestDTO.departmentId())
@@ -99,8 +102,6 @@ public class FacultyServiceImpl implements FacultyService {
             throw new InternalServerErrorException("Failed to retrieve department faculties");
         }
     }
-
-
 
 
     @Override
