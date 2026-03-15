@@ -1,7 +1,8 @@
 package com.cts.edusphere.controllers.auditLog;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
-import com.cts.edusphere.services.auditLog.AuditLogService;
+import com.cts.edusphere.services.audit_log.AuditLogService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

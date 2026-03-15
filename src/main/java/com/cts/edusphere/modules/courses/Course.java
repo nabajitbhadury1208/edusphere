@@ -1,0 +1,42 @@
+package com.cts.edusphere.modules.courses;
+
+import com.cts.edusphere.core.BaseEntity;
+import com.cts.edusphere.enums.Status;
+import com.cts.edusphere.modules.department.Department;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Table(
+        name = "course",
+        indexes = {
+                @Index(name = "idx_course_department", columnList = "department_id")
+        }
+)
+@AttributeOverride(name = "id", column = @Column(name = "course_id"))
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class Course extends BaseEntity {
+    @Column(nullable = false, unique = true)
+    private String title;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "department_id", nullable = false)
+    @JsonIgnore
+    private Department department;
+
+    @Column(nullable = false)
+    private int credits;
+
+    @Column(nullable = false)
+    private int duration;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
+}

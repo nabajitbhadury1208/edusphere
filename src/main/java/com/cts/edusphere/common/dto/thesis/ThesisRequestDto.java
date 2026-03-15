@@ -2,8 +2,6 @@ package com.cts.edusphere.common.dto.thesis;
 
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.enums.ThesisStatus;
-import com.cts.edusphere.modules.Faculty;
-import com.cts.edusphere.modules.Student;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;

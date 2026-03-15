@@ -5,11 +5,11 @@ import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.ExamMapper;
-import com.cts.edusphere.modules.Course;
-import com.cts.edusphere.modules.Exam;
-import com.cts.edusphere.repositories.CourseRepository;
-import com.cts.edusphere.repositories.ExamRepository;
+import com.cts.edusphere.mappers.exam.ExamMapper;
+import com.cts.edusphere.modules.courses.Course;
+import com.cts.edusphere.modules.exam.Exam;
+import com.cts.edusphere.repositories.course.CourseRepository;
+import com.cts.edusphere.repositories.exam.ExamRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

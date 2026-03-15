@@ -1,0 +1,41 @@
+package com.cts.edusphere.modules.faculty;
+
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.modules.department.Department;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+
+import java.time.Instant;
+
+
+@Entity
+@Getter
+@Setter
+@SuperBuilder
+@Table(name = "faculty_members")
+@NoArgsConstructor
+@AllArgsConstructor
+@PrimaryKeyJoinColumn(name = "user_id")
+
+public class Faculty extends User {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    @JsonIgnore
+    private Department department;
+
+    @Column(nullable = false)
+    private String position;
+
+    @Column(nullable = false, updatable = false, name = "join_date")
+    private Instant joinDate;
+
+    @PrePersist
+    protected void onPrePersist() {
+        if (joinDate == null) {
+            joinDate = Instant.now();
+        }
+    }
+
+}

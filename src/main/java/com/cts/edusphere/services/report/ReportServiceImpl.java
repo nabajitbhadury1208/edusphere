@@ -4,11 +4,11 @@ import com.cts.edusphere.common.dto.report.ReportRequestDto;
 import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.ReportMapper;
-import com.cts.edusphere.modules.Report;
-import com.cts.edusphere.repositories.DepartmentRepository;
-import com.cts.edusphere.repositories.ReportRepository;
-import com.cts.edusphere.repositories.UserRepository; // Added
+import com.cts.edusphere.mappers.report.ReportMapper;
+import com.cts.edusphere.modules.report.Report;
+import com.cts.edusphere.repositories.department.DepartmentRepository;
+import com.cts.edusphere.repositories.report.ReportRepository;
+import com.cts.edusphere.repositories.user.UserRepository; // Added
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

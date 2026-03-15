@@ -2,10 +2,12 @@ package com.cts.edusphere.services.auditLog;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.mappers.AuditLogMapper;
-import com.cts.edusphere.modules.AuditLog;
-import com.cts.edusphere.modules.User;
-import com.cts.edusphere.repositories.AuditLogRepository;
+import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
+import com.cts.edusphere.modules.audit_log.AuditLog;
+import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
+import com.cts.edusphere.services.audit_log.AuditLogServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +55,7 @@ public class AuditLogServiceImplTest {
         auditLog.setUser(user);
         auditLog.setAction("CREATE");
         auditLog.setResource("Faculty");
-        auditLog.setTimestamp(Instant.now());
+        // auditLog.setTimestamp(Instant.now());
         auditLog.setCreatedAt(Instant.now());
         auditLog.setUpdatedAt(Instant.now());
 
@@ -62,8 +64,8 @@ public class AuditLogServiceImplTest {
                 userId,
                 "CREATE",
                 "Faculty",
-                null,
-                Instant.now()
+                null
+                // Instant.now()
         );
     }
 
@@ -193,4 +195,3 @@ public class AuditLogServiceImplTest {
         verify(auditLogRepository, times(1)).findByResourceContainingIgnoreCase("faculty");
     }
 }
-
