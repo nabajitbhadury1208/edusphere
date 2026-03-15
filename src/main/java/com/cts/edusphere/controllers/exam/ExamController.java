@@ -26,7 +26,7 @@ public class ExamController {
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<?> createExam(@Validated(OnCreate.class) @RequestBody ExamRequest request) {
+  public ResponseEntity<ExamResponse> createExam(@Validated(OnCreate.class) @RequestBody ExamRequest request) {
 
     ExamResponse response = examService.createExam(request);
     return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -44,7 +44,7 @@ public class ExamController {
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<?> updateExamById(@PathVariable UUID id,
+  public ResponseEntity<ExamResponse> updateExamById(@PathVariable UUID id,
       @Validated(OnUpdate.class) @RequestBody ExamRequest request) {
     ExamResponse updatedExam = examService.updateExam(id, request);
     return ResponseEntity.ok(updatedExam);
@@ -52,7 +52,7 @@ public class ExamController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<?> getExamById(@PathVariable UUID id) {
+  public ResponseEntity<ExamResponse> getExamById(@PathVariable UUID id) {
 
     ExamResponse exam = examService.getExamById(id);
     return ResponseEntity.ok(exam);
@@ -61,7 +61,7 @@ public class ExamController {
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<?> deleteExam(@PathVariable UUID id) {
+  public ResponseEntity<ExamResponse> deleteExam(@PathVariable UUID id) {
 
     examService.deleteExam(id);
     return ResponseEntity.noContent().build();
