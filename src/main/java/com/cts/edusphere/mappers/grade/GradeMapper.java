@@ -24,6 +24,10 @@ public class GradeMapper {
                 .build();
     }
     public static GradeResponse toDTO(Grade grade){
+
+        if (grade == null) {
+            return null;
+        }
         return GradeResponse.builder()
                 .examId(grade.getExam().getId())
                 .studentId(grade.getStudent().getId())

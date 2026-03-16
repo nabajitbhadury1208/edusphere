@@ -21,7 +21,7 @@ public class GradeController {
     private final GradeService gradeService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN','FACULTY')")
     public ResponseEntity<GradeResponse> createGrade(@Validated(OnCreate.class) @RequestBody GradeRequest request) {
             GradeResponse response = gradeService.createGrade(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -29,21 +29,21 @@ public class GradeController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getAllGrades() {
+    public ResponseEntity<List<GradeResponse>> getAllGrades() {
             List<GradeResponse> grades = gradeService.getAllGrades();
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getGradeById(@PathVariable UUID id) {
+    public ResponseEntity<GradeResponse> getGradeById(@PathVariable UUID id) {
             GradeResponse grade = gradeService.getGradeById(id);
             return ResponseEntity.ok(grade);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> updateGrade(@PathVariable UUID id,@Validated(OnUpdate.class) @RequestBody GradeRequest request) {
+    @PreAuthorize("hasRole('ADMIN','FACULTY')")
+    public ResponseEntity<GradeResponse> updateGrade(@PathVariable UUID id,@Validated(OnUpdate.class) @RequestBody GradeRequest request) {
             GradeResponse updatedGrade = gradeService.updateGrade(id, request);
             return ResponseEntity.ok(updatedGrade);
     }
@@ -59,14 +59,14 @@ public class GradeController {
 
     @GetMapping("/students/{studentId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getGradesByStudent(@PathVariable UUID studentId) {
+    public ResponseEntity<List<GradeResponse>> getGradesByStudent(@PathVariable UUID studentId) {
             List<GradeResponse> grades = gradeService.getGradesByStudent(studentId);
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/exam/{examId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getGradesByExam(@PathVariable UUID examId) {
+    public ResponseEntity<List<GradeResponse>> getGradesByExam(@PathVariable UUID examId) {
             List<GradeResponse> grades = gradeService.getGradesByExam(examId);
             return ResponseEntity.ok(grades);
     }

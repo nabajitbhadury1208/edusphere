@@ -10,6 +10,9 @@ import org.springframework.stereotype.Component;
 public class ExamMapper {
 
     public static Exam toEntity(ExamRequest dto, Course course){
+        if (dto == null) {
+            return null;
+        }
         return Exam.builder()
                 .course(course)
                 .type(dto.type())
@@ -19,6 +22,9 @@ public class ExamMapper {
     }
 
     public static ExamResponse toDTO(Exam exam){
+        if (exam == null) {
+            return null;
+        }
         return ExamResponse.builder()
                 .id(exam.getId())
                 .courseId(exam.getCourse().getId())
