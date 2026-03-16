@@ -21,6 +21,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserServiceImpl userServiceImpl;
 
     @Override
     @Transactional(readOnly = true)
