@@ -1,7 +1,9 @@
 package com.cts.edusphere.controllers.student_documents;
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
 import com.cts.edusphere.common.storage.StorageService;
 import com.cts.edusphere.config.security.UserPrincipal;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.student_document.StudentDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

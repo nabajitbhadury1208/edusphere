@@ -11,6 +11,8 @@ import com.cts.edusphere.modules.audit.Audit;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.audit.AuditRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
+import com.cts.edusphere.services.audit_log.AuditLogService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

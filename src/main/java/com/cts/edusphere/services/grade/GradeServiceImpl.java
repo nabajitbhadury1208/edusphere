@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.grade;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.grade.GradeMapper;
@@ -27,6 +29,7 @@ public class GradeServiceImpl implements GradeService {
     private final StudentRepository studentRepository;
 
     @Override
+    @ComplianceAudit(entityType = AuditEntityType.GRADE_ASSIGNED, scope = "Verify Grade assigned to Student")
     public GradeResponse createGrade(GradeRequest request) {
         Exam exam = examRepository.findById(request.examId())
                 .orElseThrow(() -> new ResourceNotFoundException("Exam not found with id: " + request.examId()));
@@ -45,10 +48,7 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public List<GradeResponse> getAllGrades() {
-        return gradeRepository.findAll()
-                .stream()
-                .map(GradeMapper::toDTO)
-                .collect(Collectors.toList());
+        return gradeRepository.findAll().stream().map(GradeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -60,6 +60,7 @@ public class GradeServiceImpl implements GradeService {
     }
 
     @Override
+    @ComplianceAudit(entityType = AuditEntityType.GRADE_ASSIGNED, scope = "Verify Grade update to a particular Student")
     public GradeResponse updateGrade(UUID id, GradeRequest request) {
         Grade grade = gradeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Grade not found with id: " + id));
@@ -98,17 +99,11 @@ public class GradeServiceImpl implements GradeService {
 
     @Override
     public List<GradeResponse> getGradesByStudent(UUID studentId) {
-        return gradeRepository.findByStudentId(studentId)
-                .stream()
-                .map(GradeMapper::toDTO)
-                .collect(Collectors.toList());
+        return gradeRepository.findByStudentId(studentId).stream().map(GradeMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<GradeResponse> getGradesByExam(UUID examId) {
-        return gradeRepository.findByExamId(examId)
-                .stream()
-                .map(GradeMapper::toDTO)
-                .collect(Collectors.toList());
+        return gradeRepository.findByExamId(examId).stream().map(GradeMapper::toDTO).collect(Collectors.toList());
     }
 }
