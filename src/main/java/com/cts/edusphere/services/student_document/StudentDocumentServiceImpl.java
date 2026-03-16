@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.student_document;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
 import com.cts.edusphere.common.storage.StorageService;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.DocType;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.student_document.StudentDocumentMapper;
@@ -29,6 +31,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
 
     @Override
     @Transactional
+    @ComplianceAudit(entityType = AuditEntityType.STUDENT_DOCUMENT_CREATED, scope = "Verify a new document that needs review")
     public StudentDocumentResponse uploadDocument(MultipartFile file, UUID studentId, String docType) {
         Student studentUser = studentRepository.findById(studentId).orElseThrow(
                 () -> new ResourceNotFoundException("student not found with id: " + studentId)
@@ -97,6 +100,7 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
 
     @Override
     @Transactional
+    @ComplianceAudit(entityType = AuditEntityType.STUDENT_DOCUMENT_APPROVAL, scope = "Verify student docuemnt")
     public StudentDocumentResponse verifyDocument(UUID id, boolean status) {
         StudentDocument document = studentDocumentRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Document not found with id: " + id)

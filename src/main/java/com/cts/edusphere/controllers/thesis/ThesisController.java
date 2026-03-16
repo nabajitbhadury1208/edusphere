@@ -1,10 +1,11 @@
 package com.cts.edusphere.controllers.thesis;
 
-
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
 import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.thesis.ThesisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ThesisController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY', 'STUDENT')")
-    public ResponseEntity<ThesisResponseDto> create(@Validated(OnCreate.class)@RequestBody ThesisRequestDto request) {
+    public ResponseEntity<ThesisResponseDto> create(@Validated(OnCreate.class) @RequestBody ThesisRequestDto request) {
         return ResponseEntity.ok(thesisService.createThesis(request));
     }
 
@@ -47,7 +48,8 @@ public class ThesisController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY')")
-    public ResponseEntity<ThesisResponseDto> update(@Validated(OnUpdate.class)@PathVariable UUID id, @RequestBody ThesisRequestDto request) {
+    public ResponseEntity<ThesisResponseDto> update(@Validated(OnUpdate.class) @PathVariable UUID id,
+            @RequestBody ThesisRequestDto request) {
         return ResponseEntity.ok(thesisService.updateThesis(id, request));
     }
 

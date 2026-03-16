@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.research_project;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.research_project.ResearchProjectMapper;
@@ -32,6 +34,7 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     private final ResearchProjectMapper projectMapper;
 
     @Override
+    @ComplianceAudit(entityType = AuditEntityType.RESEARCH_APPROVAL, scope = "Verify funding sources and ethical clearance")
     public ResearchProjectResponse createProject(ResearchProjectRequest request) {
         try {
             Faculty lead = facultyRepository.findById(request.facultyId())

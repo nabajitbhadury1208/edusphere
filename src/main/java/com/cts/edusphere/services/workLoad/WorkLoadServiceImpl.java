@@ -2,6 +2,8 @@ package com.cts.edusphere.services.workLoad;
 
 import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
 import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.work_load.WorkLoadMapper;
@@ -9,6 +11,8 @@ import com.cts.edusphere.modules.work_load.WorkLoad;
 import com.cts.edusphere.repositories.course.CourseRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import com.cts.edusphere.repositories.work_load.WorkLoadRepository;
+import com.cts.edusphere.services.audit_log.AuditLogService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +32,8 @@ public class WorkLoadServiceImpl implements WorkLoadService {
     private final WorkLoadMapper mapper;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
+    private final AuditLogService auditLogService;
+
 
     @Override
     public WorkLoadResponseDto createWorkLoad(WorkLoadRequestDto request) {
@@ -61,14 +67,14 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             throw new InternalServerErrorException("Failed to retrieve workloads list");
         }
     }
-
+    
     @Override
     @Transactional(readOnly = true)
     public WorkLoadResponseDto getWorkLoadById(UUID id) {
         try {
             return repository.findById(id)
-                    .map(mapper::toResponse)
-                    .orElseThrow(() -> new ResourceNotFoundException("Workload not found with id: " + id));
+            .map(mapper::toResponse)
+            .orElseThrow(() -> new ResourceNotFoundException("Workload not found with id: " + id));
         } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -112,7 +118,7 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             throw new InternalServerErrorException("Failed to update workload record");
         }
     }
-
+    
     @Override
     public void deleteWorkLoad(UUID id) {
         try {

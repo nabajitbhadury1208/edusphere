@@ -1,8 +1,10 @@
 package com.cts.edusphere.services.user;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.user.User;
@@ -127,6 +129,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    @ComplianceAudit(entityType = AuditEntityType.USER_DEACTIVATED, scope = "Verify activation status of User")
     public User updateUserStatus(UUID id, Status status, UserPrincipal principal) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));

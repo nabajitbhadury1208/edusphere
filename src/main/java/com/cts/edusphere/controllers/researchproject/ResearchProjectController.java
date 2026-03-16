@@ -1,7 +1,9 @@
 package com.cts.edusphere.controllers.researchproject;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.research_project.ResearchProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

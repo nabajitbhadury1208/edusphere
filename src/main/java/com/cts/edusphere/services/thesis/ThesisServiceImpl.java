@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.thesis;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
 import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.thesis.ThesisMapper;
@@ -30,6 +32,7 @@ public class ThesisServiceImpl implements ThesisService {
     private final FacultyRepository facultyRepository;
 
     @Override
+    @ComplianceAudit(entityType = AuditEntityType.RESEARCH_APPROVAL, scope = "Verify that the research topic and supervisor assignment follow departmental policy")
     public ThesisResponseDto createThesis(ThesisRequestDto request) {
         try {
             Thesis thesis = thesisMapper.toEntity(request);

@@ -15,12 +15,14 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        String bearerAuth = "bearerAuth";
+
         return new OpenAPI()
-            .info(new Info().title("My API").version("1.0"))
-            .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+            .info(new Info().title("Edusphere API").version("1.0"))
+            .addSecurityItem(new SecurityRequirement().addList(bearerAuth))
             .components(new Components()
-                .addSecuritySchemes("bearerAuth", new SecurityScheme()
-                    .name("bearerAuth")
+                .addSecuritySchemes(bearerAuth, new SecurityScheme()
+                    .name(bearerAuth)
                     .type(SecurityScheme.Type.HTTP)
                     .scheme("bearer")
                     .bearerFormat("JWT")));

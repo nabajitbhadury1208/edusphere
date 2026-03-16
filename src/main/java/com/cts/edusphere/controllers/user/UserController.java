@@ -1,8 +1,10 @@
 package com.cts.edusphere.controllers.user;
 
+import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.common.dto.user.UserResponseDto;
 import com.cts.edusphere.config.security.UserPrincipal;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.mappers.user.UserMapper;
 import com.cts.edusphere.services.user.UserServiceImpl;
@@ -106,6 +108,7 @@ public class UserController {
     }
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
+    @ComplianceAudit(entityType = AuditEntityType.STUDENT_UPDATED, scope = "Verify change of student activate status")
     public ResponseEntity<UserResponseDto> updateUserStatus(
             @PathVariable UUID id,
             @RequestBody UserRequestDto requestDto,
