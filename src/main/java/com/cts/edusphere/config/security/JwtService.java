@@ -76,6 +76,7 @@ public class JwtService {
 
     private UserPrincipal buildUserPrincipal(Claims claims) {
         String userId = claims.getSubject();
+
         String name = claims.get("name", String.class);
         List<String> roleStr = claims.get("roles", List.class);
         if (roleStr == null || roleStr.isEmpty()) {

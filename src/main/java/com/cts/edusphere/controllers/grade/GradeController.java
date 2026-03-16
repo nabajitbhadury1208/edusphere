@@ -22,7 +22,7 @@ public class GradeController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createGrade(@Validated(OnCreate.class) @RequestBody GradeRequest request) {
+    public ResponseEntity<GradeResponse> createGrade(@Validated(OnCreate.class) @RequestBody GradeRequest request) {
             GradeResponse response = gradeService.createGrade(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -52,7 +52,7 @@ public class GradeController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteGrade(@PathVariable UUID id) {
+    public ResponseEntity<GradeResponse> deleteGrade(@PathVariable UUID id) {
             gradeService.deleteGrade(id);
             return ResponseEntity.noContent().build();
     }
