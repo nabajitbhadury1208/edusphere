@@ -21,7 +21,7 @@ public class GradeController {
     private final GradeService gradeService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN','FACULTY')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY')")
     public ResponseEntity<GradeResponse> createGrade(@Validated(OnCreate.class) @RequestBody GradeRequest request) {
             GradeResponse response = gradeService.createGrade(request);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -42,7 +42,7 @@ public class GradeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN','FACULTY')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY')")
     public ResponseEntity<GradeResponse> updateGrade(@PathVariable UUID id,@Validated(OnUpdate.class) @RequestBody GradeRequest request) {
             GradeResponse updatedGrade = gradeService.updateGrade(id, request);
             return ResponseEntity.ok(updatedGrade);

@@ -34,7 +34,7 @@ public class ExamController {
   }
 
   @GetMapping
-  @PreAuthorize("hasRole('ADMIN','FACULTY','DEPARTMENT_HEAD)")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD)")
   public ResponseEntity<List<ExamResponse>> getAllExams() {
 
     List<ExamResponse> exams = examService.getAllExams();
@@ -43,7 +43,7 @@ public class ExamController {
   }
 
   @PutMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN','FACULTY')")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY')")
   public ResponseEntity<ExamResponse> updateExamById(@PathVariable UUID id,
       @Validated(OnUpdate.class) @RequestBody ExamRequest request) {
     ExamResponse updatedExam = examService.updateExam(id, request);
@@ -51,7 +51,7 @@ public class ExamController {
   }
 
   @GetMapping("/{id}")
-  @PreAuthorize("hasRole('ADMIN','FACULTY','STUDENT')")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','STUDENT')")
   public ResponseEntity<ExamResponse> getExamById(@PathVariable UUID id) {
 
     ExamResponse exam = examService.getExamById(id);
@@ -69,7 +69,7 @@ public class ExamController {
   }
 
   @GetMapping("/course/{courseId}")
-  @PreAuthorize("hasRole('ADMIN','FACULTY','STUDENT')")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','STUDENT')")
   public ResponseEntity<List<ExamResponse>> getExamsByCourse(@PathVariable UUID courseId) {
 
     List<ExamResponse> exams = examService.getExamsByCourse(courseId);
