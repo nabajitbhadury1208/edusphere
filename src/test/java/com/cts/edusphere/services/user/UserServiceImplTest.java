@@ -14,9 +14,9 @@ import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InsufficientPermissionException;
-import com.cts.edusphere.exceptions.genericexceptions.PasswordCannotBeChangedException;
+import com.cts.edusphere.exceptions.genericexceptions.PasswordNotChangedException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotCreatedException;
+import com.cts.edusphere.exceptions.genericexceptions.UserCreationFailedException;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.user.UserRepository;
 import java.util.List;
@@ -110,7 +110,7 @@ class UserServiceImplTest {
         RegisterRequest req = new RegisterRequest("New", "existing@cts.com", "12345", "pass", null);
         when(userRepository.existsByEmail(req.email())).thenReturn(true);
 
-        UserNotCreatedException ex = assertThrows(UserNotCreatedException.class, 
+        UserCreationFailedException ex = assertThrows(UserCreationFailedException.class, 
             () -> userService.registerUser(req));
         assertTrue(ex.getMessage().contains("Email existing@cts.com is already in use"));
     }
@@ -161,7 +161,7 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", user.getPassword())).thenReturn(false);
 
-        PasswordCannotBeChangedException ex = assertThrows(PasswordCannotBeChangedException.class, 
+        PasswordNotChangedException ex = assertThrows(PasswordNotChangedException.class, 
             () -> userService.changePassword(userId, "wrong", "new"));
         assertTrue(ex.getMessage().contains("Current password is incorrect"));
     }

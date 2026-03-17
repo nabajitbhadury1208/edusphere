@@ -3,6 +3,9 @@ package com.cts.edusphere.services.audit_log;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.enums.Severity;
 import com.cts.edusphere.enums.SystemLogType;
+import com.cts.edusphere.exceptions.genericexceptions.AuditLogNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.AuditLogsNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.FailedToCreateLogException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
@@ -63,8 +66,11 @@ public class AuditLogServiceImpl implements AuditLogService {
                     .build();
 
             auditLogRepository.save(log);
-        } catch (Exception e) {
+        } catch (FailedToCreateLogException e) {
             log.error("Failed to persist system audit log: {}", e.getMessage());
+        } catch(Exception e) {
+            log.error("Unexpected error occurred while logging system event: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to log system event");
         }
     }
 
@@ -74,8 +80,11 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findAll().stream()
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (AuditLogsNotFoundException e) {
             log.error("Error fetching all audit logs: {}", e.getMessage());
+            throw new AuditLogsNotFoundException("Failed to retrieve audit logs");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching all audit logs: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs");
         }
     }
@@ -85,11 +94,14 @@ public class AuditLogServiceImpl implements AuditLogService {
         try {
             return auditLogRepository.findById(id)
                     .map(auditLogMapper::toResponseDTO)
-                    .orElseThrow(() -> new ResourceNotFoundException("Audit log not found with id: " + id));
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
+                    .orElseThrow(() -> new AuditLogNotFoundException("Audit log not found with id: " + id));
+        // } catch (ResourceNotFoundException e) {
+        //     throw e;
+        } catch (AuditLogNotFoundException e) {
             log.error("Error fetching audit log {}: {}", id, e.getMessage());
+            throw new AuditLogNotFoundException("Failed to retrieve audit log");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching audit log {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit log");
         }
     }
@@ -100,8 +112,11 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findByUser_Id(userId).stream()
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (AuditLogsNotFoundException e) {
             log.error("Error fetching audit logs for user {}: {}", userId, e.getMessage());
+            throw new AuditLogsNotFoundException("Failed to retrieve user audit logs");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching audit logs for user {}: {}", userId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve user audit logs");
         }
     }
@@ -112,8 +127,11 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findByResourceContainingIgnoreCase(resource).stream()
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (AuditLogsNotFoundException e) {
             log.error("Error fetching audit logs for resource {}: {}", resource, e.getMessage());
+            throw new AuditLogsNotFoundException("Failed to retrieve resource audit logs");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching audit logs for resource {}: {}", resource, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve resource audit logs");
         }
     }
@@ -124,8 +142,11 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findBySeverity(severity).stream()
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (AuditLogsNotFoundException e) {
             log.error("Error fetching audit logs by severity {}: {}", severity, e.getMessage());
+            throw new AuditLogsNotFoundException("Failed to retrieve audit logs by severity");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching audit logs by severity {}: {}", severity, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs by severity");
         }
     }
@@ -136,8 +157,11 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findByLogType(logType).stream()
                     .map(auditLogMapper::toResponseDTO)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (AuditLogsNotFoundException e) {
             log.error("Error fetching audit logs by type {}: {}", logType, e.getMessage());
+            throw new AuditLogsNotFoundException("Failed to retrieve audit logs by type");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching audit logs by type {}: {}", logType, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs by type");
         }
     }
