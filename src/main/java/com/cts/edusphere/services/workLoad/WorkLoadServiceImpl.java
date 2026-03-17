@@ -6,6 +6,9 @@ import com.cts.edusphere.enums.Severity;
 import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.WorkLoadCreateFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.WorkLoadsFailedToFetchException;
+import com.cts.edusphere.exceptions.genericexceptions.WorkLoadNotFoundException;
 import com.cts.edusphere.mappers.work_load.WorkLoadMapper;
 import com.cts.edusphere.modules.work_load.WorkLoad;
 import com.cts.edusphere.repositories.course.CourseRepository;
@@ -49,7 +52,14 @@ public class WorkLoadServiceImpl implements WorkLoadService {
 
             log.info("Workload record created successfully with ID: {}", savedWorkLoad.getId());
             return mapper.toResponse(savedWorkLoad);
-        } catch (Exception e) {
+        }
+        
+        catch(WorkLoadCreateFailedException e) {
+            log.error("Workload creation failed: {}", e.getMessage());
+            throw new WorkLoadCreateFailedException("Failed to create workload record: " + e.getMessage());
+        }
+
+        catch (Exception e) {
             log.error("Error occurred while creating workload: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to create workload record: " + e.getMessage());
         }
@@ -62,7 +72,14 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             return repository.findAll().stream()
                     .map(mapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } 
+        
+        catch(WorkLoadsFailedToFetchException e) {
+            log.error("Failed to fetch workloads: {}", e.getMessage());
+            throw new WorkLoadsFailedToFetchException("Failed to retrieve workloads list: " + e.getMessage());
+        }
+        
+        catch (Exception e) {
             log.error("Error occurred while fetching all workloads: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve workloads list");
         }
@@ -74,9 +91,12 @@ public class WorkLoadServiceImpl implements WorkLoadService {
         try {
             return repository.findById(id)
             .map(mapper::toResponse)
-            .orElseThrow(() -> new ResourceNotFoundException("Workload not found with id: " + id));
-        } catch (ResourceNotFoundException e) {
-            throw e;
+            .orElseThrow(() -> new WorkLoadNotFoundException("Workload not found with id: " + id));
+
+        } catch (WorkLoadsFailedToFetchException e) {
+            log.error("Workload not found: {}", e.getMessage());
+            throw new WorkLoadsFailedToFetchException("Workload not found with id: " + id);
+
         } catch (Exception e) {
             log.error("Error occurred while fetching workload {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve workload details");
@@ -90,7 +110,14 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             return repository.findByFacultyId(facultyId).stream()
                     .map(mapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } 
+        
+        catch(WorkLoadsFailedToFetchException e) {
+            log.error("Failed to fetch workloads for faculty {}: {}", facultyId, e.getMessage());
+            throw new WorkLoadsFailedToFetchException("Failed to retrieve faculty workloads: " + e.getMessage());
+        }
+
+        catch (Exception e) {
             log.error("Error fetching workloads for faculty {}: {}", facultyId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve faculty workloads");
         }
@@ -111,8 +138,11 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             WorkLoad updatedWorkLoad = repository.save(existing);
             log.info("Workload record updated successfully: {}", id);
             return mapper.toResponse(updatedWorkLoad);
-        } catch (ResourceNotFoundException e) {
-            throw e;
+
+        }  catch (WorkLoadsFailedToFetchException e) {
+            log.error("Failed to update workload {}: {}", id, e.getMessage());
+            throw new WorkLoadsFailedToFetchException("Failed to update workload: " + e.getMessage());
+            
         } catch (Exception e) {
             log.error("Error occurred while updating workload {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to update workload record");
@@ -127,9 +157,13 @@ public class WorkLoadServiceImpl implements WorkLoadService {
             }
             repository.deleteById(id);
             log.info("Workload record deleted successfully: {}", id);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
+
+        } catch(WorkLoadsFailedToFetchException e) {
+            log.error("Failed to delete workload {}: {}", id, e.getMessage());
+            throw new WorkLoadsFailedToFetchException("Failed to delete workload: " + e.getMessage());
+        }
+        
+         catch (Exception e) {
             log.error("Error occurred while deleting workload {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to delete workload record");
         }

@@ -7,13 +7,16 @@ import java.time.Instant;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 @RequiredArgsConstructor
 @Slf4j
-public final class GenericExceptionConfig {
+@Configuration
+public class GenericExceptionConfig {
   private final AuditLogService auditLogService;
 
   public void logSecurityEvent(SystemLogType logType, Severity severity, String details) {

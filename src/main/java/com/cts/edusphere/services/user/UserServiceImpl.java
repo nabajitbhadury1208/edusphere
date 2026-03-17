@@ -12,10 +12,12 @@ import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.*;
 
 @Service
@@ -254,15 +256,28 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @ComplianceAudit(entityType = AuditEntityType.USER_DEACTIVATED, scope = "Verify activation status of User")
     public User updateUserStatus(UUID id, Status status, UserPrincipal principal) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        try {
+            User user = userRepository.findById(id)
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+    
+            if (id.equals(principal.userId()) && status == Status.INACTIVE) {
+                throw new AccessDeniedException("Admins cannot deactivate their own account.");
+            }
+    
+    
+            user.setStatus(status);
+            return userRepository.save(user);
+        } 
+        
+        catch(UserUpdateFailedException e) {
+            log.error("Error occurred while updating user status for user {}: {}", id, e.getMessage());
+            throw new UserUpdateFailedException("Failed to update user status: " + e.getMessage());
 
-        if (id.equals(principal.userId()) && status == Status.INACTIVE) {
-            throw new IllegalArgumentException("Admins cannot deactivate their own account.");
         }
-
-
-        user.setStatus(status);
-        return userRepository.save(user);
+        
+        catch (Exception e) {
+            log.error("Unexpected error occurred while updating user status for user {}: {}", id, e.getMessage());
+            throw new InternalServerErrorException("An unexpected error occurred while updating the user status");
+        }
     }
 }
