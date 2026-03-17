@@ -107,14 +107,13 @@
 
 ## Curriculum API
 
-| Sl No | Method   | Endpoint                    | Description                        | Role                                              |
-|:------|:---------|:----------------------------|:-----------------------------------|:--------------------------------------------------|
-| 1     | `POST`   | `/curriculum`               | Create a new curriculum            | Admin, DeptHead                                   |
-| 2     | `GET`    | `/curriculum`               | Get all curriculums                | Admin, DeptHead, Faculty, Student, Compliance     |
-| 3     | `GET`    | `/curriculum/{id}`          | Get a curriculum by id             | Admin, DeptHead, Faculty, Student, Compliance     |
-| 4     | `PUT`    | `/curriculum/{id}`          | Fully update a curriculum by id    | Admin, DeptHead                                   |
-| 5     | `PATCH`  | `/curriculum/{id}`          | Partially update a curriculum by id| Admin, DeptHead, Faculty                          |
-| 6     | `DELETE` | `/curriculum/{id}`          | Delete a curriculum by id          | Admin                                             |
+| Sl No | Method   | Endpoint            | Description                        | Role                                              |
+|:------|:---------|:--------------------|:-----------------------------------|:--------------------------------------------------|
+| 1     | `POST`   | `/curriculums`      | Create a new curriculum            | Admin, DeptHead                                   |
+| 2     | `GET`    | `/curriculums`      | Get all curriculums                | Admin, DeptHead, Faculty, Student, Compliance     |
+| 3     | `GET`    | `/curriculums/{id}` | Get a curriculum by id             | Admin, DeptHead, Faculty, Student, Compliance     |
+| 4     | `PUT`    | `/curriculums/{id}` | Fully update a curriculum by id    | Admin, DeptHead                                   |
+| 5     | `DELETE` | `/curriculums/{id}` | Delete a curriculum by id          | Admin                                             |
 
 ---
 
@@ -180,9 +179,9 @@
 | 3     | `GET`    | `/student-documents/student/{studentId}` | Get all documents for a student | Admin, DeptHead, Student (own), Compliance |
 | 4     | `GET`    | `/student-documents/all`                 | Get all student document        | Admin, Compliance                      |
 | 5     | `DELETE` | `/student-documents/{id}`                | Delete a student document by id | Admin                      
-| 6     | `GET`    | `/student-documents/me/docs`             | Delete a student document by id | Admin                      
-| 7     | `PATCH`  | `/student-documents/{id}/verify`         | Delete a student document by id | Admin                      
-| 8     | `GET`    | `/student-documents/download/{id}`       | Delete a student document by id | Admin                      
+| 6     | `GET`    | `/student-documents/me/docs`             | Get current student document    | Admin                      
+| 7     | `PATCH`  | `/student-documents/{id}/verify`         | Verify student document by id   | Admin                      
+| 8     | `GET`    | `/student-documents/download/{id}`       | Download student document by id | Admin                      
 
 ---
 
@@ -203,13 +202,14 @@
 
 ## Notifications API
 
-| Sl No | Method   | Endpoint                               | Description                    | Role                              |
-|:------|:---------|:---------------------------------------|:-------------------------------|:----------------------------------|
-| 1     | `POST`   | `/notifications`                       | Create a new notification      | Admin                             |
-| 2     | `GET`    | `/notifications/{userId}`              | Get notifications by user id   | All                               |
-| 3     | `PATCH`  | `/notifications/{notificationId}/read` | Mark a notification as read    | All                               |
-| 4     | `PATCH`  | `/notifications/{userId}/read-all`     | Mark all notifications as read | All                               |
-| 5     | `DELETE` | `/notifications/{notificationId}`      | Delete a notification by id    | Admin                             |
+| Sl No | Method   | Endpoint                               | Description                     | Role                              |
+|:------|:---------|:---------------------------------------|:--------------------------------|:----------------------------------|
+| 1     | `POST`   | `/notifications/{userId}`              | Create a new notification       | Admin                             |
+| 2     | `GET`    | `/notifications/{userId}`              | Get notifications by user id    | All                               |
+| 3     | `PATCH`  | `/notifications/{notificationId}/read` | Mark a notification as read     | All                               |
+| 4     | `PATCH`  | `/notifications/{userId}/read-all`     | Mark all notifications as read  | All                               |
+| 5     | `DELETE` | `/notifications/{notificationId}`      | Delete a notification by id     | Admin                             |
+| 6     | `GET`    | `/notifications/stream/{userId}`       | Get stream a notification by id | Admin                             |
 
 ---
 
@@ -217,12 +217,14 @@
 
 > **Note:** Audit Logs are system-generated, immutable records of actions across the platform. No create/update/delete operations are permitted.
 
-| Sl No | Method   | Endpoint                                    | Description                              | Role                        |
-|:------|:---------|:--------------------------------------------|:-----------------------------------------|:----------------------------|
-| 1     | `GET`    | `/audit-logs`                               | Get all audit log entries                | Admin, Compliance           |
-| 2     | `GET`    | `/audit-logs/{id}`                          | Get an audit log entry by id             | Admin, Compliance           |
-| 3     | `GET`    | `/audit-logs/user/{userId}`                 | Get audit log entries for a user         | Admin, Compliance           |
-| 4     | `GET`    | `/audit-logs/resource/{resource}`           | Get audit logs for a resource by name    | Admin, Compliance           |
+| Sl No | Method   | Endpoint                          | Description                           | Role                        |
+|:------|:---------|:----------------------------------|:--------------------------------------|:----------------------------|
+| 1     | `GET`    | `/audit-logs`                     | Get all audit log entries             | Admin, Compliance           |
+| 2     | `GET`    | `/audit-logs/{id}`                | Get an audit log entry by id          | Admin, Compliance           |
+| 3     | `GET`    | `/audit-logs/user/{userId}`       | Get audit log entries for a user      | Admin, Compliance           |
+| 4     | `GET`    | `/audit-logs/resource/{resource}` | Get audit logs for a resource by name | Admin, Compliance           |
+| 5     | `GET`    | `/audit-logs/severity/{severity}` | Get audit logs by by severity         | Admin, Compliance           |
+| 6     | `GET`    | `/audit-logs/type/{logType}`      | Get audit logs by type                | Admin, Compliance           |
 
 ---
 
@@ -235,22 +237,22 @@
 | 1     | `GET`    | `/audits/by-entity-type` | Get all audit by entity type | Admin, Compliance officer    |
 | 2     | `GET`    | `/audits`                | Get all audits               | Admin, Compliance, Regulator |
 | 3     | `GET`    | `/audits/{id}`           | Get an audit by id           | Admin, Compliance, Regulator |
-| 4     | `PUT`    | `/audits/{id}`           | Fully update an audit by id  | Admin, Compliance            |
+| 4     | `PUT`    | `/audits/{id}/review`    | Review an audit by id        | Admin, Compliance            |
 | 5     | `DELETE` | `/audits/{id}`           | Delete an audit by id        | Admin                        |
 
 ---
 
 ## Compliance Records API
 
-| Sl No | Method   | Endpoint                                          | Description                              | Role                               |
-|:------|:---------|:--------------------------------------------------|:-----------------------------------------|:-----------------------------------|
-| 1     | `POST`   | `/compliance-records`                             | Create a compliance record               | Admin, Compliance                  |
-| 2     | `GET`    | `/compliance-records`                             | Get all compliance records               | Admin, Compliance, Regulator       |
-| 3     | `GET`    | `/compliance-records/{id}`                        | Get a compliance record by id            | Admin, Compliance, Regulator       |
-| 4     | `GET`    | `/compliance-records/entity/{entityId}`           | Get compliance records for an entity     | Admin, Compliance, Regulator       |
-| 5     | `PUT`    | `/compliance-records/{id}`                        | Fully update a compliance record         | Admin, Compliance                  |
-| 6     | `PATCH`  | `/compliance-records/{id}`                        | Partially update a compliance record     | Admin, Compliance                  |
-| 7     | `DELETE` | `/compliance-records/{id}`                        | Delete a compliance record by id         | Admin                              |
+| Sl No | Method   | Endpoint                                | Description                          | Role                               |
+|:------|:---------|:----------------------------------------|:-------------------------------------|:-----------------------------------|
+| 1     | `POST`   | `/compliance-records`                   | Create a compliance record           | Admin, Compliance                  |
+| 2     | `GET`    | `/compliance-records`                   | Get all compliance records           | Admin, Compliance, Regulator       |
+| 3     | `GET`    | `/compliance-records/{id}`              | Get a compliance record by id        | Admin, Compliance, Regulator       |
+| 4     | `GET`    | `/compliance-records/entity/{entityId}` | Get compliance records for an entity | Admin, Compliance, Regulator       |
+| 5     | `PUT`    | `/compliance-records/{id}`              | Fully update a compliance record     | Admin, Compliance                  |
+| 6     | `GET`    | `/compliance-records/user/{userid}`     | Get compliance record by user id     | Admin, Compliance                  |
+| 7     | `DELETE` | `/compliance-records/{id}`              | Delete a compliance record by id     | Admin                              |
 
 ---
 
