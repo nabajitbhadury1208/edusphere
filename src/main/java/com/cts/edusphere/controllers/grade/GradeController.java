@@ -28,14 +28,14 @@ public class GradeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','COMPLIANCE')")
     public ResponseEntity<List<GradeResponse>> getAllGrades() {
             List<GradeResponse> grades = gradeService.getAllGrades();
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE')")
     public ResponseEntity<GradeResponse> getGradeById(@PathVariable UUID id) {
             GradeResponse grade = gradeService.getGradeById(id);
             return ResponseEntity.ok(grade);
@@ -58,14 +58,14 @@ public class GradeController {
     }
 
     @GetMapping("/students/{studentId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD','STUDENT','COMPLIANCE')")
     public ResponseEntity<List<GradeResponse>> getGradesByStudent(@PathVariable UUID studentId) {
             List<GradeResponse> grades = gradeService.getGradesByStudent(studentId);
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/exam/{examId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE')")
     public ResponseEntity<List<GradeResponse>> getGradesByExam(@PathVariable UUID examId) {
             List<GradeResponse> grades = gradeService.getGradesByExam(examId);
             return ResponseEntity.ok(grades);

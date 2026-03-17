@@ -230,13 +230,13 @@
 
 > **Note:** Audits are manually created compliance/review audits, distinct from system-generated Audit Logs.
 
-| Sl No | Method   | Endpoint                    | Description                        | Role                               |
-|:------|:---------|:----------------------------|:-----------------------------------|:-----------------------------------|
-| 1     | `POST`   | `/audits`                   | Create a new audit                 | Admin, Compliance                  |
-| 2     | `GET`    | `/audits`                   | Get all audits                     | Admin, Compliance, Regulator       |
-| 3     | `GET`    | `/audits/{id}`              | Get an audit by id                 | Admin, Compliance, Regulator       |
-| 4     | `PUT`    | `/audits/{id}`              | Fully update an audit by id        | Admin, Compliance                  |
-| 5     | `DELETE` | `/audits/{id}`              | Delete an audit by id              | Admin                              |
+| Sl No | Method   | Endpoint                 | Description                  | Role                         |
+|:------|:---------|:-------------------------|:-----------------------------|:-----------------------------|
+| 1     | `GET`    | `/audits/by-entity-type` | Get all audit by entity type | Admin, Compliance officer    |
+| 2     | `GET`    | `/audits`                | Get all audits               | Admin, Compliance, Regulator |
+| 3     | `GET`    | `/audits/{id}`           | Get an audit by id           | Admin, Compliance, Regulator |
+| 4     | `PUT`    | `/audits/{id}`           | Fully update an audit by id  | Admin, Compliance            |
+| 5     | `DELETE` | `/audits/{id}`           | Delete an audit by id        | Admin                        |
 
 ---
 
