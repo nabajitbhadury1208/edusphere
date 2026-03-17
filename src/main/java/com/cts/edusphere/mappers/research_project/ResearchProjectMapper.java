@@ -37,6 +37,7 @@ public class ResearchProjectMapper {
                 .toList();
 
         return new ResearchProjectResponse(
+                project.getId(),
                 project.getTitle(),
                 project.getFacultyLead().getId(),
                 project.getStatus(),
