@@ -6,6 +6,10 @@ import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.ThesisCreationFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.ThesisDeletionFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.ThesisNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.ThesisUpdationFailedException;
 import com.cts.edusphere.mappers.thesis.ThesisMapper;
 import com.cts.edusphere.modules.thesis.Thesis;
 import com.cts.edusphere.repositories.thesis.ThesisRepository;
@@ -39,6 +43,7 @@ public class ThesisServiceImpl implements ThesisService {
             if (request.studentId() != null) {
                 thesis.setStudent(studentRepository.getReferenceById(request.studentId()));
             }
+
             if (request.supervisorId() != null) {
                 thesis.setSupervisor(facultyRepository.getReferenceById(request.supervisorId()));
             }
@@ -46,6 +51,11 @@ public class ThesisServiceImpl implements ThesisService {
             Thesis savedThesis = thesisRepository.save(thesis);
             log.info("Thesis created successfully with ID: {}", savedThesis.getId());
             return thesisMapper.toResponse(savedThesis);
+
+        } catch (ThesisCreationFailedException e) {
+            log.error("Error occurred while creating thesis: {}", e.getMessage());
+            throw new ThesisCreationFailedException("Failed to create thesis record: " + e.getMessage());
+
         } catch (Exception e) {
             log.error("Error occurred while creating thesis: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to create thesis record: " + e.getMessage());
@@ -58,9 +68,12 @@ public class ThesisServiceImpl implements ThesisService {
         try {
             return thesisRepository.findById(id)
                     .map(thesisMapper::toResponse)
-                    .orElseThrow(() -> new ResourceNotFoundException("Thesis not found with id: " + id));
-        } catch (ResourceNotFoundException e) {
-            throw e;
+                    .orElseThrow(() -> new ThesisNotFoundException("Thesis not found with id: " + id));
+
+        } catch (ThesisNotFoundException e) {
+            log.error("Thesis with ID {} not found: {}", id, e.getMessage());
+            throw new ThesisNotFoundException("Thesis with ID: " + id + " not found");
+
         } catch (Exception e) {
             log.error("Error occurred while fetching thesis {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve thesis details");
@@ -74,7 +87,12 @@ public class ThesisServiceImpl implements ThesisService {
             return thesisRepository.findByStudentId(studentId).stream()
                     .map(thesisMapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch(ThesisNotFoundException e) {
+            log.error("Thesis for student {} not found: {}", studentId, e.getMessage());
+            throw new ThesisNotFoundException("Thesis for student with ID: " + studentId + " not found");
+        }
+        
+        catch (Exception e) {
             log.error("Error fetching thesis for student {}: {}", studentId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve student thesis");
         }
@@ -87,7 +105,14 @@ public class ThesisServiceImpl implements ThesisService {
             return thesisRepository.findBySupervisorId(facultyId).stream()
                     .map(thesisMapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } 
+        
+        catch(ThesisNotFoundException e) {
+            log.error("Thesis for supervisor {} not found: {}", facultyId, e.getMessage());
+            throw new ThesisNotFoundException("Thesis for supervisor with ID: " + facultyId + " not found");
+        }
+        
+        catch (Exception e) {
             log.error("Error fetching thesis for supervisor {}: {}", facultyId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve supervisor thesis");
         }
@@ -97,7 +122,7 @@ public class ThesisServiceImpl implements ThesisService {
     public ThesisResponseDto updateThesis(UUID id, ThesisRequestDto request) {
         try {
             Thesis existing = thesisRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Thesis not found with id: " + id));
+                    .orElseThrow(() -> new ThesisNotFoundException("Thesis not found with id: " + id));
 
             // Update associations using proxies
             if (request.studentId() != null) {
@@ -114,8 +139,11 @@ public class ThesisServiceImpl implements ThesisService {
             Thesis updatedThesis = thesisRepository.save(existing);
             log.info("Thesis record updated successfully: {}", id);
             return thesisMapper.toResponse(updatedThesis);
-        } catch (ResourceNotFoundException e) {
-            throw e;
+
+        } catch (ThesisUpdationFailedException e) {
+            log.error("Error occurred while updating thesis {}: {}", id, e.getMessage());
+            throw new ThesisUpdationFailedException("Failed to update thesis record: " + e.getMessage());
+
         } catch (Exception e) {
             log.error("Error occurred while updating thesis {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to update thesis record");
@@ -126,12 +154,15 @@ public class ThesisServiceImpl implements ThesisService {
     public void deleteThesis(UUID id) {
         try {
             if (!thesisRepository.existsById(id)) {
-                throw new ResourceNotFoundException("Thesis not found with id: " + id);
+                throw new ThesisNotFoundException("Thesis not found with id: " + id);
             }
             thesisRepository.deleteById(id);
             log.info("Thesis record deleted successfully: {}", id);
-        } catch (ResourceNotFoundException e) {
-            throw e;
+            
+        } catch (ThesisDeletionFailedException e) {
+            log.error("Error occurred while deleting thesis {}: {}", id, e.getMessage());
+            throw new ThesisDeletionFailedException("Failed to delete thesis record: " + e.getMessage());
+
         } catch (Exception e) {
             log.error("Error occurred while deleting thesis {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to delete thesis record");

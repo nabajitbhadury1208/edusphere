@@ -5,7 +5,7 @@ import com.cts.edusphere.common.dto.notification.NotificationResponse;
 import com.cts.edusphere.enums.NotificationType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.NoNotificationFoundWithId;
-import com.cts.edusphere.exceptions.genericexceptions.NoNotificationFoundWithUserId;
+import com.cts.edusphere.exceptions.genericexceptions.NotificationNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.modules.notification.Notification;
 import com.cts.edusphere.modules.user.User;

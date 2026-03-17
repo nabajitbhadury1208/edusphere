@@ -8,6 +8,11 @@ import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.StudentCreationFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.StudentDeletionFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.StudentNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.StudentUpdateFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.StudentsNotFoundException;
 import com.cts.edusphere.mappers.student.StudentMapper;
 import com.cts.edusphere.modules.student.Student;
 import com.cts.edusphere.repositories.student.StudentRepository;
@@ -45,6 +50,9 @@ public class StudentServiceImpl implements StudentService {
             Student savedStudent = studentRepository.save(student);
             log.info("student record created successfully with ID: {}", savedStudent.getId());
             return studentMapper.toResponseDTO(savedStudent);
+        } catch (StudentCreationFailedException e) {
+            log.error("Error occurred while creating student: {}", e.getMessage());
+            throw new StudentCreationFailedException("Failed to create student record: " + e.getMessage());
         } catch (Exception e) {
             log.error("Error occurred while creating student: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to create student record");
@@ -58,8 +66,10 @@ public class StudentServiceImpl implements StudentService {
             return studentRepository.findById(id)
                     .map(studentMapper::toResponseDTO)
                     .orElseThrow(() -> new ResourceNotFoundException("student not found with id: " + id));
-        } catch (ResourceNotFoundException e) {
-            throw e;
+        }  catch (StudentNotFoundException e) {
+            log.error("student with ID {} not found: {}", id, e.getMessage());
+            throw new StudentNotFoundException("student with ID: " + id + " not found");
+
         } catch (Exception e) {
             log.error("Error occurred while fetching student {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve student details");
@@ -73,6 +83,11 @@ public class StudentServiceImpl implements StudentService {
             return studentRepository.findAll().stream()
                     .map(studentMapper::toResponseDTO)
                     .collect(Collectors.toList());
+
+        } catch (StudentsNotFoundException e) {
+            log.error("Error occurred while fetching all students: {}", e.getMessage());
+            throw new StudentsNotFoundException("Failed to retrieve students list");
+
         } catch (Exception e) {
             log.error("Error occurred while fetching all students: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve students list");
@@ -96,8 +111,11 @@ public class StudentServiceImpl implements StudentService {
             Student updatedStudent = studentRepository.save(student);
             log.info("student record updated successfully: {}", id);
             return studentMapper.toResponseDTO(updatedStudent);
-        } catch (ResourceNotFoundException e) {
-            throw e;
+
+        } catch(StudentUpdateFailedException e) {
+            log.error("Error occurred while updating student {}: {}", id, e.getMessage());
+            throw new StudentUpdateFailedException("Failed to update student record: " + e.getMessage());
+
         } catch (Exception e) {
             log.error("Error occurred while updating student {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to update student record");
@@ -112,8 +130,11 @@ public class StudentServiceImpl implements StudentService {
                     .orElseThrow(() -> new ResourceNotFoundException("student not found with id: " + id));
             studentRepository.delete(student);
             log.info("student record deleted successfully: {}", id);
-        } catch (ResourceNotFoundException e) {
-            throw e;
+
+        }catch(StudentDeletionFailedException e) {
+            log.error("Error occurred while deleting student {}: {}", id, e.getMessage());
+            throw new StudentDeletionFailedException("Failed to delete student record: " + e.getMessage());
+            
         } catch (Exception e) {
             log.error("Error occurred while deleting student {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to delete student record");

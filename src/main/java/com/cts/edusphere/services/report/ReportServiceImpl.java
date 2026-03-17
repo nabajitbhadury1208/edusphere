@@ -3,6 +3,11 @@ package com.cts.edusphere.services.report;
 import com.cts.edusphere.common.dto.report.ReportRequestDto;
 import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportCreationFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportDeletionFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportFetchingFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportUpdatingFailedException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.report.ReportMapper;
 import com.cts.edusphere.modules.report.Report;
@@ -47,9 +52,12 @@ public class ReportServiceImpl implements ReportService {
             Report savedReport = reportRepository.save(report);
             log.info("Report created successfully with ID: {}", savedReport.getId());
             return reportMapper.toResponse(savedReport);
-        } catch (Exception e) {
+        } catch (ReportCreationFailedException e) {
             log.error("Error occurred while creating report: {}", e.getMessage());
-            throw new InternalServerErrorException("Failed to create report record: " + e.getMessage());
+            throw new ReportCreationFailedException("Failed to create report record: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while creating report: {}", e.getMessage());
+            throw new InternalServerErrorException("An unexpected error occurred while creating the report");
         }
     }
 
@@ -60,8 +68,11 @@ public class ReportServiceImpl implements ReportService {
             return reportRepository.findAll().stream()
                     .map(reportMapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (ReportFetchingFailedException e) {
             log.error("Error occurred while fetching all reports: {}", e.getMessage());
+            throw new ReportFetchingFailedException("Failed to retrieve reports list: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while fetching all reports: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve reports list");
         }
     }
@@ -72,9 +83,10 @@ public class ReportServiceImpl implements ReportService {
         try {
             return reportRepository.findById(id)
                     .map(reportMapper::toResponse)
-                    .orElseThrow(() -> new ResourceNotFoundException("Report not found with id: " + id));
-        } catch (ResourceNotFoundException e) {
-            throw e;
+                    .orElseThrow(() -> new ReportNotFoundException("Report not found with id: " + id));
+        } catch (ReportNotFoundException e) {
+            log.error("Report with id {} not found: {}", id, e.getMessage());
+            throw new ReportNotFoundException("Report with id: " + id + " not found");
         } catch (Exception e) {
             log.error("Error occurred while fetching report {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve report details");
@@ -88,8 +100,11 @@ public class ReportServiceImpl implements ReportService {
             return reportRepository.findByDepartmentId(departmentId).stream()
                     .map(reportMapper::toResponse)
                     .collect(Collectors.toList());
-        } catch (Exception e) {
+        } catch (ReportFetchingFailedException e) {
             log.error("Error fetching reports for department {}: {}", departmentId, e.getMessage());
+            throw new ReportFetchingFailedException("Failed to retrieve department reports");
+        } catch (Exception e) {
+            log.error("Unexpected error fetching reports for department {}: {}", departmentId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve department reports");
         }
     }
@@ -115,10 +130,11 @@ public class ReportServiceImpl implements ReportService {
             Report updatedReport = reportRepository.save(existing);
             log.info("Report record updated successfully: {}", id);
             return reportMapper.toResponse(updatedReport);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (ReportUpdatingFailedException e) {
             log.error("Error occurred while updating report {}: {}", id, e.getMessage());
+            throw new ReportUpdatingFailedException("Failed to update report record");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while updating report {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to update report record");
         }
     }
@@ -131,10 +147,11 @@ public class ReportServiceImpl implements ReportService {
             }
             reportRepository.deleteById(id);
             log.info("Report record deleted successfully: {}", id);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
+        }  catch (ReportDeletionFailedException e) {
             log.error("Error occurred while deleting report {}: {}", id, e.getMessage());
+            throw new ReportDeletionFailedException("Failed to delete report record");
+        } catch (Exception e) {
+            log.error("Unexpected error occurred while deleting report {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to delete report record");
         }
     }
