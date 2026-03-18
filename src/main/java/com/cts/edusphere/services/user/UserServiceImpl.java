@@ -5,9 +5,11 @@ import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.AuditEntityType;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditLogRepository auditLogRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,11 +109,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    @Transactional
     public void deleteUserById(UUID id) {
         try {
             if (!userRepository.existsById(id)) {
                 throw new UserNotFoundException("User with id " + id + " not found");
             }
+            auditLogRepository.nullifyUserOnAuditLogs(id);
             userRepository.deleteById(id);
 
         }
@@ -150,11 +156,14 @@ public class UserServiceImpl implements UserService {
             if (request.name() != null) user.setName(request.name());
             if (request.phone() != null) user.setPhone(request.phone());
     
-            if (isAdmin) {
-                if (request.roles() != null) user.setRoles(new HashSet<>(request.roles()));
-                if (request.status() != null) user.setStatus(request.status());
-            }
-    
+            if (isAdmin && request.roles() != null){
+                    Set<Role> existingRoles = user.getRoles() != null
+                            ? new HashSet<>(user.getRoles()) : new HashSet<>();
+                    existingRoles.addAll(request.roles());
+                    user.setRoles(existingRoles);
+                }
+            if(user.getStatus() != null) user.setStatus(request.status());
+
             return userRepository.save(user);
         } 
         

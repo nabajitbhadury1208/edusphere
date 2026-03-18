@@ -9,7 +9,7 @@ public record StudentDocumentResponse(
         UUID studentId,
         String studentName,
         DocType docType,
-        String fileUri,
+        String downloadUrl,
         boolean verificationStatus
 ) {
 }

@@ -1,14 +1,16 @@
 package com.cts.edusphere.controllers.notification;
 
-import com.cts.edusphere.common.dto.course.CourseResponse;
+import com.cts.edusphere.common.dto.notification.BroadcastNotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationResponse;
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.services.notification.NotificationService;
 
 import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 
@@ -38,58 +40,59 @@ public class NotificationController {
         return notificationService.subscribeToNofications(userId);
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/send/user/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> createNotification(@Valid @PathVariable UUID userId,
-            @RequestBody NotificationRequest notificationRequest) {
-        try {
-            notificationService.createNotification(userId, notificationRequest);
-            return ResponseEntity.ok("Successfully created user");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<NotificationResponse> sendToUser(
+            @PathVariable UUID userId,
+            @Valid @RequestBody NotificationRequest notificationRequest) {
+        NotificationResponse response = notificationService.createNotification(userId, notificationRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+
+    @PostMapping("/send/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<NotificationResponse>> sendToAll(
+            @Valid @RequestBody BroadcastNotificationRequest request) {
+        List<NotificationResponse> responses = notificationService.sendToAll(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
+    }
+
+
+    @PostMapping("/send/role/{role}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<NotificationResponse>> sendToRole(
+            @PathVariable Role role,
+            @Valid @RequestBody BroadcastNotificationRequest request) {
+        List<NotificationResponse> responses = notificationService.sendToRole(role, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responses);
+    }
+
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<NotificationResponse>> getAllNotificationsForUserId(@Valid @PathVariable UUID userId) {
-        try {
-            return ResponseEntity.ok(notificationService.getAllNotificationsForUserId(userId));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<List<NotificationResponse>> getAllNotificationsForUserId(@PathVariable UUID userId) {
+        return ResponseEntity.ok(notificationService.getAllNotificationsForUserId(userId));
     }
 
     @PatchMapping("/{notificationId}/read")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> markNotificationAsRead(@Valid @PathVariable UUID notificationId) {
-        try {
-            notificationService.markNotificationAsRead(notificationId);
-            return ResponseEntity.ok("Successfully marked notification with id: " + notificationId + " as read");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<String> markNotificationAsRead(@PathVariable UUID notificationId) {
+        notificationService.markNotificationAsRead(notificationId);
+        return ResponseEntity.ok("Successfully marked notification with id: " + notificationId + " as read");
     }
 
     @PatchMapping("/{userId}/read-all")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> markAllNotificationsAsRead(@Valid @PathVariable UUID userId) {
-        try {
-            notificationService.markAllNotificationsAsRead(userId);
-            return ResponseEntity.ok("Successfully marked all notification with user id: " + userId + " as read");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<String> markAllNotificationsAsRead(@PathVariable UUID userId) {
+        notificationService.markAllNotificationsAsRead(userId);
+        return ResponseEntity.ok("Successfully marked all notifications for user id: " + userId + " as read");
     }
 
-    @DeleteMapping(path = "/{notificationId}")
+    @DeleteMapping("/{notificationId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteNotificationById(@Valid @PathVariable UUID notificationId) {
-        try {
-            notificationService.deleteNotificationById(notificationId);
-            return ResponseEntity.ok("Successfully deleted notification with id: " + notificationId + " as read");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<String> deleteNotificationById(@PathVariable UUID notificationId) {
+        notificationService.deleteNotificationById(notificationId);
+        return ResponseEntity.ok("Successfully deleted notification with id: " + notificationId);
     }
 }

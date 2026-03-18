@@ -1,10 +1,10 @@
 package com.cts.edusphere.controllers.student_documents;
-import com.cts.edusphere.aspects.ComplianceAudit;
+
 import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
-import com.cts.edusphere.common.storage.StorageService;
+import com.cts.edusphere.common.dto.student_document.VerifyDocumentRequest;
 import com.cts.edusphere.config.security.UserPrincipal;
-import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.student_document.StudentDocumentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -23,7 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class StudentDocumentsController {
-        private final StudentDocumentService studentDocumentService;
+    private final StudentDocumentService studentDocumentService;
 
     @PostMapping("/me/upload")
     @PreAuthorize("hasRole('STUDENT')")
@@ -37,7 +38,7 @@ public class StudentDocumentsController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER')" + "or (hasRole('STUDENT') and @studentDocumentService.getDocumentById(#id)?.studentId() == principal.userId())")
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER') or (hasRole('STUDENT') and @studentDocumentService.getDocumentById(#id)?.studentId() == principal.userId())")
     public ResponseEntity<StudentDocumentResponse> getDocument(@PathVariable UUID id) {
         return ResponseEntity.ok(studentDocumentService.getDocumentById(id));
     }
@@ -56,12 +57,9 @@ public class StudentDocumentsController {
 
     @GetMapping("/download/{id}")
     @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER')" + "or (hasRole('STUDENT') and @studentDocumentService.getDocumentById(#id)?.studentId() == principal.userId())")
-    @ResponseBody
+
     public ResponseEntity<Resource> downloadDocument(@PathVariable UUID id) {
         Resource file = studentDocumentService.downloadDocument(id);
-
-        if (file == null || !file.exists())
-            return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
@@ -69,8 +67,8 @@ public class StudentDocumentsController {
 
     @PatchMapping("/{id}/verify")
     @PreAuthorize("hasAnyRole('FACULTY', 'DEPARTMENT_HEAD', 'ADMIN')")
-    public ResponseEntity<StudentDocumentResponse> verifyDocument(@PathVariable UUID id, @RequestParam("status") boolean status) {
-        StudentDocumentResponse updated = studentDocumentService.verifyDocument(id, status);
+    public ResponseEntity<StudentDocumentResponse> verifyDocument(@PathVariable UUID id, @Valid @RequestBody VerifyDocumentRequest request) {
+        StudentDocumentResponse updated = studentDocumentService.verifyDocument(id, request.verified());
         return ResponseEntity.ok(updated);
     }
 
@@ -82,6 +80,7 @@ public class StudentDocumentsController {
     }
 
     @GetMapping("/me/docs")
+    @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<List<StudentDocumentResponse>> getMyDocuments(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "docType", required = false) String docType
@@ -90,7 +89,7 @@ public class StudentDocumentsController {
         log.info("Fetching documents for logged-in user: {}", principal.userId());
 
         List<StudentDocumentResponse> responses;
-        if(docType != null && !docType.isBlank()) {
+        if (docType != null && !docType.isBlank()) {
             responses = studentDocumentService.getMyDocumentsByType(principal.userId(), docType);
         } else {
             responses = studentDocumentService.getAllDocumentsByStudentId(principal.userId());

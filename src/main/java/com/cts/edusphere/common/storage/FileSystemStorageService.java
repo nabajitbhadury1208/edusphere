@@ -59,22 +59,28 @@ public class FileSystemStorageService implements StorageService {
                 extension = filename.substring(filename.lastIndexOf("."));
             }
 
-            Path targetDir = this.rootLocation.resolve(subFolder).normalize();
+            Path targetDir = this.rootLocation.resolve(subFolder).normalize().toAbsolutePath();
+            if (!targetDir.startsWith(this.rootLocation.toAbsolutePath())) {
+                throw new StorageException("Cannot store file outside root storage directory");
+            }
             if (!Files.exists(targetDir)) {
                 Files.createDirectories(targetDir);
             }
 
             String generatedFilename = UUID.randomUUID().toString() + extension;
-            Path destinationFile = this.rootLocation.resolve(Path.of(generatedFilename)).normalize().toAbsolutePath();
+            Path destinationFile = targetDir.resolve(generatedFilename).normalize().toAbsolutePath();
 
-            if (!destinationFile.getParent().equals(this.rootLocation.toAbsolutePath())) {
+            if (!destinationFile.getParent().equals(targetDir)) {
                 throw new StorageException("Cannot store file outside current directory.");
             }
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
             }
-            return generatedFilename;
-        } catch (Exception e) {
+            return this.rootLocation.toAbsolutePath().relativize(destinationFile).toString();
+        } catch (StorageException e){
+            throw e;
+        }
+        catch (Exception e) {
             throw new StorageException("Failed to store file: " + e.getMessage(), e);
         }
 

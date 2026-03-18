@@ -1,10 +1,12 @@
 package com.cts.edusphere.repositories.user;
 
+import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.modules.user.User;
 import jakarta.validation.constraints.Email;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +14,6 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(@Email String email);
     Optional<User> findByEmail(String email);
+
+    List<User> findAllByRolesContaining(Role role);
 }

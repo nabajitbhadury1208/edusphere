@@ -1,8 +1,10 @@
 package com.cts.edusphere.services.notification;
 
+import com.cts.edusphere.common.dto.notification.BroadcastNotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationResponse;
 
+import com.cts.edusphere.enums.Role;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
@@ -13,6 +15,10 @@ public interface NotificationService {
     UUID userId,
     NotificationRequest notificationRequest
   );
+
+  List<NotificationResponse> sendToAll(BroadcastNotificationRequest request);
+
+  List<NotificationResponse> sendToRole(Role role, BroadcastNotificationRequest request);
 
   List<NotificationResponse> getAllNotificationsForUserId(UUID userId);
 
