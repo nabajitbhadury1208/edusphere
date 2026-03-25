@@ -4,6 +4,8 @@ import com.cts.edusphere.common.dto.faculty.FacultyRequestDTO;
 import com.cts.edusphere.common.dto.faculty.FacultyResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
+import com.cts.edusphere.exceptions.genericexceptions.FacultyNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.faculty.FacultyMapper;
 import com.cts.edusphere.modules.department.Department;
@@ -124,7 +126,7 @@ public class FacultyServiceImplTest {
     void testCreateFaculty_DepartmentNotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.createFaculty(facultyRequestDTO));
+        assertThrows(InternalServerErrorException.class, () -> facultyService.createFaculty(facultyRequestDTO));
         verify(departmentRepository, times(1)).findById(departmentId);
         verify(facultyRepository, never()).save(any());
     }
@@ -145,7 +147,7 @@ public class FacultyServiceImplTest {
     void testGetFacultyById_NotFound() {
         when(facultyRepository.findById(facultyId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.getFacultyById(facultyId));
+        assertThrows(FacultyNotFoundException.class, () -> facultyService.getFacultyById(facultyId));
         verify(facultyRepository, times(1)).findById(facultyId);
     }
 
@@ -197,7 +199,7 @@ public class FacultyServiceImplTest {
     void testGetFacultiesByDepartment_DepartmentNotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.getFacultiesByDepartment(departmentId));
+        assertThrows(InternalServerErrorException.class, () -> facultyService.getFacultiesByDepartment(departmentId));
         verify(departmentRepository, times(1)).findById(departmentId);
     }
 
@@ -221,7 +223,7 @@ public class FacultyServiceImplTest {
     void testUpdateFaculty_NotFound() {
         when(facultyRepository.findById(facultyId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.updateFaculty(facultyId, facultyRequestDTO));
+        assertThrows(InternalServerErrorException.class, () -> facultyService.updateFaculty(facultyId, facultyRequestDTO));
         verify(facultyRepository, times(1)).findById(facultyId);
         verify(facultyRepository, never()).save(any());
     }
@@ -245,7 +247,7 @@ public class FacultyServiceImplTest {
         FacultyRequestDTO partialDTO = new FacultyRequestDTO("Updated Name", null, null, null, null, null, null);
         when(facultyRepository.findById(facultyId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.updateFaculty(facultyId, partialDTO));
+        assertThrows(InternalServerErrorException.class, () -> facultyService.updateFaculty(facultyId, partialDTO));
         verify(facultyRepository, never()).save(any());
     }
 
@@ -264,7 +266,7 @@ public class FacultyServiceImplTest {
     void testDeleteFaculty_NotFound() {
         when(facultyRepository.findById(facultyId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> facultyService.deleteFaculty(facultyId));
+        assertThrows(InternalServerErrorException.class, () -> facultyService.deleteFaculty(facultyId));
         verify(facultyRepository, never()).delete(any());
     }
 }

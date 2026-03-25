@@ -2,21 +2,16 @@ package com.cts.edusphere.controllers.audit;
 
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
-import com.cts.edusphere.common.validation.OnCreate;
-import com.cts.edusphere.common.validation.OnUpdate;
 import com.cts.edusphere.config.security.JwtAuthenticationFilter;
 import com.cts.edusphere.config.security.JwtService;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.AuditStatus;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.services.audit.AuditService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +32,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -48,6 +42,7 @@ import java.util.UUID;
 
 @WebMvcTest(controllers = AuditController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@org.springframework.context.annotation.Import(com.cts.edusphere.exceptions.GenericExceptionConfig.class)
 public class AuditControllerTest {
     @TestConfiguration
     static class TestJacksonConfig {
@@ -66,7 +61,13 @@ public class AuditControllerTest {
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
+    private JwtService jwtService;
+
+    @MockitoBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+
+    @MockitoBean
+    private com.cts.edusphere.services.audit_log.AuditLogService auditLogService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,32 +85,9 @@ public class AuditControllerTest {
         auditId = UUID.randomUUID();
         officerId = UUID.randomUUID();
 
-        auditRequestDTO = new AuditRequestDTO(officerId, "scope", "findings", "2022-01-22");
-        auditResponseDTO = new AuditResponseDTO(auditId, officerId, "scope", "findings", LocalDate.now(),
+        auditRequestDTO = new AuditRequestDTO(officerId, AuditEntityType.STUDENT_CREATED, UUID.randomUUID(), "scope", "findings", AuditStatus.COMPLETED);
+        auditResponseDTO = new AuditResponseDTO(auditId, officerId, AuditEntityType.STUDENT_CREATED, UUID.randomUUID(), "scope", "findings", LocalDate.now(),
                 AuditStatus.COMPLETED);
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    @DisplayName("POST /api/v1/audits - Returns 201 Created with full DTO body")
-    void createAudit_ReturnsCreated() throws Exception {
-        when(auditService.createAudit(any(AuditRequestDTO.class))).thenReturn(auditResponseDTO);
-
-        mockMvc.perform(post("/api/v1/audits").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(auditRequestDTO))).andExpect(status().isCreated())
-                .andExpect(content().json(objectMapper.writeValueAsString(auditResponseDTO)));
-    }
-
-    @Test
-    @WithMockUser(roles = "ADMIN")
-    @DisplayName("POST /api/v1/audits - Returns Error")
-    void createAudit_ReturnsBadRequest() throws Exception {
-        when(auditService.createAudit(any(AuditRequestDTO.class))).thenReturn(auditResponseDTO);
-
-        AuditRequestDTO invalidRequest = new AuditRequestDTO(null, "", "", "");
-
-        mockMvc.perform(post("/api/v1/audits").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidRequest))).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -166,13 +144,25 @@ public class AuditControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("PUT /api/v1/audits/{id} - Returns 200 OK")
-    void updateAudit_ReturnsUpdatedAudit() throws Exception {
-        when(auditService.updateAudit(any(UUID.class), any(AuditRequestDTO.class))).thenReturn(auditResponseDTO);
+    @DisplayName("PUT /api/v1/audits/{id}/review - Returns 200 OK")
+    void reviewAudit_ReturnsUpdatedAudit() throws Exception {
+        when(auditService.reviewAudit(any(UUID.class), any(AuditRequestDTO.class))).thenReturn(auditResponseDTO);
 
-        mockMvc.perform(put("/api/v1/audits/{id}", auditId).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put("/api/v1/audits/{id}/review", auditId).with(csrf()).contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(auditRequestDTO))).andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(auditResponseDTO)));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audits/by-entity-type - Returns 200 OK")
+    void getAuditsByEntityType_ReturnsList() throws Exception {
+        List<AuditResponseDTO> auditList = List.of(auditResponseDTO);
+        when(auditService.getAuditsByEntityType(AuditEntityType.STUDENT_CREATED)).thenReturn(auditList);
+
+        mockMvc.perform(get("/api/v1/audits/by-entity-type").param("entityType", "STUDENT_CREATED")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(auditList)));
     }
 
     @Test

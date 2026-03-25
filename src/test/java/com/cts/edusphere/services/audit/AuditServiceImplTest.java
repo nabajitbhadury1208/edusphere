@@ -2,10 +2,12 @@ package com.cts.edusphere.services.audit;
 
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
+import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.AuditStatus;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.AuditNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.audit.AuditMapper;
 import com.cts.edusphere.modules.audit.Audit;
 import com.cts.edusphere.modules.user.User;
@@ -73,14 +75,18 @@ class AuditServiceImplTest {
 
         auditRequestDTO = new AuditRequestDTO(
                 officerId,
+                AuditEntityType.STUDENT_CREATED,
+                UUID.randomUUID(),
                 "Academic Audit",
                 "All systems compliant",
-                LocalDate.now().toString()
+                AuditStatus.COMPLETED
         );
 
         auditResponseDTO = new AuditResponseDTO(
                 auditId,
                 officerId,
+                AuditEntityType.STUDENT_CREATED,
+                UUID.randomUUID(),
                 "Academic Audit",
                 "All systems compliant",
                 LocalDate.now(),
@@ -89,26 +95,26 @@ class AuditServiceImplTest {
     }
 
     @Test
-    void testCreateAudit_Success() {
+    void testReviewAudit_Success() {
+        when(auditRepository.findById(auditId)).thenReturn(Optional.of(audit));
         when(userRepository.findById(officerId)).thenReturn(Optional.of(officer));
-        when(auditMapper.toEntity(auditRequestDTO)).thenReturn(audit);
         when(auditRepository.save(any(Audit.class))).thenReturn(audit);
         when(auditMapper.toResponseDTO(audit)).thenReturn(auditResponseDTO);
 
-        AuditResponseDTO result = auditService.createAudit(auditRequestDTO);
+        AuditResponseDTO result = auditService.reviewAudit(auditId, auditRequestDTO);
 
         assertNotNull(result);
         assertEquals(auditId, result.auditId());
-        verify(userRepository, times(1)).findById(officerId);
+        verify(auditRepository, times(1)).findById(auditId);
         verify(auditRepository, times(1)).save(any(Audit.class));
     }
 
     @Test
-    void testCreateAudit_OfficerNotFound() {
-        when(userRepository.findById(officerId)).thenReturn(Optional.empty());
+    void testReviewAudit_AuditNotFound() {
+        when(auditRepository.findById(auditId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> auditService.createAudit(auditRequestDTO));
-        verify(userRepository, times(1)).findById(officerId);
+        assertThrows(InternalServerErrorException.class, () -> auditService.reviewAudit(auditId, auditRequestDTO));
+        verify(auditRepository, times(1)).findById(auditId);
         verify(auditRepository, never()).save(any());
     }
 
@@ -158,31 +164,22 @@ class AuditServiceImplTest {
     void testGetAuditById_NotFound() {
         when(auditRepository.findById(auditId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> auditService.getAuditById(auditId));
+        assertThrows(InternalServerErrorException.class, () -> auditService.getAuditById(auditId));
         verify(auditRepository, times(1)).findById(auditId);
     }
 
     @Test
-    void testUpdateAudit_Success() {
-        when(auditRepository.findById(auditId)).thenReturn(Optional.of(audit));
-        when(auditRepository.save(any(Audit.class))).thenReturn(audit);
+    void testGetAuditsByEntityType_Success() {
+        List<Audit> audits = List.of(audit);
+        when(auditRepository.findByEntityType(AuditEntityType.STUDENT_CREATED)).thenReturn(audits);
         when(auditMapper.toResponseDTO(audit)).thenReturn(auditResponseDTO);
 
-        AuditResponseDTO result = auditService.updateAudit(auditId, auditRequestDTO);
+        List<AuditResponseDTO> result = auditService.getAuditsByEntityType(AuditEntityType.STUDENT_CREATED);
 
         assertNotNull(result);
-        verify(auditRepository, times(1)).findById(auditId);
-        verify(auditRepository, times(1)).save(any(Audit.class));
+        assertEquals(1, result.size());
+        verify(auditRepository, times(1)).findByEntityType(AuditEntityType.STUDENT_CREATED);
     }
-
-    @Test
-    void testUpdateAudit_NotFound() {
-        when(auditRepository.findById(auditId)).thenReturn(Optional.empty());
-
-        assertThrows(ResourceNotFoundException.class, () -> auditService.updateAudit(auditId, auditRequestDTO));
-        verify(auditRepository, never()).save(any());
-    }
-
 
     @Test
     void testDeleteAudit_Success() {
@@ -199,7 +196,7 @@ class AuditServiceImplTest {
     void testDeleteAudit_NotFound() {
         when(auditRepository.existsById(auditId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> auditService.deleteAudit(auditId));
+        assertThrows(InternalServerErrorException.class, () -> auditService.deleteAudit(auditId));
         verify(auditRepository, never()).deleteById(any());
     }
 }

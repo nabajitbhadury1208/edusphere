@@ -3,7 +3,8 @@ package com.cts.edusphere.services.grade;
 import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
 import com.cts.edusphere.enums.GradeStatus;
-import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
+import com.cts.edusphere.exceptions.genericexceptions.GradesNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.modules.exam.Exam;
 import com.cts.edusphere.modules.grade.Grade;
@@ -100,7 +101,7 @@ public class GradeServiceImplTest {
     void testCreateGrade_ExamNotFound() {
         when(examRepository.findById(examId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> gradeService.createGrade(gradeRequest));
+        assertThrows(InternalServerErrorException.class, () -> gradeService.createGrade(gradeRequest));
         verify(gradeRepository, never()).save(any());
     }
 
@@ -152,7 +153,7 @@ public class GradeServiceImplTest {
     void testDeleteGrade_NotFound() {
         when(gradeRepository.findById(gradeId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> gradeService.deleteGrade(gradeId));
+        assertThrows(GradesNotFoundException.class, () -> gradeService.deleteGrade(gradeId));
         verify(gradeRepository, never()).delete(any());
     }
 
@@ -161,7 +162,7 @@ public class GradeServiceImplTest {
         when(gradeRepository.findById(gradeId)).thenReturn(Optional.of(grade));
         doThrow(new RuntimeException("Database constraint")).when(gradeRepository).delete(grade);
 
-        assertThrows(CannotDeleteException.class, () -> gradeService.deleteGrade(gradeId));
+        assertThrows(InternalServerErrorException.class, () -> gradeService.deleteGrade(gradeId));
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.enums.ThesisStatus;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.ThesisNotFoundException;
 import com.cts.edusphere.mappers.thesis.ThesisMapper;
 import com.cts.edusphere.modules.faculty.Faculty;
 import com.cts.edusphere.modules.student.Student;
@@ -122,7 +123,7 @@ class ThesisServiceImplTest {
     void getThesisById_ShouldThrowResourceNotFound_WhenNotExists() {
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> thesisService.getThesisById(thesisId));
+        assertThrows(ThesisNotFoundException.class, () -> thesisService.getThesisById(thesisId));
     }
 
     @Test
@@ -154,7 +155,7 @@ class ThesisServiceImplTest {
     void updateThesis_ShouldThrowResourceNotFound_WhenNotFound() {
         when(thesisRepository.findById(thesisId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> thesisService.updateThesis(thesisId, requestDto));
+        assertThrows(InternalServerErrorException.class, () -> thesisService.updateThesis(thesisId, requestDto));
     }
 
     // --- Delete Thesis Tests ---
@@ -172,7 +173,7 @@ class ThesisServiceImplTest {
     void deleteThesis_ShouldThrowResourceNotFound_WhenNotExists() {
         when(thesisRepository.existsById(thesisId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> thesisService.deleteThesis(thesisId));
+        assertThrows(InternalServerErrorException.class, () -> thesisService.deleteThesis(thesisId));
         verify(thesisRepository, never()).deleteById(any());
     }
 }

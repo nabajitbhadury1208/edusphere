@@ -5,7 +5,7 @@ import com.cts.edusphere.common.dto.student.StudentResponseDTO;
 import com.cts.edusphere.enums.Gender;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.student.StudentMapper;
 import com.cts.edusphere.modules.student.Student;
 import com.cts.edusphere.repositories.student.StudentRepository;
@@ -125,7 +125,7 @@ public class StudentServiceImplTest {
     void testGetStudentById_NotFound() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> studentService.getStudentById(studentId));
+        assertThrows(InternalServerErrorException.class, () -> studentService.getStudentById(studentId));
         verify(studentRepository, times(1)).findById(studentId);
     }
 
@@ -178,7 +178,7 @@ public class StudentServiceImplTest {
     void testUpdateStudent_NotFound() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> studentService.updateStudent(studentId, studentRequestDTO));
+        assertThrows(InternalServerErrorException.class, () -> studentService.updateStudent(studentId, studentRequestDTO));
         verify(studentRepository, never()).save(any());
     }
 
@@ -198,7 +198,7 @@ public class StudentServiceImplTest {
     void testDeleteStudent_NotFound() {
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> studentService.deleteStudent(studentId));
+        assertThrows(InternalServerErrorException.class, () -> studentService.deleteStudent(studentId));
         verify(studentRepository, never()).delete(any());
     }
 }

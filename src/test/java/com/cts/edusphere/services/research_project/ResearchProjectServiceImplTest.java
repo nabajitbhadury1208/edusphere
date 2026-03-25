@@ -9,7 +9,7 @@ import static org.mockito.Mockito.*;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
 import com.cts.edusphere.enums.ProjectStatus;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.research_project.ResearchProjectMapper;
 import com.cts.edusphere.modules.faculty.Faculty;
 import com.cts.edusphere.modules.research_project.ResearchProject;
@@ -102,6 +102,7 @@ class ResearchProjectServiceImplTest {
                 .build();
 
         response = new ResearchProjectResponse(
+                projectId,
                 "AI in Education",
                 leadFacultyId,
                 ProjectStatus.ACTIVE,
@@ -146,7 +147,7 @@ class ResearchProjectServiceImplTest {
         when(facultyRepository.findById(leadFacultyId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.createProject(request)
         );
 
@@ -193,7 +194,7 @@ class ResearchProjectServiceImplTest {
     void getProjectById_ThrowsException_WhenNotFound() {
         when(researchProjectRepository.findById(projectId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> researchProjectService.getProjectById(projectId));
+        assertThrows(InternalServerErrorException.class, () -> researchProjectService.getProjectById(projectId));
         verify(researchProjectRepository).findById(projectId);
     }
 
@@ -219,7 +220,7 @@ class ResearchProjectServiceImplTest {
         when(researchProjectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.addFacultyMember(projectId, facultyMemberId)
         );
 
@@ -233,7 +234,7 @@ class ResearchProjectServiceImplTest {
         when(facultyRepository.findById(facultyMemberId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.addFacultyMember(projectId, facultyMemberId)
         );
 
@@ -260,7 +261,7 @@ class ResearchProjectServiceImplTest {
         when(researchProjectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.removeFacultyMember(projectId, facultyMemberId)
         );
 
@@ -289,7 +290,7 @@ class ResearchProjectServiceImplTest {
         when(researchProjectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.addStudent(projectId, studentId)
         );
 
@@ -303,7 +304,7 @@ class ResearchProjectServiceImplTest {
         when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.addStudent(projectId, studentId)
         );
 
@@ -330,7 +331,7 @@ class ResearchProjectServiceImplTest {
         when(researchProjectRepository.findById(projectId)).thenReturn(Optional.empty());
 
         assertThrows(
-                ResourceNotFoundException.class,
+                InternalServerErrorException.class,
                 () -> researchProjectService.removeStudent(projectId, studentId)
         );
 
@@ -350,7 +351,7 @@ class ResearchProjectServiceImplTest {
     void deleteProject_ThrowsException_WhenNotFound() {
         when(researchProjectRepository.existsById(projectId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> researchProjectService.deleteProject(projectId));
+        assertThrows(InternalServerErrorException.class, () -> researchProjectService.deleteProject(projectId));
         verify(researchProjectRepository, never()).deleteById(projectId);
     }
 }

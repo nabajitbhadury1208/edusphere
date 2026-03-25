@@ -4,7 +4,6 @@ import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
 import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.work_load.WorkLoadMapper;
 import com.cts.edusphere.modules.courses.Course;
 import com.cts.edusphere.modules.user.User;
@@ -122,7 +121,7 @@ class WorkLoadServiceImplTest {
         when(repository.findById(workLoadId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> workLoadService.getWorkLoadById(workLoadId))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(InternalServerErrorException.class);
     }
 
     // --- UPDATE TESTS ---
@@ -154,7 +153,7 @@ class WorkLoadServiceImplTest {
         when(repository.findById(workLoadId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> workLoadService.updateWorkLoad(workLoadId, requestDto))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(InternalServerErrorException.class);
     }
 
     // --- DELETE TESTS ---
@@ -173,6 +172,6 @@ class WorkLoadServiceImplTest {
         when(repository.existsById(workLoadId)).thenReturn(false);
 
         assertThatThrownBy(() -> workLoadService.deleteWorkLoad(workLoadId))
-                .isInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(InternalServerErrorException.class);
     }
 }

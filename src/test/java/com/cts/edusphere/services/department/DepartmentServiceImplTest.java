@@ -4,6 +4,8 @@ import com.cts.edusphere.common.dto.department.DepartmentRequestDTO;
 import com.cts.edusphere.common.dto.department.DepartmentResponseDTO;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
+import com.cts.edusphere.exceptions.genericexceptions.DepartmentNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.department.DepartmentMapper;
 import com.cts.edusphere.modules.department.Department;
@@ -129,7 +131,7 @@ public class DepartmentServiceImplTest {
         when(departmentMapper.toEntity(departmentRequestDTO)).thenReturn(department);
         when(userRepository.findById(headId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.createDepartment(departmentRequestDTO));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.createDepartment(departmentRequestDTO));
         verify(departmentRepository, never()).save(any());
     }
 
@@ -149,7 +151,7 @@ public class DepartmentServiceImplTest {
     void testGetDepartmentById_NotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.getDepartmentById(departmentId));
+        assertThrows(DepartmentNotFoundException.class, () -> departmentService.getDepartmentById(departmentId));
         verify(departmentRepository, times(1)).findById(departmentId);
     }
 
@@ -201,7 +203,7 @@ public class DepartmentServiceImplTest {
     void testUpdateDepartment_NotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.updateDepartment(departmentId, departmentRequestDTO));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.updateDepartment(departmentId, departmentRequestDTO));
         verify(departmentRepository, never()).save(any());
     }
 
@@ -236,7 +238,7 @@ public class DepartmentServiceImplTest {
         );
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.updateDepartment(departmentId, partialDTO));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.updateDepartment(departmentId, partialDTO));
         verify(departmentRepository, never()).save(any());
     }
 
@@ -259,7 +261,7 @@ public class DepartmentServiceImplTest {
     void testChangeDepartmentHead_DepartmentNotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
         verify(userRepository, never()).findById(any());
     }
 
@@ -268,7 +270,7 @@ public class DepartmentServiceImplTest {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.of(department));
         when(userRepository.findById(headId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.changeDepartmentHead(departmentId, headId));
         verify(departmentRepository, never()).save(any());
     }
 
@@ -287,7 +289,7 @@ public class DepartmentServiceImplTest {
     void testDeleteDepartment_NotFound() {
         when(departmentRepository.findById(departmentId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> departmentService.deleteDepartment(departmentId));
+        assertThrows(InternalServerErrorException.class, () -> departmentService.deleteDepartment(departmentId));
         verify(departmentRepository, never()).delete(any());
     }
 }

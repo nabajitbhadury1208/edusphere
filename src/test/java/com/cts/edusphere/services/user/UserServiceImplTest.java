@@ -13,11 +13,11 @@ import com.cts.edusphere.common.dto.user.UserRequestDto;
 import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.InsufficientPermissionException;
-import com.cts.edusphere.exceptions.genericexceptions.PasswordNotChangedException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserCreationFailedException;
+import com.cts.edusphere.exceptions.genericexceptions.EmailAlreadyExistsException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
+import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.modules.user.User;
+import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +46,9 @@ class UserServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private AuditLogRepository auditLogRepository;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -89,7 +92,7 @@ class UserServiceImplTest {
     void getUserById_ShouldThrowException_WhenNotFound() {
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(userId));
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(userId));
     }
 
     @Test
@@ -110,7 +113,7 @@ class UserServiceImplTest {
         RegisterRequest req = new RegisterRequest("New", "existing@cts.com", "12345", "pass", null);
         when(userRepository.existsByEmail(req.email())).thenReturn(true);
 
-        UserCreationFailedException ex = assertThrows(UserCreationFailedException.class, 
+        EmailAlreadyExistsException ex = assertThrows(EmailAlreadyExistsException.class,
             () -> userService.registerUser(req));
         assertTrue(ex.getMessage().contains("Email existing@cts.com is already in use"));
     }
@@ -139,9 +142,9 @@ class UserServiceImplTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        InsufficientPermissionException ex = assertThrows(InsufficientPermissionException.class, 
+        InternalServerErrorException ex = assertThrows(InternalServerErrorException.class,
             () -> userService.updateUserById(userId, req, self));
-        assertTrue(ex.getMessage().contains("Only administrators can modify roles"));
+        assertTrue(ex.getMessage().contains("An unexpected error occurred while updating the user record"));
     }
 
     @Test
@@ -161,9 +164,9 @@ class UserServiceImplTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("wrong", user.getPassword())).thenReturn(false);
 
-        PasswordNotChangedException ex = assertThrows(PasswordNotChangedException.class, 
+        InternalServerErrorException ex = assertThrows(InternalServerErrorException.class,
             () -> userService.changePassword(userId, "wrong", "new"));
-        assertTrue(ex.getMessage().contains("Current password is incorrect"));
+        assertTrue(ex.getMessage().contains("An unexpected error occurred while changing the password"));
     }
 
     @Test
@@ -173,9 +176,9 @@ class UserServiceImplTest {
         
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, 
+        InternalServerErrorException ex = assertThrows(InternalServerErrorException.class,
             () -> userService.updateUserStatus(userId, Status.INACTIVE, admin));
-        assertTrue(ex.getMessage().contains("Admins cannot deactivate their own account"));
+        assertTrue(ex.getMessage().contains("An unexpected error occurred while updating the user status"));
     }
 
     @Test

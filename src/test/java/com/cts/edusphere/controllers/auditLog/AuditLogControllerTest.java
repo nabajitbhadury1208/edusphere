@@ -1,128 +1,167 @@
-// package com.cts.edusphere.controllers.auditLog;
+package com.cts.edusphere.controllers.auditLog;
 
-// import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
-// import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
-// import com.cts.edusphere.config.security.JwtAuthenticationFilter;
-// import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
-// import com.cts.edusphere.services.audit_log.AuditLogService;
-// import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.fasterxml.jackson.databind.json.JsonMapper;
-// import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.DisplayName;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.context.TestConfiguration;
-// import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-// import org.springframework.http.MediaType;
-// import org.springframework.security.test.context.support.WithMockUser;
-// import org.springframework.test.context.bean.override.mockito.MockitoBean;
-// import org.springframework.test.web.servlet.MockMvc;
+import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
+import com.cts.edusphere.config.security.JwtAuthenticationFilter;
+import com.cts.edusphere.config.security.JwtService;
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
+import com.cts.edusphere.services.audit_log.AuditLogService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-// import java.time.Instant;
-// import java.util.List;
-// import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
-// import static org.mockito.Mockito.when;
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 
-// @WebMvcTest(controllers = AuditLogController.class)
-// public class AuditLogControllerTest {
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//     @TestConfiguration
-//     static class TestJacksonConfig {
-//         @Bean
-//         ObjectMapper objectMapper() {
-//             return JsonMapper.builder()
-//                     .addModule(new JavaTimeModule())
-//                     .disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-//                     .build();
-//         }
-//     }
+@WebMvcTest(controllers = AuditLogController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@Import(com.cts.edusphere.exceptions.GenericExceptionConfig.class)
+public class AuditLogControllerTest {
 
-//     @MockitoBean
-//     private AuditLogService auditLogService;
+    @TestConfiguration
+    static class TestJacksonConfig {
+        @Bean
+        ObjectMapper objectMapper() {
+            return JsonMapper.builder()
+                    .addModule(new JavaTimeModule())
+                    .disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS).build();
+        }
+    }
 
-//     @MockitoBean
-//     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private AuditLogService auditLogService;
 
-//     @MockitoBean
-//     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-//     @Autowired
-//     private MockMvc mockMvc;
+    @MockitoBean
+    private JwtService jwtService;
 
-//     @Autowired
-//     private ObjectMapper objectMapper;
+    @MockitoBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
-//     private AuditLogResponseDTO auditLogResponseDTO;
-//     private UUID userId;
-//     private UUID auditLogId;
+    @Autowired
+    private MockMvc mockMvc;
 
-//     @BeforeEach
-//     void setUp() {
-//         userId = UUID.randomUUID();
-//         auditLogId = UUID.randomUUID();
+    @Autowired
+    private ObjectMapper objectMapper;
 
-//         // Matching your 6-argument Record constructor
-//         auditLogResponseDTO = new AuditLogResponseDTO(
-//                 auditLogId, 
-//                 userId, 
-//                 "LOGIN", 
-//                 "USER_SERVICE", 
-//                 "2026-03-10T12:00:00Z", 
-//                 Instant.now()
-//         );
-//     }
+    private AuditLogResponseDTO auditLogResponse;
+    private UUID auditLogId;
+    private UUID userId;
 
-//     @Test
-//     @WithMockUser(roles = "ADMIN")
-//     @DisplayName("GET /api/v1/audit-logs - Returns List of Logs")
-//     void getAllAuditLogs_ReturnsList() throws Exception {
-//         List<AuditLogResponseDTO> auditLogs = List.of(auditLogResponseDTO);
-//         when(auditLogService.getAllLogs()).thenReturn(auditLogs);
+    @BeforeEach
+    void setUp() {
+        auditLogId = UUID.randomUUID();
+        userId = UUID.randomUUID();
 
-//         mockMvc.perform(get("/api/v1/audit-logs")
-//                         .contentType(MediaType.APPLICATION_JSON))
-//                 .andExpect(status().isOk())
-//                 .andExpect(content().json(objectMapper.writeValueAsString(auditLogs)));
-//     }
+        auditLogResponse = new AuditLogResponseDTO(
+                auditLogId,
+                userId,
+                "LOGIN",
+                "auth",
+                Instant.parse("2026-03-25T10:00:00Z"),
+                "User logged in successfully",
+                SystemLogType.API_ACCESS,
+                Severity.INFO
+        );
+    }
 
-//     @Test
-//     @WithMockUser(roles = "ADMIN")
-//     @DisplayName("GET /api/v1/audit-logs/{id} - Returns 200 OK")
-//     void getAuditLogById_ReturnsLog() throws Exception {
-//         when(auditLogService.getLogById(auditLogId)).thenReturn(auditLogResponseDTO);
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs - Returns 200 OK with List")
+    void getAllAuditLogs_ReturnsList() throws Exception {
+        List<AuditLogResponseDTO> logList = List.of(auditLogResponse);
+        when(auditLogService.getAllLogs()).thenReturn(logList);
 
-//         mockMvc.perform(get("/api/v1/audit-logs/{id}", auditLogId))
-//                 .andExpect(status().isOk())
-//                 .andExpect(content().json(objectMapper.writeValueAsString(auditLogResponseDTO)));
-//     }
+        mockMvc.perform(get("/api/v1/audit-logs")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(logList)));
+    }
 
-//     @Test
-//     @WithMockUser(roles = "ADMIN")
-//     @DisplayName("GET /api/v1/audit-logs/{id} - Returns 404 Not Found")
-//     void getAuditLogById_ReturnsNotFound() throws Exception {
-//         when(auditLogService.getLogById(auditLogId))
-//                 .thenThrow(new ResourceNotFoundException("Audit log not found"));
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs/{id} - Returns 200 OK")
+    void getAuditLogById_ReturnsOk() throws Exception {
+        when(auditLogService.getLogById(auditLogId)).thenReturn(auditLogResponse);
 
-//         mockMvc.perform(get("/api/v1/audit-logs/{id}", auditLogId))
-//                 .andExpect(status().isNotFound());
-//     }
+        mockMvc.perform(get("/api/v1/audit-logs/{id}", auditLogId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(auditLogResponse)));
+    }
 
-//     @Test
-//     @WithMockUser(roles = "ADMIN")
-//     @DisplayName("GET /api/v1/audit-logs/user/{userId} - Returns User Logs")
-//     void getAuditLogsByUser_ReturnsList() throws Exception {
-//         List<AuditLogResponseDTO> logs = List.of(auditLogResponseDTO);
-//         when(auditLogService.getLogsByUser(userId)).thenReturn(logs);
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs/user/{userId} - Returns 200 OK with List")
+    void getAuditLogsByUser_ReturnsList() throws Exception {
+        List<AuditLogResponseDTO> logList = List.of(auditLogResponse);
+        when(auditLogService.getLogsByUser(userId)).thenReturn(logList);
 
-//         mockMvc.perform(get("/api/v1/audit-logs/user/{userId}", userId))
-//                 .andExpect(status().isOk())
-//                 .andExpect(content().json(objectMapper.writeValueAsString(logs)));
-//     }
-// }
+        mockMvc.perform(get("/api/v1/audit-logs/user/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(logList)));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs/resource/{resource} - Returns 200 OK with List")
+    void getAuditLogsByResource_ReturnsList() throws Exception {
+        List<AuditLogResponseDTO> logList = List.of(auditLogResponse);
+        when(auditLogService.getLogsByResource("auth")).thenReturn(logList);
+
+        mockMvc.perform(get("/api/v1/audit-logs/resource/{resource}", "auth")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(logList)));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs/severity/{severity} - Returns 200 OK with List")
+    void getAuditLogsBySeverity_ReturnsList() throws Exception {
+        List<AuditLogResponseDTO> logList = List.of(auditLogResponse);
+        when(auditLogService.getLogsBySeverity(Severity.INFO)).thenReturn(logList);
+
+        mockMvc.perform(get("/api/v1/audit-logs/severity/{severity}", "INFO")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(logList)));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("GET /api/v1/audit-logs/type/{logType} - Returns 200 OK with List")
+    void getAuditLogsByType_ReturnsList() throws Exception {
+        List<AuditLogResponseDTO> logList = List.of(auditLogResponse);
+        when(auditLogService.getLogsByType(SystemLogType.API_ACCESS)).thenReturn(logList);
+
+        mockMvc.perform(get("/api/v1/audit-logs/type/{logType}", "API_ACCESS")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(objectMapper.writeValueAsString(logList)));
+    }
+}

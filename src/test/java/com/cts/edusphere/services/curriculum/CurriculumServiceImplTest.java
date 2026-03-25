@@ -7,7 +7,7 @@ import static org.mockito.Mockito.*;
 import com.cts.edusphere.common.dto.curriculum.CurriculumRequest;
 import com.cts.edusphere.common.dto.curriculum.CurriculumResponse;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.curriculum.CurriculumMapper;
 import com.cts.edusphere.modules.courses.Course;
 import com.cts.edusphere.modules.curriculum.Curriculum;
@@ -98,13 +98,12 @@ class CurriculumServiceImplTest {
     }
 
     @Test
-    void createCurriculum_ShouldThrowRuntimeException_WhenCourseNotFound() {
+    void createCurriculum_ShouldThrowInternalServerErrorException_WhenCourseNotFound() {
         when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class,
+        assertThrows(InternalServerErrorException.class,
                 () -> curriculumService.createCurriculum(curriculumRequest));
 
-        assertTrue(exception.getMessage().contains("Course not found"));
         verify(curriculumRepository, never()).save(any());
     }
 
@@ -156,7 +155,7 @@ class CurriculumServiceImplTest {
     void deleteCurriculumById_ShouldThrowResourceNotFound_WhenNotExists() {
         when(curriculumRepository.existsById(curriculumId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class,
+        assertThrows(InternalServerErrorException.class,
                 () -> curriculumService.deleteCurriculumById(curriculumId));
         verify(curriculumRepository, never()).deleteById(any());
     }

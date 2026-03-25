@@ -8,6 +8,8 @@ import com.cts.edusphere.common.dto.report.ReportRequestDto;
 import com.cts.edusphere.common.dto.report.ReportResponseDto;
 import com.cts.edusphere.enums.ReportScope;
 import com.cts.edusphere.enums.Status;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
+import com.cts.edusphere.exceptions.genericexceptions.ReportNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.report.ReportMapper;
 import com.cts.edusphere.modules.department.Department;
@@ -159,7 +161,7 @@ class ReportServiceImplTest {
     void getReportById_ThrowsException_WhenNotFound() {
         when(reportRepository.findById(reportId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> reportService.getReportById(reportId));
+        assertThrows(ReportNotFoundException.class, () -> reportService.getReportById(reportId));
         verify(reportRepository).findById(reportId);
     }
 
@@ -231,7 +233,7 @@ class ReportServiceImplTest {
     void updateReport_ThrowsException_WhenReportNotFound() {
         when(reportRepository.findById(reportId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> reportService.updateReport(reportId, request));
+        assertThrows(InternalServerErrorException.class, () -> reportService.updateReport(reportId, request));
         verify(reportRepository).findById(reportId);
         verify(reportRepository, never()).save(any(Report.class));
     }
@@ -249,7 +251,7 @@ class ReportServiceImplTest {
     void deleteReport_ThrowsException_WhenNotFound() {
         when(reportRepository.existsById(reportId)).thenReturn(false);
 
-        assertThrows(ResourceNotFoundException.class, () -> reportService.deleteReport(reportId));
+        assertThrows(InternalServerErrorException.class, () -> reportService.deleteReport(reportId));
         verify(reportRepository, never()).deleteById(reportId);
     }
 }

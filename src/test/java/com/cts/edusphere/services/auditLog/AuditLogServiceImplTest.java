@@ -1,7 +1,9 @@
 package com.cts.edusphere.services.auditLog;
 
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
+import com.cts.edusphere.enums.Severity;
+import com.cts.edusphere.enums.SystemLogType;
+import com.cts.edusphere.exceptions.genericexceptions.AuditLogNotFoundException;
 import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
 import com.cts.edusphere.modules.audit_log.AuditLog;
 import com.cts.edusphere.modules.user.User;
@@ -64,8 +66,10 @@ public class AuditLogServiceImplTest {
                 userId,
                 "CREATE",
                 "Faculty",
-                null
-                // Instant.now()
+                Instant.now(),
+                "Test details",
+                SystemLogType.API_ACCESS,
+                Severity.INFO
         );
     }
 
@@ -115,7 +119,7 @@ public class AuditLogServiceImplTest {
     void testGetLogById_NotFound() {
         when(auditLogRepository.findById(auditLogId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> auditLogService.getLogById(auditLogId));
+        assertThrows(AuditLogNotFoundException.class, () -> auditLogService.getLogById(auditLogId));
         verify(auditLogRepository, times(1)).findById(auditLogId);
     }
 

@@ -8,7 +8,9 @@ import com.cts.edusphere.common.dto.exam.ExamRequest;
 import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.enums.ExamType;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
+import com.cts.edusphere.exceptions.genericexceptions.CourseNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.ExamNotFoundException;
+import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.modules.courses.Course;
 import com.cts.edusphere.modules.exam.Exam;
@@ -86,7 +88,7 @@ class ExamServiceImplTest {
     void createExam_ShouldThrowResourceNotFound_WhenCourseDoesNotExist() {
         when(courseRepository.findById(courseId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> examService.createExam(examRequest));
+        assertThrows(CourseNotFoundException.class, () -> examService.createExam(examRequest));
         verify(examRepository, never()).save(any());
     }
     @Test
@@ -114,7 +116,7 @@ class ExamServiceImplTest {
     void getExamById_ShouldThrowResourceNotFound_WhenIdDoesNotExist() {
         when(examRepository.findById(examId)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> examService.getExamById(examId));
+        assertThrows(ExamNotFoundException.class, () -> examService.getExamById(examId));
         verify(examRepository).findById(examId);
     }
     @Test
@@ -162,7 +164,7 @@ class ExamServiceImplTest {
         when(examRepository.findById(examId)).thenReturn(Optional.of(exam));
         doThrow(new RuntimeException("DB Error")).when(examRepository).delete(exam);
 
-        assertThrows(CannotDeleteException.class, () -> examService.deleteExam(examId));
+        assertThrows(InternalServerErrorException.class, () -> examService.deleteExam(examId));
     }
 
     @Test
