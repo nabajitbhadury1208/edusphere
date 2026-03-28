@@ -15,6 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Method;
 import java.util.UUID;
 
+/**
+ * Spring AOP aspect that automatically generates compliance audit records whenever
+ * a method annotated with {@link ComplianceAudit} returns successfully.
+ *
+ * <p>This aspect intercepts the return of any {@code @ComplianceAudit}-annotated method,
+ * extracts the entity identifier from the returned object, and persists a new
+ * {@link com.cts.edusphere.modules.audit.Audit} record with status
+ * {@link com.cts.edusphere.enums.AuditStatus#PENDING} via {@link AuditRepository}.</p>
+ */
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -23,6 +32,22 @@ public class AuditAutoGeneratorAspect {
 
     private final AuditRepository auditRepository;
 
+    /**
+     * After-returning advice that fires whenever a method annotated with
+     * {@code @ComplianceAudit} completes without throwing an exception.
+     *
+     * <p>The advice reads the {@link ComplianceAudit} metadata from the intercepted
+     * method, extracts the entity {@link UUID} from the returned value, builds a
+     * pending {@link com.cts.edusphere.modules.audit.Audit} record, and saves it.
+     * Any failure during this process is caught and logged so that it never disrupts
+     * the original business flow.</p>
+     *
+     * @param joinPoint provides reflective access to the intercepted method and its
+     *                  declaring type
+     * @param result    the value returned by the intercepted method; may be
+     *                  {@code null} if the method returns {@code void} or explicitly
+     *                  returns {@code null}
+     */
     @AfterReturning(pointcut = "@annotation(com.cts.edusphere.aspects.ComplianceAudit)", returning = "result")
     @Transactional
     public void autoGenerateComplianceAudit(JoinPoint joinPoint, Object result) {
@@ -48,6 +73,22 @@ public class AuditAutoGeneratorAspect {
         }
     }
 
+    /**
+     * Attempts to extract a {@link UUID} entity identifier from an arbitrary result
+     * object using a sequence of reflection-based strategies.
+     *
+     * <ol>
+     *   <li>Calls {@code getId()} if the method exists and returns a {@link UUID}.</li>
+     *   <li>Falls back to {@code id()} (record-style accessor).</li>
+     *   <li>Scans all public no-arg methods whose name ends with {@code "Id"} and
+     *       whose return type is {@link UUID}, returning the first match.</li>
+     * </ol>
+     *
+     * @param result the object from which the entity identifier should be extracted;
+     *               may be {@code null}
+     * @return the extracted {@link UUID}, or {@code null} if the result is
+     *         {@code null}, no suitable accessor is found, or reflection fails
+     */
     private UUID extractEntityId(Object result) {
         if (result == null) return null;
 

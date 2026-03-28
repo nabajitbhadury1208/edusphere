@@ -7,6 +7,15 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for submitting or updating a student thesis record.
+ *
+ * @param studentId      the UUID of the student submitting the thesis; required on create
+ * @param title          the full title of the thesis; required on create
+ * @param supervisorId   the UUID of the faculty member supervising the thesis; required on create
+ * @param submissionDate the date on which the thesis was or will be submitted; required on create
+ * @param status         the current review status of the thesis (e.g., SUBMITTED, UNDER_REVIEW, APPROVED); required on create
+ */
 public record ThesisRequestDto(
 
         @NotNull(groups = OnCreate.class, message = "Student is required")

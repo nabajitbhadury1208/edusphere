@@ -30,12 +30,27 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+/**
+ * REST controller handling user authentication, registration, and token management.
+ * Base path: /api/v1/auth
+ * The register, login, and refresh endpoints are publicly accessible (no auth required).
+ */
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserServiceImpl userService;
     private final NotificationService notificationService;
 
+    /**
+     * Registers a new user account in the system.
+     * Creates a User entity, encodes the password, assigns the provided roles,
+     * generates both access and refresh JWT tokens, subscribes the user to notifications,
+     * and returns the token pair.
+     *
+     * @param request the registration request containing name, email, phone, password, and roles
+     * @return HTTP 201 with an AuthResponse (accessToken, refreshToken) on success,
+     *         or HTTP 400 with an error message if registration fails
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         try {
@@ -57,6 +72,17 @@ public class AuthController {
         }
     }
 
+    /**
+     * Authenticates an existing user with their email and password.
+     * Validates credentials via Spring Security AuthenticationManager, extracts roles,
+     * generates JWT tokens, subscribes the user to notifications, and returns the token pair.
+     * Throws DisabledException (HTTP 403) if the user account is inactive.
+     *
+     * @param request the login request containing email and password
+     * @return HTTP 200 with an AuthResponse (accessToken, refreshToken) on success,
+     *         HTTP 403 if the account is disabled,
+     *         or HTTP 401 with an error message if credentials are invalid
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
@@ -91,6 +117,14 @@ public class AuthController {
         }
     }
 
+    /**
+     * Issues a new access/refresh token pair using a valid refresh token.
+     * Validates the provided refresh token, loads the associated user, and generates fresh tokens.
+     *
+     * @param request the refresh request containing the refresh token string
+     * @return HTTP 200 with a new AuthResponse (accessToken, refreshToken) on success,
+     *         or HTTP 401 with an error message if the refresh token is invalid or expired
+     */
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         try {
@@ -111,6 +145,15 @@ public class AuthController {
         }
     }
 
+    /**
+     * Logs out the currently authenticated user.
+     * Since JWT is stateless, logout is client-side: the server simply returns a message
+     * advising the client to discard the tokens. No server-side token invalidation occurs.
+     *
+     * @param principal the authenticated user principal injected by Spring Security
+     * @return HTTP 200 with a logout confirmation message,
+     *         or HTTP 401 if the user is not authenticated
+     */
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(@AuthenticationPrincipal UserPrincipal principal) {
         if (principal == null) {
@@ -123,6 +166,14 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Changes the password of the currently authenticated user.
+     * Verifies the current password before updating to the new encoded password.
+     *
+     * @param request   the change password request containing currentPassword and newPassword
+     * @param principal the authenticated user principal providing the userId
+     * @return HTTP 200 with a success confirmation message
+     */
     @PatchMapping("/change-password")
     public ResponseEntity<Map<String, String>> changePassword(@Valid @RequestBody ChangePasswordRequest request,
                                                               @AuthenticationPrincipal UserPrincipal principal) {

@@ -9,6 +9,15 @@ import jakarta.validation.constraints.Size;
 
 import java.util.Set;
 
+/**
+ * Data Transfer Object for registering a new user account in EduSphere.
+ *
+ * @param name     the full display name of the user; must not be blank
+ * @param email    the unique email address of the user; must be a valid email format
+ * @param password the account password; write-only, must be at least 8 characters long
+ * @param phone    the user's contact phone number; optional at registration
+ * @param roles    the set of roles assigned to the new user (e.g., STUDENT, FACULTY)
+ */
 public record RegisterRequest(
         @NotBlank(message = "Name must not be blank") String name,
 

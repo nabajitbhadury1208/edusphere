@@ -22,6 +22,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link CurriculumService} that provides business logic for managing curricula.
+ *
+ * <p>Supports creating, retrieving, updating, and deleting {@link Curriculum} entities.
+ * Each curriculum is linked to an existing {@link Course}. Compliance auditing is applied
+ * to creation operations via the {@code @ComplianceAudit} aspect.
+ * Dependencies are injected via constructor by Lombok's {@code @RequiredArgsConstructor}.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -30,6 +38,21 @@ public class CurriculumServiceImpl implements CurriculumService {
   private final CourseRepository courseRepository;
   private final CurriculumMapper curriculumMapper;
 
+  /**
+   * Creates a new curriculum associated with an existing course.
+   *
+   * <p>Validates that the course referenced by {@code curriculumRequest.courseId()} exists
+   * before building and persisting the {@link Curriculum} entity. This operation is audited
+   * for compliance via the {@code @ComplianceAudit} aspect with entity type
+   * {@link AuditEntityType#CURRICULUM_CREATED}.
+   *
+   * @param curriculumRequest the request DTO containing the course ID, description,
+   *                          modules JSON, and status for the new curriculum
+   * @return a {@link CurriculumResponse} representing the newly created curriculum
+   * @throws CourseNotFoundException       if no course exists with the ID provided in the request
+   * @throws CurriculumNotCreatedException if the curriculum could not be created due to a persistence error
+   * @throws InternalServerErrorException  if an unexpected error occurs during creation
+   */
   @Override
   @ComplianceAudit(
       entityType = AuditEntityType.CURRICULUM_CREATED,
@@ -63,6 +86,17 @@ public class CurriculumServiceImpl implements CurriculumService {
     }
   }
 
+  /**
+   * Retrieves all curricula available in the system.
+   *
+   * <p>Fetches every {@link Curriculum} entity from the repository and maps each one
+   * to a {@link CurriculumResponse} DTO.
+   *
+   * @return a {@link List} of {@link CurriculumResponse} objects representing all curricula;
+   *         returns an empty list if no curricula exist
+   * @throws CurriculumsNotFoundException if a retrieval-specific error occurs
+   * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+   */
   @Override
   public List<CurriculumResponse> getAllCurriculums() {
     try {
@@ -77,6 +111,14 @@ public class CurriculumServiceImpl implements CurriculumService {
     }
   }
 
+  /**
+   * Retrieves a single curriculum by its unique identifier.
+   *
+   * @param id the {@link UUID} of the curriculum to retrieve
+   * @return a {@link CurriculumResponse} representing the found curriculum
+   * @throws CurriculumNotFoundException  if no curriculum exists with the given {@code id}
+   * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+   */
   @Override
   public CurriculumResponse getCurriculumById(UUID id) {
     try {
@@ -98,6 +140,21 @@ public class CurriculumServiceImpl implements CurriculumService {
     }
   }
 
+  /**
+   * Updates an existing curriculum identified by its unique identifier.
+   *
+   * <p>Only non-null fields in the {@code curriculumRequest} are applied to the existing
+   * curriculum, allowing partial updates. If a new {@code courseId} is provided, the
+   * referenced course is validated and reassigned.
+   *
+   * @param id                the {@link UUID} of the curriculum to update
+   * @param curriculumRequest the request DTO containing the fields to update;
+   *                          any null field is ignored
+   * @throws CurriculumNotFoundException  if no curriculum exists with the given {@code id}
+   * @throws CourseNotFoundException      if a new {@code courseId} is provided but the course does not exist
+   * @throws CurriculumNotUpdatedException if the curriculum could not be updated due to a persistence error
+   * @throws InternalServerErrorException if an unexpected error occurs during the update
+   */
   @Override
   public void updateCurriculumById(UUID id, CurriculumRequest curriculumRequest) {
     try {
@@ -141,6 +198,17 @@ public class CurriculumServiceImpl implements CurriculumService {
     }
   }
 
+  /**
+   * Deletes the curriculum identified by the given unique identifier.
+   *
+   * <p>Verifies that the curriculum exists before invoking deletion. If the curriculum
+   * is not found, a {@link CurriculumNotFoundException} is thrown immediately.
+   *
+   * @param id the {@link UUID} of the curriculum to delete
+   * @throws CurriculumNotFoundException   if no curriculum exists with the given {@code id}
+   * @throws CurriculumNotDeletedException if the curriculum could not be deleted due to a persistence error
+   * @throws InternalServerErrorException  if an unexpected error occurs during deletion
+   */
   @Override
   public void deleteCurriculumById(UUID id) {
     try {

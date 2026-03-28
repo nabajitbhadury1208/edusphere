@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing compliance audit records.
+ * Handles business logic for reviewing, retrieving, filtering, and deleting audit entries.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -36,6 +40,16 @@ public class AuditServiceImpl implements AuditService {
     private final AuditMapper auditMapper;
     private final UserRepository userRepository;
 
+    /**
+     * Reviews an existing audit record by assigning a compliance officer, recording findings,
+     * setting the audit date to today, and optionally updating the audit status.
+     *
+     * @param auditId the UUID of the audit record to review
+     * @param dto     the request containing officerId, findings, and optional new status
+     * @return the updated AuditResponseDTO after the review
+     * @throws AuditNotFoundException       if no audit with the given ID exists
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     @Transactional
     public AuditResponseDTO reviewAudit(UUID auditId,AuditRequestDTO dto) {
@@ -63,6 +77,14 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
+    /**
+     * Retrieves all audit records from the database and maps them to response DTOs.
+     * Uses a read-only transaction for performance optimization.
+     *
+     * @return a list of all AuditResponseDTO objects
+     * @throws AuditsNotFoundException      if no audit records are available
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     @Transactional(readOnly = true)
     public List<AuditResponseDTO> getAllAudits() {
@@ -77,6 +99,14 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
+    /**
+     * Retrieves a single audit record by its unique identifier.
+     *
+     * @param id the UUID of the audit record to retrieve
+     * @return the matching AuditResponseDTO
+     * @throws AuditNotFoundException       if no audit with the given ID exists
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     @Transactional(readOnly = true)
     public AuditResponseDTO getAuditById(UUID id) {
@@ -96,6 +126,15 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
+    /**
+     * Permanently deletes an audit record by its unique identifier.
+     * Verifies existence before deletion to throw a descriptive exception.
+     *
+     * @param id the UUID of the audit record to delete
+     * @throws AuditNotFoundException       if no audit with the given ID exists
+     * @throws AuditNotDeletedException     if a domain-specific deletion failure occurs
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Transactional
     public void deleteAudit(UUID id) {
         try {
@@ -115,6 +154,14 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
+    /**
+     * Retrieves all audit records matching a specific entity type.
+     *
+     * @param entityType the AuditEntityType enum value to filter by
+     * @return a list of AuditResponseDTO objects matching the entity type
+     * @throws AuditNotFoundException       if no matching audits are found
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditResponseDTO> getAuditsByEntityType(AuditEntityType entityType) {
         try {
@@ -129,6 +176,16 @@ public class AuditServiceImpl implements AuditService {
         }
     }
 
+    /**
+     * Helper method that validates and retrieves a compliance officer by their user ID.
+     * Ensures the user has the COMPLIANCE_OFFICER or ADMIN role before returning.
+     *
+     * @param officerId the UUID of the user to validate as a compliance officer
+     * @return the validated User entity
+     * @throws OfficerNotFoundException     if no user with the given ID exists
+     * @throws ResourceNotFoundException    if the user does not have the required role
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     private User findOfficerById(UUID officerId) {
         try {
             User officer = userRepository.findById(officerId)

@@ -23,6 +23,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link ReportService} that manages the full lifecycle of {@link Report}
+ * entities within the EduSphere platform.
+ *
+ * <p>This service provides create, read, update, and delete (CRUD) operations for reports.
+ * It coordinates between {@link ReportRepository}, {@link DepartmentRepository}, and
+ * {@link UserRepository} to ensure that all relational references (department, generator)
+ * are resolved to JPA-managed proxies before persistence, avoiding detached-entity errors.</p>
+ *
+ * <p>All public methods participate in a transaction. Read-only methods are additionally
+ * annotated with {@code @Transactional(readOnly = true)} for potential performance benefits.</p>
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,6 +46,18 @@ public class ReportServiceImpl implements ReportService {
     private final DepartmentRepository departmentRepository;
     private final UserRepository userRepository; // Added
 
+    /**
+     * Creates and persists a new report from the supplied request data.
+     *
+     * <p>If the request contains a {@code departmentId} or {@code generatedBy} user ID,
+     * JPA reference proxies are resolved for those associations to prevent detached-entity
+     * exceptions and optimistic-locking issues caused by unmanaged instances.</p>
+     *
+     * @param request a {@link ReportRequestDto} containing all fields required to build the report
+     * @return a {@link ReportResponseDto} representing the newly persisted report
+     * @throws ReportCreationFailedException if a known creation error occurs
+     * @throws InternalServerErrorException  if an unexpected error occurs during creation
+     */
     @Override
     public ReportResponseDto createReport(ReportRequestDto request) {
         try {
@@ -61,6 +85,13 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    /**
+     * Retrieves all reports stored in the system.
+     *
+     * @return a {@link List} of {@link ReportResponseDto} objects; may be empty if no reports exist
+     * @throws ReportFetchingFailedException if a known fetch error occurs
+     * @throws InternalServerErrorException  if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReportResponseDto> getAllReports() {
@@ -77,6 +108,14 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    /**
+     * Retrieves a single report by its unique identifier.
+     *
+     * @param id the {@link UUID} of the report to retrieve
+     * @return the {@link ReportResponseDto} corresponding to the found report
+     * @throws ReportNotFoundException      if no report exists with the given {@code id}
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public ReportResponseDto getReportById(UUID id) {
@@ -93,6 +132,14 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    /**
+     * Retrieves all reports associated with a specific department.
+     *
+     * @param departmentId the {@link UUID} of the department whose reports are to be fetched
+     * @return a {@link List} of {@link ReportResponseDto} objects; may be empty if none are found
+     * @throws ReportFetchingFailedException if a known fetch error occurs
+     * @throws InternalServerErrorException  if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReportResponseDto> getReportsByDepartment(UUID departmentId) {
@@ -109,6 +156,22 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    /**
+     * Updates an existing report with the non-null fields provided in the request.
+     *
+     * <p>Only the {@code metrics}, {@code status}, {@code scope}, {@code departmentId}, and
+     * {@code generatedBy} fields are eligible for update. Fields that are {@code null} in the
+     * request are left unchanged on the existing entity. Department and user associations are
+     * resolved to JPA-managed proxies before saving.</p>
+     *
+     * @param id      the {@link UUID} of the report to update
+     * @param request a {@link ReportRequestDto} containing the fields to update; {@code null}
+     *                fields are ignored
+     * @return the {@link ReportResponseDto} representing the report after the update
+     * @throws ResourceNotFoundException      if no report exists with the given {@code id}
+     * @throws ReportUpdatingFailedException  if a known update error occurs
+     * @throws InternalServerErrorException   if an unexpected error occurs during the update
+     */
     @Override
     public ReportResponseDto updateReport(UUID id, ReportRequestDto request) {
         try {
@@ -139,6 +202,17 @@ public class ReportServiceImpl implements ReportService {
         }
     }
 
+    /**
+     * Permanently deletes the report identified by the given ID from the data store.
+     *
+     * <p>An existence check is performed before deletion; if the report does not exist, a
+     * {@link ResourceNotFoundException} is thrown immediately.</p>
+     *
+     * @param id the {@link UUID} of the report to delete
+     * @throws ResourceNotFoundException    if no report exists with the given {@code id}
+     * @throws ReportDeletionFailedException if a known deletion error occurs
+     * @throws InternalServerErrorException  if an unexpected error occurs during deletion
+     */
     @Override
     public void deleteReport(UUID id) {
         try {

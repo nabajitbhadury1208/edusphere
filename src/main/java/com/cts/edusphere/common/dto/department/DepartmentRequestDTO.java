@@ -8,6 +8,15 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for creating or updating a department.
+ *
+ * @param departmentName the full name of the department; required on create
+ * @param departmentCode a unique short code identifying the department; required on create
+ * @param contactInfo    contact details (email, phone, etc.) for the department; required on create and update
+ * @param status         the operational status of the department (ACTIVE or INACTIVE); required on create
+ * @param headId         the UUID of the user designated as department head; optional on create
+ */
 public record DepartmentRequestDTO(
         @NotBlank(groups = OnCreate.class, message = "department name cannot be blank")
         String departmentName,

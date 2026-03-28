@@ -8,6 +8,17 @@ import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object for creating or updating a student's account.
+ *
+ * @param name     the full name of the student; required on create
+ * @param email    the unique email address; must be a valid email format; required on create
+ * @param phone    the contact phone number; must be 7 to 15 digits with an optional leading '+'; validated on create and update
+ * @param password the account password; write-only and never returned in responses; required on create
+ * @param dob      the student's date of birth; must be in the past or today; required on create
+ * @param gender   the student's gender identity (MALE, FEMALE, or PREFER_NOT_TO_SAY); required on create
+ * @param address  the student's residential or mailing address; required on create
+ */
 public record StudentRequestDTO(
         @NotBlank(groups = OnCreate.class, message = "Name cannot be blank")
         String name,

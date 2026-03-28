@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for system audit logging.
+ * Persists structured log entries for all API actions and system events.
+ * Uses @Lazy injection for the repository to prevent circular dependency issues.
+ */
 @Service
 @Slf4j
 @Transactional(readOnly = true)
@@ -31,6 +36,13 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final AuditLogMapper auditLogMapper;
     private final UserRepository userRepository;
 
+    /**
+     * Constructor with @Lazy AuditLogRepository injection to prevent circular dependency.
+     *
+     * @param auditLogRepository the lazily-loaded repository for audit log persistence
+     * @param auditLogMapper     the mapper for converting entities to response DTOs
+     * @param userRepository     the repository for resolving user entities by ID
+     */
     @Autowired
     public AuditLogServiceImpl(
             @Lazy AuditLogRepository auditLogRepository,
@@ -42,6 +54,20 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
 
+    /**
+     * Persists a structured system event to the audit log.
+     * Optionally associates the log entry with a user if userId is provided.
+     * Applies default values: "SYSTEM" for null action/resource, INFO for null severity.
+     * Non-throwing by design — swallows exceptions to prevent logging failures
+     * from disrupting business operations.
+     *
+     * @param logType   the SystemLogType classifying the event (e.g., API_ACCESS, INTERNAL_ERROR)
+     * @param severity  the Severity level (INFO, WARN, ERROR); defaults to INFO if null
+     * @param action    the name of the action or method; defaults to "SYSTEM" if null
+     * @param resource  the name of the resource or class involved; defaults to "SYSTEM" if null
+     * @param details   additional detail string (e.g., exception message); may be null
+     * @param userId    the UUID of the associated user; may be null for system-level events
+     */
     @Override
     @Transactional
     public void logSystemEvent(SystemLogType logType, Severity severity,
@@ -72,6 +98,13 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves all audit log entries from the database.
+     *
+     * @return a list of all AuditLogResponseDTO objects
+     * @throws AuditLogsNotFoundException   if no log entries exist
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditLogResponseDTO> getAllLogs() {
         try {
@@ -87,6 +120,14 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves a specific audit log entry by its unique identifier.
+     *
+     * @param id the UUID of the log entry to retrieve
+     * @return the matching AuditLogResponseDTO
+     * @throws AuditLogNotFoundException    if no log entry with the given ID exists
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public AuditLogResponseDTO getLogById(UUID id) {
         try {
@@ -104,6 +145,14 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves all audit log entries associated with a specific user.
+     *
+     * @param userId the UUID of the user whose log entries are to be retrieved
+     * @return a list of AuditLogResponseDTO objects for the given user
+     * @throws AuditLogsNotFoundException   if no log entries exist for the user
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditLogResponseDTO> getLogsByUser(UUID userId) {
         try {
@@ -119,6 +168,15 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves audit log entries where the resource field contains the given string
+     * (case-insensitive partial match).
+     *
+     * @param resource the resource name to search for
+     * @return a list of matching AuditLogResponseDTO objects
+     * @throws AuditLogsNotFoundException   if no matching entries exist
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditLogResponseDTO> getLogsByResource(String resource) {
         try {
@@ -134,6 +192,14 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves all audit log entries with a specific severity level.
+     *
+     * @param severity the Severity enum value to filter by (INFO, WARN, ERROR)
+     * @return a list of AuditLogResponseDTO objects matching the given severity
+     * @throws AuditLogsNotFoundException   if no entries exist for the given severity
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditLogResponseDTO> getLogsBySeverity(Severity severity) {
         try {
@@ -149,6 +215,14 @@ public class AuditLogServiceImpl implements AuditLogService {
         }
     }
 
+    /**
+     * Retrieves all audit log entries with a specific log type.
+     *
+     * @param logType the SystemLogType enum value to filter by
+     * @return a list of AuditLogResponseDTO objects matching the given log type
+     * @throws AuditLogsNotFoundException   if no entries exist for the given log type
+     * @throws InternalServerErrorException if an unexpected error occurs
+     */
     @Override
     public List<AuditLogResponseDTO> getLogsByType(SystemLogType logType) {
         try {
