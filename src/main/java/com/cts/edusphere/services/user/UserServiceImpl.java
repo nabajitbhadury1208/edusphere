@@ -22,6 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 
+/**
+ * Implementation of {@link UserService} that provides user management operations
+ * such as creation, retrieval, update, deletion, registration, authentication
+ * support, and status management.
+ *
+ * <p>All database interactions are delegated to {@link com.cts.edusphere.repositories.user.UserRepository}.
+ * Password encoding is handled via Spring Security's {@link org.springframework.security.crypto.password.PasswordEncoder}.
+ * Audit log entries are nullified before user deletion to preserve referential integrity.</p>
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,6 +39,13 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuditLogRepository auditLogRepository;
 
+    /**
+     * Retrieves all users stored in the system.
+     *
+     * @return a {@link List} of all {@link User} entities; never {@code null}
+     * @throws UsersNotFoundException      if no users are found during the fetch
+     * @throws InternalServerErrorException if an unexpected error occurs while retrieving user records
+     */
     @Override
     @Transactional(readOnly = true)
     public List<User> getAllUsers() {
@@ -49,6 +65,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Retrieves a single user by their unique identifier.
+     *
+     * @param id the {@link UUID} of the user to retrieve
+     * @return the {@link User} entity matching the given {@code id}
+     * @throws UserNotFoundException        if no user exists with the specified {@code id}
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public User getUserById(UUID id) {
@@ -69,6 +93,14 @@ public class UserServiceImpl implements UserService {
         }   
     }
     
+    /**
+     * Persists a new {@link User} entity to the database.
+     *
+     * @param user the {@link User} entity to create; must not be {@code null}
+     * @return the saved {@link User} entity with any auto-generated fields populated
+     * @throws UserCreationFailedException  if the user record cannot be created
+     * @throws InternalServerErrorException if an unexpected error occurs during creation
+     */
     @Override
     public User createUser(User user) {
         try {
@@ -88,6 +120,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param email the email address to search for; must not be {@code null}
+     * @return the {@link User} entity associated with the given {@code email}
+     * @throws UserNotFoundException        if no user is found with the specified {@code email}
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
@@ -109,6 +149,17 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Deletes a user by their unique identifier.
+     *
+     * <p>Before deletion, all audit log entries referencing this user are nullified
+     * to preserve referential integrity in the audit log table.</p>
+     *
+     * @param id the {@link UUID} of the user to delete
+     * @throws UserNotFoundException        if no user exists with the specified {@code id}
+     * @throws UserDeletionFailedException  if the deletion operation fails
+     * @throws InternalServerErrorException if an unexpected error occurs during deletion
+     */
     @Override
     @Transactional
     public void deleteUserById(UUID id) {
@@ -133,6 +184,23 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Updates an existing user's details identified by their unique identifier.
+     *
+     * <p>Regular users may only update their own {@code name} and {@code phone}.
+     * Only administrators may modify a user's {@code roles} or {@code status}.
+     * Attempting to update another user's record without admin privileges throws
+     * {@link InsufficientPermissionException}.</p>
+     *
+     * @param id            the {@link UUID} of the user to update
+     * @param request       a {@link UserRequestDto} containing the fields to update
+     * @param userPrincipal the currently authenticated principal, used for permission checks
+     * @return the updated {@link User} entity
+     * @throws ResourceNotFoundException    if no user exists with the specified {@code id}
+     * @throws InsufficientPermissionException if the caller lacks the required privileges
+     * @throws UserUpdateFailedException    if the update operation fails
+     * @throws InternalServerErrorException if an unexpected error occurs during the update
+     */
     @Override
     public User updateUserById(UUID id, UserRequestDto request, UserPrincipal userPrincipal) {
         try {
@@ -179,6 +247,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Checks whether a user with the given email address already exists in the system.
+     *
+     * @param email the email address to check; must not be {@code null}
+     * @return {@code true} if a user with the specified {@code email} exists, {@code false} otherwise
+     * @throws EmailAlreadyExistsException  if an error occurs specifically related to email uniqueness
+     * @throws InternalServerErrorException if an unexpected error occurs during the existence check
+     */
     @Override
     public boolean existsByEmail(String email) {
         try {
@@ -196,6 +272,18 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Finds a user by their email address, returning an {@link Optional} result.
+     *
+     * <p>Unlike {@link #getUserByEmail(String)}, this method does not throw a
+     * {@link UserNotFoundException} when the user is absent; instead it returns
+     * an empty {@link Optional}.</p>
+     *
+     * @param email the email address to search for; must not be {@code null}
+     * @return an {@link Optional} containing the matching {@link User}, or empty if not found
+     * @throws UserNotFoundException        if a repository-level error referencing the user occurs
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     public Optional<User> findByEmail(String email) {
         try {
@@ -212,6 +300,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Registers a new user in the system using the provided registration details.
+     *
+     * <p>The supplied password is encoded before persistence. The new account is
+     * automatically assigned an {@link com.cts.edusphere.enums.Status#ACTIVE} status.
+     * Registration fails immediately if the requested email address is already in use.</p>
+     *
+     * @param request a {@link RegisterRequest} containing the new user's details
+     *                (name, email, phone, password, roles); must not be {@code null}
+     * @return the newly created {@link User} entity with all auto-generated fields populated
+     * @throws EmailAlreadyExistsException  if the email address is already registered
+     * @throws UserCreationFailedException  if the user record cannot be persisted
+     */
     @Override
     @Transactional
     public User registerUser(RegisterRequest request) {
@@ -237,6 +338,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Changes the password for the specified user after validating the current password.
+     *
+     * <p>The current password is verified against the stored encoded value before
+     * the new password is encoded and saved.</p>
+     *
+     * @param userId          the {@link UUID} of the user whose password is to be changed
+     * @param currentPassword the user's existing plaintext password for verification
+     * @param newPassword     the new plaintext password to set; will be encoded before storage
+     * @throws InvalidPasswordException     if {@code currentPassword} does not match the stored password
+     * @throws PasswordNotChangedException  if the password update operation fails
+     * @throws InternalServerErrorException if an unexpected error occurs during the operation
+     */
     @Override
     @Transactional
     public void changePassword(UUID userId, String currentPassword, String newPassword) {
@@ -261,6 +375,23 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     * Updates the {@link Status} of a user identified by the given {@code id}.
+     *
+     * <p>An administrator is not permitted to deactivate their own account; attempting
+     * to do so with a {@code status} of {@link Status#INACTIVE} while the {@code principal}
+     * matches the target {@code id} will throw an {@link java.nio.file.AccessDeniedException}.
+     * This operation is audited via the {@link com.cts.edusphere.aspects.ComplianceAudit} aspect.</p>
+     *
+     * @param id        the {@link UUID} of the user whose status is to be updated
+     * @param status    the new {@link Status} to assign to the user
+     * @param principal the currently authenticated principal, used to prevent self-deactivation
+     * @return the updated {@link User} entity
+     * @throws UserNotFoundException        if no user exists with the specified {@code id}
+     * @throws java.nio.file.AccessDeniedException if an admin attempts to deactivate their own account
+     * @throws UserUpdateFailedException    if the status update operation fails
+     * @throws InternalServerErrorException if an unexpected error occurs during the update
+     */
     @Override
     @Transactional
     @ComplianceAudit(entityType = AuditEntityType.USER_DEACTIVATED, scope = "Verify activation status of User")

@@ -7,6 +7,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+/**
+ * Data Transfer Object for creating a regulator user account.
+ * Regulators are external oversight users who monitor institutional compliance.
+ *
+ * @param name     the full name of the regulator; must not be blank
+ * @param email    the regulator's unique email address; must be a valid email format
+ * @param phone    the contact phone number; must be 7 to 15 digits with an optional leading '+'
+ * @param password the account password; write-only and never returned in responses
+ * @param status   the initial account status (ACTIVE or INACTIVE)
+ */
 public record RegulatorRequest(
         @NotBlank(message = "Name cannot be blank")
         String name,

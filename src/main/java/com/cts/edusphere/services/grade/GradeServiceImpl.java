@@ -30,6 +30,19 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing student grade business operations.
+ *
+ * <p>Provides full CRUD functionality for {@link Grade} entities, along with
+ * convenience queries that filter grades by student or exam. Each write operation
+ * validates that the referenced {@link Exam} and {@link Student} exist before
+ * persisting changes. Compliance-sensitive operations are audited via the
+ * {@code @ComplianceAudit} AOP aspect.</p>
+ *
+ * <p>Dependencies are injected via constructor (Lombok {@code @RequiredArgsConstructor}).
+ * Static mapper methods from {@link GradeMapper} are used to convert between
+ * entities and DTOs.</p>
+ */
 @Service
 @RequiredArgsConstructor
 public class GradeServiceImpl implements GradeService {
@@ -38,6 +51,23 @@ public class GradeServiceImpl implements GradeService {
     private final ExamRepository examRepository;
     private final StudentRepository studentRepository;
 
+    /**
+     * Creates a new grade record and persists it to the database.
+     *
+     * <p>Resolves the {@link Exam} and {@link Student} referenced in the request,
+     * maps the request to a {@link Grade} entity via {@link GradeMapper#toEntity},
+     * saves the record, and returns the persisted data as a DTO. A compliance audit
+     * event of type {@link AuditEntityType#GRADE_ASSIGNED} is recorded by the AOP
+     * aspect.</p>
+     *
+     * @param request the {@link GradeRequest} containing examId, studentId, score,
+     *                grade letter, and status
+     * @return a {@link GradeResponse} representing the newly created grade record
+     * @throws ExamNotFoundException        if no exam exists with the given {@code examId}
+     * @throws StudentNotFoundException     if no student exists with the given {@code studentId}
+     * @throws GradeNotCreatedException     if a domain-level creation constraint is violated
+     * @throws InternalServerErrorException if any unexpected error occurs during creation
+     */
     @Override
     @ComplianceAudit(entityType = AuditEntityType.GRADE_ASSIGNED, scope = "Verify Grade assigned to Student")
     public GradeResponse createGrade(GradeRequest request) {
@@ -59,6 +89,17 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Retrieves all grade records stored in the system.
+     *
+     * <p>Streams all {@link Grade} entities from the repository and maps each one
+     * to a {@link GradeResponse} DTO.</p>
+     *
+     * @return a {@link List} of {@link GradeResponse} objects; may be empty if no
+     *         grade records exist
+     * @throws GradesNotFoundException      if a domain-level error prevents listing grades
+     * @throws InternalServerErrorException if any unexpected error occurs during retrieval
+     */
     @Override
     public List<GradeResponse> getAllGrades() {
         try {
@@ -70,12 +111,24 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Retrieves a single grade record by its unique identifier.
+     *
+     * <p>Looks up the {@link Grade} entity by {@code id} and maps it to a
+     * {@link GradeResponse} DTO before returning.</p>
+     *
+     * @param id the {@link UUID} of the grade record to retrieve
+     * @return a {@link GradeResponse} containing the grade details
+     * @throws GradeNotCreatedException         if no grade record exists with the given {@code id}
+     * @throws GradeCouldNotBeDeletedException  if a domain-level retrieval error occurs
+     * @throws InternalServerErrorException     if any unexpected error occurs during retrieval
+     */
     @Override
     public GradeResponse getGradeById(UUID id) {
         try {
             Grade grade = gradeRepository.findById(id)
                     .orElseThrow(() -> new GradeNotCreatedException("Grade not found with id: " + id));
-    
+
             return GradeMapper.toDTO(grade);
         } catch (GradeCouldNotBeDeletedException e) {
             throw new GradeCouldNotBeDeletedException("Could not retrieve grade: " + e.getMessage());
@@ -84,6 +137,24 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Updates all fields of an existing grade record.
+     *
+     * <p>Resolves the grade, the referenced {@link Exam}, and the referenced
+     * {@link Student} before applying all fields from the request. Unlike a partial
+     * update, every field is overwritten unconditionally. A compliance audit event
+     * of type {@link AuditEntityType#GRADE_ASSIGNED} is recorded by the AOP aspect.</p>
+     *
+     * @param id      the {@link UUID} of the grade record to update
+     * @param request the {@link GradeRequest} containing the new examId, studentId,
+     *                score, grade letter, and status
+     * @return a {@link GradeResponse} reflecting the grade record's state after the update
+     * @throws GradesNotFoundException      if no grade record exists with the given {@code id}
+     * @throws ExamNotFoundException        if no exam exists with the given {@code examId}
+     * @throws StudentNotFoundException     if no student exists with the given {@code studentId}
+     * @throws GradeNotUpdatedException     if a domain-level update constraint is violated
+     * @throws InternalServerErrorException if any unexpected error occurs during the update
+     */
     @Override
     @ComplianceAudit(entityType = AuditEntityType.GRADE_ASSIGNED, scope = "Verify Grade update to a particular Student")
     public GradeResponse updateGrade(UUID id, GradeRequest request) {
@@ -112,6 +183,18 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Deletes a grade record from the system by its unique identifier.
+     *
+     * <p>Locates the {@link Grade} entity and removes it from the repository.
+     * The lookup happens outside the inner try-catch so that a missing record
+     * propagates immediately as a {@link GradesNotFoundException}.</p>
+     *
+     * @param id the {@link UUID} of the grade record to delete
+     * @throws GradesNotFoundException          if no grade record exists with the given {@code id}
+     * @throws GradeCouldNotBeDeletedException  if a domain-level deletion constraint is violated
+     * @throws InternalServerErrorException     if any unexpected error occurs during deletion
+     */
     @Override
     public void deleteGrade(UUID id) {
         Grade grade = gradeRepository.findById(id)
@@ -126,6 +209,18 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Retrieves all grade records associated with a specific student.
+     *
+     * <p>Delegates to {@code GradeRepository#findByStudentId} and maps each
+     * result to a {@link GradeResponse} DTO.</p>
+     *
+     * @param studentId the {@link UUID} of the student whose grades are requested
+     * @return a {@link List} of {@link GradeResponse} objects for the given student;
+     *         may be empty if the student has no grades recorded
+     * @throws GradesNotFoundException      if a domain-level error prevents listing grades
+     * @throws InternalServerErrorException if any unexpected error occurs during retrieval
+     */
     @Override
     public List<GradeResponse> getGradesByStudent(UUID studentId) {
         try {
@@ -137,6 +232,18 @@ public class GradeServiceImpl implements GradeService {
         }
     }
 
+    /**
+     * Retrieves all grade records associated with a specific exam.
+     *
+     * <p>Delegates to {@code GradeRepository#findByExamId} and maps each result
+     * to a {@link GradeResponse} DTO.</p>
+     *
+     * @param examId the {@link UUID} of the exam whose grade records are requested
+     * @return a {@link List} of {@link GradeResponse} objects for the given exam;
+     *         may be empty if no grades have been recorded for the exam
+     * @throws GradesNotFoundException      if a domain-level error prevents listing grades
+     * @throws InternalServerErrorException if any unexpected error occurs during retrieval
+     */
     @Override
     public List<GradeResponse> getGradesByExam(UUID examId) {
         try {

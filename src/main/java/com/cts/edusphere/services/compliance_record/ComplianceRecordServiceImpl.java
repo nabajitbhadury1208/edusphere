@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing compliance records.
+ * Handles CRUD operations and filtering by entity ID or officer user ID.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +36,15 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     private final UserRepository userRepository;
     private final ComplianceRecordMapper complianceRecordMapper;
 
+    /**
+     * Creates a new compliance record and associates it with a compliance officer.
+     * Resolves the officer User entity from the repository before persisting.
+     *
+     * @param request the request containing officer ID, entity ID/type, compliance type, result, and notes
+     * @return the created ComplianceRecordResponse
+     * @throws ComplianceRecordNotFoundException if the officer user is not found
+     * @throws ComplianceRecordNotCreatedException if creation fails
+     */
     @Override
     public ComplianceRecordResponse createComplianceRecord(ComplianceRecordRequest request) {
         try {
@@ -50,6 +63,12 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Retrieves all compliance records from the database.
+     *
+     * @return a list of all ComplianceRecordResponse objects
+     * @throws ComplianceRecordsNotFoundException if retrieval fails
+     */
     @Override
     public List<ComplianceRecordResponse> getAllComplianceRecords() {
         try {
@@ -64,6 +83,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Retrieves a specific compliance record by its unique identifier.
+     *
+     * @param id the UUID of the compliance record to retrieve
+     * @return the matching ComplianceRecordResponse
+     * @throws ComplianceRecordNotFoundException if no record with the given ID exists
+     */
     @Override
     public ComplianceRecordResponse getComplianceRecordById(UUID id) {
         try {
@@ -76,6 +102,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Retrieves all compliance records associated with a specific entity.
+     *
+     * @param entityId the UUID of the entity to filter by
+     * @return a list of ComplianceRecordResponse objects for the given entity
+     * @throws ComplianceRecordNotFoundException if retrieval fails
+     */
     @Override
     public List<ComplianceRecordResponse> getComplianceRecordsByEntityId(UUID entityId) {
         try {
@@ -90,6 +123,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Retrieves all compliance records created by a specific compliance officer.
+     *
+     * @param userId the UUID of the compliance officer user
+     * @return a list of ComplianceRecordResponse objects for the given officer
+     * @throws ComplianceRecordNotFoundException if retrieval fails
+     */
     @Override
     public List<ComplianceRecordResponse> getComplianceRecordsByUserId(UUID userId) {
         try {
@@ -104,6 +144,15 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Updates an existing compliance record with the provided fields (partial update).
+     * Only non-null fields in the request are applied to the existing record.
+     *
+     * @param id      the UUID of the compliance record to update
+     * @param request the request DTO containing updated fields
+     * @throws ComplianceRecordNotFoundException     if no record with the given ID exists
+     * @throws UpdatingComplianceRecordFailedException if the update fails
+     */
     @Override
     public void updateComplianceRecord(UUID id, ComplianceRecordRequest request) {
         try {
@@ -133,6 +182,14 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    /**
+     * Permanently deletes a compliance record by its unique identifier.
+     * Verifies existence before deletion.
+     *
+     * @param id the UUID of the compliance record to delete
+     * @throws ComplianceRecordNotFoundException     if no record with the given ID exists
+     * @throws ComplianceRecordNotDeletedException   if deletion fails
+     */
     @Override
     public void deleteComplianceRecordById(UUID id) {
         try {

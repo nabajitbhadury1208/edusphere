@@ -24,6 +24,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service implementation for managing thesis records within the EduSphere platform.
+ *
+ * <p>Provides CRUD operations for {@link com.cts.edusphere.modules.thesis.Thesis} entities,
+ * including creation, retrieval by ID, retrieval by student or supervisor, update, and deletion.
+ * All write operations participate in the default {@link org.springframework.transaction.annotation.Transactional}
+ * context declared at the class level, while read operations use read-only transactions for
+ * optimised performance. Compliance-sensitive operations are additionally decorated with
+ * {@link com.cts.edusphere.aspects.ComplianceAudit} to satisfy institutional audit requirements.</p>
+ *
+ * @see ThesisService
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,6 +47,21 @@ public class ThesisServiceImpl implements ThesisService {
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
 
+    /**
+     * Creates a new thesis record from the supplied request data.
+     *
+     * <p>Maps the incoming {@link ThesisRequestDto} to a {@link Thesis} entity, resolves the
+     * optional student and supervisor associations via JPA proxy references, persists the entity,
+     * and returns the saved state as a {@link ThesisResponseDto}.
+     * This operation is subject to compliance auditing under
+     * {@link AuditEntityType#RESEARCH_APPROVAL}.</p>
+     *
+     * @param request the DTO containing title, status, and optional {@code studentId} /
+     *                {@code supervisorId} fields; must not be {@code null}
+     * @return a {@link ThesisResponseDto} representing the newly created thesis record
+     * @throws ThesisCreationFailedException if a domain-level creation failure is detected
+     * @throws InternalServerErrorException  if any unexpected error occurs during persistence
+     */
     @Override
     @ComplianceAudit(entityType = AuditEntityType.RESEARCH_APPROVAL, scope = "Verify that the research topic and supervisor assignment follow departmental policy")
     public ThesisResponseDto createThesis(ThesisRequestDto request) {
@@ -62,6 +89,17 @@ public class ThesisServiceImpl implements ThesisService {
         }
     }
 
+    /**
+     * Retrieves a single thesis record by its unique identifier.
+     *
+     * <p>Executes within a read-only transaction. Throws {@link ThesisNotFoundException} when
+     * no thesis exists for the provided {@code id}.</p>
+     *
+     * @param id the {@link UUID} of the thesis to retrieve; must not be {@code null}
+     * @return a {@link ThesisResponseDto} containing the thesis details
+     * @throws ThesisNotFoundException      if no thesis with the given {@code id} exists
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public ThesisResponseDto getThesisById(UUID id) {
@@ -80,6 +118,20 @@ public class ThesisServiceImpl implements ThesisService {
         }
     }
 
+    /**
+     * Retrieves all thesis records associated with a given student.
+     *
+     * <p>Executes within a read-only transaction. Returns an empty list when the student has no
+     * thesis records rather than throwing an exception, unless a domain-specific
+     * {@link ThesisNotFoundException} is raised by the repository layer.</p>
+     *
+     * @param studentId the {@link UUID} of the student whose theses are to be retrieved;
+     *                  must not be {@code null}
+     * @return an unmodifiable {@link List} of {@link ThesisResponseDto} objects (may be empty)
+     * @throws ThesisNotFoundException      if the repository explicitly signals that no theses
+     *                                      exist for the student
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ThesisResponseDto> getThesisByStudent(UUID studentId) {
@@ -98,6 +150,20 @@ public class ThesisServiceImpl implements ThesisService {
         }
     }
 
+    /**
+     * Retrieves all thesis records supervised by a given faculty member.
+     *
+     * <p>Executes within a read-only transaction. Returns an empty list when the supervisor has
+     * no associated thesis records, unless the repository layer raises a
+     * {@link ThesisNotFoundException}.</p>
+     *
+     * @param facultyId the {@link UUID} of the faculty member (supervisor) whose theses are to
+     *                  be retrieved; must not be {@code null}
+     * @return an unmodifiable {@link List} of {@link ThesisResponseDto} objects (may be empty)
+     * @throws ThesisNotFoundException      if the repository explicitly signals that no theses
+     *                                      exist for the supervisor
+     * @throws InternalServerErrorException if an unexpected error occurs during retrieval
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ThesisResponseDto> getThesisBySupervisor(UUID facultyId) {
@@ -118,6 +184,23 @@ public class ThesisServiceImpl implements ThesisService {
         }
     }
 
+    /**
+     * Updates an existing thesis record with the non-null fields from the supplied request.
+     *
+     * <p>Loads the existing {@link Thesis} entity by {@code id}, applies partial updates for
+     * {@code studentId}, {@code supervisorId}, {@code title}, and {@code status} if the
+     * corresponding request fields are non-null, then persists and returns the updated state.
+     * Inherits the class-level {@link org.springframework.transaction.annotation.Transactional}
+     * context.</p>
+     *
+     * @param id      the {@link UUID} of the thesis to update; must not be {@code null}
+     * @param request a {@link ThesisRequestDto} containing the fields to update; fields that
+     *                are {@code null} are left unchanged
+     * @return a {@link ThesisResponseDto} representing the updated thesis record
+     * @throws ThesisNotFoundException       if no thesis with the given {@code id} exists
+     * @throws ThesisUpdationFailedException if a domain-level update failure is detected
+     * @throws InternalServerErrorException  if any unexpected error occurs during persistence
+     */
     @Override
     public ThesisResponseDto updateThesis(UUID id, ThesisRequestDto request) {
         try {
@@ -150,6 +233,18 @@ public class ThesisServiceImpl implements ThesisService {
         }
     }
 
+    /**
+     * Deletes a thesis record identified by the given {@code id}.
+     *
+     * <p>Verifies existence before deletion to provide a meaningful error message when the
+     * record is absent. Inherits the class-level
+     * {@link org.springframework.transaction.annotation.Transactional} context.</p>
+     *
+     * @param id the {@link UUID} of the thesis to delete; must not be {@code null}
+     * @throws ThesisNotFoundException       if no thesis with the given {@code id} exists
+     * @throws ThesisDeletionFailedException if a domain-level deletion failure is detected
+     * @throws InternalServerErrorException  if any unexpected error occurs during deletion
+     */
     @Override
     public void deleteThesis(UUID id) {
         try {

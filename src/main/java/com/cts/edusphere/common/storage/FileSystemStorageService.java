@@ -16,10 +16,27 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+/**
+ * File-system-backed implementation of {@link StorageService}.
+ *
+ * <p>Files are stored under a configurable root directory supplied via
+ * {@link com.cts.edusphere.config.storage.StorageProperties}. Each uploaded file
+ * is assigned a UUID-based name to avoid collisions, and sub-folder isolation is
+ * enforced to prevent path-traversal attacks.</p>
+ */
 @Service
 public class FileSystemStorageService implements StorageService {
     private final Path rootLocation;
 
+    /**
+     * Constructs a new {@code FileSystemStorageService} using the storage location
+     * defined in {@link com.cts.edusphere.config.storage.StorageProperties}.
+     *
+     * @param properties application storage configuration; the {@code location}
+     *                   property must be non-null and non-empty
+     * @throws IllegalArgumentException if the configured storage location is
+     *                                  {@code null} or empty
+     */
     @Autowired
     public FileSystemStorageService(StorageProperties properties) {
         if (properties.getLocation() == null || properties.getLocation().isEmpty()) {
@@ -28,6 +45,13 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = Path.of(properties.getLocation()).toAbsolutePath().normalize();
     }
 
+    /**
+     * Creates the root storage directory on the file system if it does not already
+     * exist.
+     *
+     * @throws com.cts.edusphere.exceptions.genericexceptions.StorageException if
+     *         the directory cannot be created due to an I/O or security error
+     */
     @Override
     public void init() {
         try {
@@ -39,11 +63,36 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Recursively deletes the entire root storage directory and all of its contents.
+     *
+     * <p>This operation is irreversible. After calling this method, {@link #init()}
+     * must be called again before the service can accept new uploads.</p>
+     */
     @Override
     public void deleteAllFiles() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
+    /**
+     * Stores the given multipart file inside the specified sub-folder under the
+     * configured root storage location.
+     *
+     * <p>The original file name is discarded and replaced with a randomly generated
+     * {@link UUID}-based name that preserves the original file extension. The
+     * sub-folder is created automatically if it does not yet exist. Path-traversal
+     * attempts (i.e. destinations outside the root directory) are rejected.</p>
+     *
+     * @param file      the multipart file to store; must not be empty and must have
+     *                  a non-blank original file name
+     * @param subFolder the relative sub-directory within the root location where
+     *                  the file should be placed (e.g. {@code "documents/2024"})
+     * @return the path of the stored file relative to the root storage location,
+     *         using the platform's default name separator
+     * @throws com.cts.edusphere.exceptions.genericexceptions.StorageException if
+     *         the file is empty, has no name, the destination would escape the root
+     *         directory, or an I/O error occurs during the copy
+     */
     @Override
     public String uploadFile(MultipartFile file, String subFolder) {
         try {
@@ -86,6 +135,17 @@ public class FileSystemStorageService implements StorageService {
 
     }
 
+    /**
+     * Returns a {@link Stream} of {@link Path} objects for every entry at the top
+     * level of the root storage directory, with paths relativised to the root.
+     *
+     * <p>The root directory itself is excluded from the stream. Callers should close
+     * the stream after use to release the underlying file-system handle.</p>
+     *
+     * @return a stream of relative {@link Path} objects representing the stored files
+     * @throws com.cts.edusphere.exceptions.genericexceptions.StorageException if
+     *         the root directory cannot be walked due to an I/O error
+     */
     @Override
     public Stream<Path> loadAllFiles() {
         try {
@@ -97,11 +157,31 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Resolves the given filename or relative path against the root storage location
+     * and returns the resulting {@link Path}.
+     *
+     * <p>This method does not verify that the resolved path actually exists.</p>
+     *
+     * @param filename the relative file name or path to resolve (as returned by
+     *                 {@link #uploadFile(MultipartFile, String)})
+     * @return the absolute {@link Path} within the root storage location
+     */
     @Override
     public Path loadFile(String filename) {
         return rootLocation.resolve(filename);
     }
 
+    /**
+     * Loads the file identified by {@code filename} as a Spring {@link Resource}
+     * that is ready to be streamed to an HTTP client.
+     *
+     * @param filename the relative path or file name of the file to load
+     * @return a {@link org.springframework.core.io.UrlResource} backed by the file
+     * @throws com.cts.edusphere.exceptions.genericexceptions.StorageException if
+     *         the file does not exist, is not readable, or an I/O error occurs
+     *         while building the resource
+     */
     @Override
     public Resource loadAsResource(String filename) {
         try {
@@ -117,6 +197,16 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Deletes the file identified by {@code filename} from the file system.
+     *
+     * <p>If the file does not exist, this method completes silently without throwing
+     * an exception.</p>
+     *
+     * @param filename the relative path or file name of the file to delete
+     * @throws com.cts.edusphere.exceptions.genericexceptions.StorageException if
+     *         an I/O or security error prevents the file from being deleted
+     */
     @Override
     public void deleteFile(String filename) {
         try {
@@ -127,6 +217,14 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
+    /**
+     * Tests whether a file identified by {@code filename} currently exists in the
+     * storage backend.
+     *
+     * @param filename the relative path or file name to test
+     * @return {@code true} if the path exists on the file system; {@code false}
+     *         otherwise
+     */
     @Override
     public boolean exists(String filename) {
         return Files.exists(loadFile(filename));

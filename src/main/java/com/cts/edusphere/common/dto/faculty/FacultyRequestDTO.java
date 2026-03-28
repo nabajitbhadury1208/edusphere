@@ -8,6 +8,17 @@ import jakarta.validation.constraints.*;
 
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for creating or updating a faculty member's account.
+ *
+ * @param name         the full name of the faculty member; required on create
+ * @param email        the unique email address; must be a valid email format; required on create
+ * @param phone        the contact phone number; must be 7 to 15 digits with an optional leading '+'; validated on create and update
+ * @param password     the account password; write-only, never returned in responses; required on create
+ * @param position     the faculty member's academic position or title (e.g., "Professor"); required on create and update
+ * @param departmentId the UUID of the department the faculty member belongs to; required on create
+ * @param status       the current account status (ACTIVE or INACTIVE); required on create and update
+ */
 public record FacultyRequestDTO(
         @NotBlank(groups = OnCreate.class, message = "Name cannot be blank")
         String name,
