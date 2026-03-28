@@ -12,7 +12,6 @@ import com.cts.edusphere.modules.work_load.WorkLoad;
 import com.cts.edusphere.repositories.course.CourseRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import com.cts.edusphere.repositories.work_load.WorkLoadRepository;
-import com.cts.edusphere.services.audit_log.AuditLogService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +41,6 @@ public class WorkLoadServiceImpl implements WorkLoadService {
     private final WorkLoadMapper mapper;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
-    private final AuditLogService auditLogService;
-
-
     /**
      * Creates a new workload record from the provided request data.
      *

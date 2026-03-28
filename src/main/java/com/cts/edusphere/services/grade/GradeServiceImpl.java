@@ -4,7 +4,6 @@ import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
 import com.cts.edusphere.enums.AuditEntityType;
-import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.GradeNotCreatedException;
 import com.cts.edusphere.exceptions.genericexceptions.GradeCouldNotBeDeletedException;

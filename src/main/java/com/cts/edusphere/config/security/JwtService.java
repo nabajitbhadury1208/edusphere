@@ -147,7 +147,8 @@ public class JwtService {
         String userId = claims.getSubject();
 
         String name = claims.get("name", String.class);
-        List<String> roleStr = claims.get("roles", List.class);
+        @SuppressWarnings("unchecked")
+        List<String> roleStr = (List<String>) claims.get("roles");
         if (roleStr == null || roleStr.isEmpty()) {
             throw new InvalidTokenException("Missing role claim in token");
         }

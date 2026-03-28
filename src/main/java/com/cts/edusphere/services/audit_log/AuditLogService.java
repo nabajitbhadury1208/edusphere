@@ -1,6 +1,5 @@
 package com.cts.edusphere.services.audit_log;
 
-import com.cts.edusphere.common.dto.audit_log.AuditLogRequestDTO;
 import com.cts.edusphere.common.dto.audit_log.AuditLogResponseDTO;
 import com.cts.edusphere.enums.Severity;
 import com.cts.edusphere.enums.SystemLogType;

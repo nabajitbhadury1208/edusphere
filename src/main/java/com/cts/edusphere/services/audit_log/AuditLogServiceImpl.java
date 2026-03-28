@@ -13,7 +13,6 @@ import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,8 @@ import java.util.stream.Collectors;
 /**
  * Service implementation for system audit logging.
  * Persists structured log entries for all API actions and system events.
- * Uses @Lazy injection for the repository to prevent circular dependency issues.
+ * Uses @Lazy injection for the repository to prevent circular dependency
+ * issues.
  */
 @Service
 @Slf4j
@@ -37,13 +37,14 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final UserRepository userRepository;
 
     /**
-     * Constructor with @Lazy AuditLogRepository injection to prevent circular dependency.
+     * Constructor with @Lazy AuditLogRepository injection to prevent circular
+     * dependency.
      *
-     * @param auditLogRepository the lazily-loaded repository for audit log persistence
+     * @param auditLogRepository the lazily-loaded repository for audit log
+     *                           persistence
      * @param auditLogMapper     the mapper for converting entities to response DTOs
      * @param userRepository     the repository for resolving user entities by ID
      */
-    @Autowired
     public AuditLogServiceImpl(
             @Lazy AuditLogRepository auditLogRepository,
             AuditLogMapper auditLogMapper,
@@ -53,26 +54,32 @@ public class AuditLogServiceImpl implements AuditLogService {
         this.userRepository = userRepository;
     }
 
-
     /**
      * Persists a structured system event to the audit log.
      * Optionally associates the log entry with a user if userId is provided.
-     * Applies default values: "SYSTEM" for null action/resource, INFO for null severity.
+     * Applies default values: "SYSTEM" for null action/resource, INFO for null
+     * severity.
      * Non-throwing by design — swallows exceptions to prevent logging failures
      * from disrupting business operations.
      *
-     * @param logType   the SystemLogType classifying the event (e.g., API_ACCESS, INTERNAL_ERROR)
-     * @param severity  the Severity level (INFO, WARN, ERROR); defaults to INFO if null
-     * @param action    the name of the action or method; defaults to "SYSTEM" if null
-     * @param resource  the name of the resource or class involved; defaults to "SYSTEM" if null
-     * @param details   additional detail string (e.g., exception message); may be null
-     * @param userId    the UUID of the associated user; may be null for system-level events
+     * @param logType  the SystemLogType classifying the event (e.g., API_ACCESS,
+     *                 INTERNAL_ERROR)
+     * @param severity the Severity level (INFO, WARN, ERROR); defaults to INFO if
+     *                 null
+     * @param action   the name of the action or method; defaults to "SYSTEM" if
+     *                 null
+     * @param resource the name of the resource or class involved; defaults to
+     *                 "SYSTEM" if null
+     * @param details  additional detail string (e.g., exception message); may be
+     *                 null
+     * @param userId   the UUID of the associated user; may be null for system-level
+     *                 events
      */
     @Override
     @Transactional
     public void logSystemEvent(SystemLogType logType, Severity severity,
-                               String action, String resource,
-                               String details, UUID userId) {
+            String action, String resource,
+            String details, UUID userId) {
         try {
             User user = null;
             if (userId != null) {
@@ -92,7 +99,7 @@ public class AuditLogServiceImpl implements AuditLogService {
             auditLogRepository.save(log);
         } catch (FailedToCreateLogException e) {
             log.error("Failed to persist system audit log: {}", e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected error occurred while logging system event: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to log system event");
         }
@@ -134,8 +141,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findById(id)
                     .map(auditLogMapper::toResponseDTO)
                     .orElseThrow(() -> new AuditLogNotFoundException("Audit log not found with id: " + id));
-        // } catch (ResourceNotFoundException e) {
-        //     throw e;
+            // } catch (ResourceNotFoundException e) {
+            // throw e;
         } catch (AuditLogNotFoundException e) {
             log.error("Error fetching audit log {}: {}", id, e.getMessage());
             throw new AuditLogNotFoundException("Failed to retrieve audit log");
@@ -169,7 +176,8 @@ public class AuditLogServiceImpl implements AuditLogService {
     }
 
     /**
-     * Retrieves audit log entries where the resource field contains the given string
+     * Retrieves audit log entries where the resource field contains the given
+     * string
      * (case-insensitive partial match).
      *
      * @param resource the resource name to search for
@@ -187,7 +195,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             log.error("Error fetching audit logs for resource {}: {}", resource, e.getMessage());
             throw new AuditLogsNotFoundException("Failed to retrieve resource audit logs");
         } catch (Exception e) {
-            log.error("Unexpected error occurred while fetching audit logs for resource {}: {}", resource, e.getMessage());
+            log.error("Unexpected error occurred while fetching audit logs for resource {}: {}", resource,
+                    e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve resource audit logs");
         }
     }
@@ -197,7 +206,8 @@ public class AuditLogServiceImpl implements AuditLogService {
      *
      * @param severity the Severity enum value to filter by (INFO, WARN, ERROR)
      * @return a list of AuditLogResponseDTO objects matching the given severity
-     * @throws AuditLogsNotFoundException   if no entries exist for the given severity
+     * @throws AuditLogsNotFoundException   if no entries exist for the given
+     *                                      severity
      * @throws InternalServerErrorException if an unexpected error occurs
      */
     @Override
@@ -210,7 +220,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             log.error("Error fetching audit logs by severity {}: {}", severity, e.getMessage());
             throw new AuditLogsNotFoundException("Failed to retrieve audit logs by severity");
         } catch (Exception e) {
-            log.error("Unexpected error occurred while fetching audit logs by severity {}: {}", severity, e.getMessage());
+            log.error("Unexpected error occurred while fetching audit logs by severity {}: {}", severity,
+                    e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs by severity");
         }
     }
@@ -220,7 +231,8 @@ public class AuditLogServiceImpl implements AuditLogService {
      *
      * @param logType the SystemLogType enum value to filter by
      * @return a list of AuditLogResponseDTO objects matching the given log type
-     * @throws AuditLogsNotFoundException   if no entries exist for the given log type
+     * @throws AuditLogsNotFoundException   if no entries exist for the given log
+     *                                      type
      * @throws InternalServerErrorException if an unexpected error occurs
      */
     @Override

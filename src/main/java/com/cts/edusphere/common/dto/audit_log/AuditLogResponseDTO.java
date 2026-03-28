@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.cts.edusphere.enums.Severity;
 import com.cts.edusphere.enums.SystemLogType;
-import jakarta.validation.constraints.NotNull;
 
 /**
  * Data Transfer Object representing a system audit log entry returned from the API.
