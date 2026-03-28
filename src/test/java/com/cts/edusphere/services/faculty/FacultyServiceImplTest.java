@@ -6,7 +6,6 @@ import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
 import com.cts.edusphere.exceptions.genericexceptions.FacultyNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.faculty.FacultyMapper;
 import com.cts.edusphere.modules.department.Department;
 import com.cts.edusphere.modules.faculty.Faculty;

@@ -7,8 +7,6 @@ import static org.mockito.Mockito.*;
 import com.cts.edusphere.common.dto.course.CourseRequest;
 import com.cts.edusphere.common.dto.course.CourseResponse;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.CourseAlreadyExistsException;
-import com.cts.edusphere.exceptions.genericexceptions.CourseNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.courses.CoursesMapper;
 import com.cts.edusphere.modules.courses.Course;

@@ -5,7 +5,6 @@ import com.cts.edusphere.common.dto.grade.GradeResponse;
 import com.cts.edusphere.enums.GradeStatus;
 import com.cts.edusphere.exceptions.genericexceptions.GradesNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.modules.exam.Exam;
 import com.cts.edusphere.modules.grade.Grade;
 import com.cts.edusphere.modules.student.Student;

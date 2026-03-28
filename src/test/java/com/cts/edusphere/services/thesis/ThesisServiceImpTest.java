@@ -8,7 +8,6 @@ import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
 import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.enums.ThesisStatus;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ThesisNotFoundException;
 import com.cts.edusphere.mappers.thesis.ThesisMapper;
 import com.cts.edusphere.modules.faculty.Faculty;

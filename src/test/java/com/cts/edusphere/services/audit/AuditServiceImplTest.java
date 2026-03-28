@@ -6,7 +6,6 @@ import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.AuditStatus;
 import com.cts.edusphere.enums.Role;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.AuditNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.mappers.audit.AuditMapper;
 import com.cts.edusphere.modules.audit.Audit;

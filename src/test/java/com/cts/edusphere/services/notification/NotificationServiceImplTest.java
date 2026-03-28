@@ -4,9 +4,6 @@ import com.cts.edusphere.common.dto.notification.NotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationResponse;
 import com.cts.edusphere.enums.NotificationType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.NoNotificationFoundWithId;
-import com.cts.edusphere.exceptions.genericexceptions.NotificationNotFoundException;
-import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.modules.notification.Notification;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.notification.NotificationRepository;
@@ -17,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
