@@ -8,11 +8,9 @@ import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.GradeNotCreatedException;
 import com.cts.edusphere.exceptions.genericexceptions.GradeCouldNotBeDeletedException;
-import com.cts.edusphere.exceptions.genericexceptions.GradeNotDeletedException;
 import com.cts.edusphere.exceptions.genericexceptions.GradeNotUpdatedException;
 import com.cts.edusphere.exceptions.genericexceptions.GradesNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.StudentNotFoundException;
 import com.cts.edusphere.mappers.grade.GradeMapper;
 import com.cts.edusphere.modules.exam.Exam;
@@ -22,7 +20,6 @@ import com.cts.edusphere.repositories.exam.ExamRepository;
 import com.cts.edusphere.repositories.grade.GradeRepository;
 import com.cts.edusphere.repositories.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 

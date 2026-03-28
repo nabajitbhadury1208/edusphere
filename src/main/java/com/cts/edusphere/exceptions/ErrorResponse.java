@@ -7,7 +7,6 @@ import java.util.Map;
 
 @Builder
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {

@@ -1,0 +1,8 @@
+﻿FILE: C:\Users\2480005\code_space\edusphere\src\main\java\com\cts\edusphere\common\dto\audit\AuditRequestDTO.java
+  import jakarta.validation.constraints.Pattern;
+
+FILE: C:\Users\2480005\code_space\edusphere\src\main\java\com\cts\edusphere\common\dto\audit_log\AuditLogRequestDTO.java
+  import com.cts.edusphere.common.validation.OnCreate;
+  import jakarta.validation.constraints.NotBlank;
+  import jakarta.validation.constraints.NotNull;
+

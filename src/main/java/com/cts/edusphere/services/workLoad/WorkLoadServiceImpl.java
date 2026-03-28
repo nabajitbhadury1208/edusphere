@@ -2,8 +2,6 @@ package com.cts.edusphere.services.workLoad;
 
 import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
 import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
-import com.cts.edusphere.enums.Severity;
-import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.WorkLoadCreateFailedException;

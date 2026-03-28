@@ -4,8 +4,6 @@ import com.cts.edusphere.common.dto.exam.ExamRequest;
 import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
-import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.services.exam.ExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,7 +32,7 @@ public class ExamController {
   }
 
   @GetMapping
-  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD)")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD')")
   public ResponseEntity<List<ExamResponse>> getAllExams() {
 
     List<ExamResponse> exams = examService.getAllExams();

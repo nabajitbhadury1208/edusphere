@@ -6,7 +6,6 @@ import com.cts.edusphere.exceptions.genericexceptions.ComplianceRecordNotCreated
 import com.cts.edusphere.exceptions.genericexceptions.ComplianceRecordNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ComplianceRecordsNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ComplianceRecordNotDeletedException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.UpdatingComplianceRecordFailedException;
 import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.mappers.compliance_record.ComplianceRecordMapper;

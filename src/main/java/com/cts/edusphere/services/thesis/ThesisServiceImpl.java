@@ -5,7 +5,6 @@ import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
 import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ThesisCreationFailedException;
 import com.cts.edusphere.exceptions.genericexceptions.ThesisDeletionFailedException;
 import com.cts.edusphere.exceptions.genericexceptions.ThesisNotFoundException;

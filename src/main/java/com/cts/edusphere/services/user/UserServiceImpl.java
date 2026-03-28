@@ -1,5 +1,4 @@
 package com.cts.edusphere.services.user;
-
 import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.auth.RegisterRequest;
 import com.cts.edusphere.common.dto.user.UserRequestDto;
@@ -13,12 +12,9 @@ import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.dao.PermissionDeniedDataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.nio.file.AccessDeniedException;
 import java.util.*;
 

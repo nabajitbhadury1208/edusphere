@@ -3,7 +3,6 @@ package com.cts.edusphere.services.exam;
 import com.cts.edusphere.common.dto.exam.ExamRequest;
 import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.CourseNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamNotCreatedException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamCouldNotBeDeletedException;
