@@ -102,4 +102,5 @@ public interface ResearchProjectService {
      * @throws com.cts.edusphere.exceptions.ResourceNotFoundException if no project exists with the given ID
      */
     void deleteProject(UUID id);
+
 }

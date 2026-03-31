@@ -2,12 +2,14 @@ package com.cts.edusphere.controllers.researchproject;
 
 import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
+import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.services.research_project.ResearchProjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public class ResearchProjectController {
 
     private final ResearchProjectService projectService;
 
-    // Sl No 1: Create
+
     /**
      * Creates a new research project.
      * Accessible by ADMIN and FACULTY roles.
@@ -34,11 +36,11 @@ public class ResearchProjectController {
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY')")
-    public ResponseEntity<ResearchProjectResponse> create(@Valid @RequestBody ResearchProjectRequest request) {
+    public ResponseEntity<ResearchProjectResponse> create(@Validated(OnCreate.class) @RequestBody ResearchProjectRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(request));
     }
 
-    // Sl No 2: Get All
+
     /**
      * Retrieves all research projects.
      * Accessible by ADMIN, DEPT_HEAD, FACULTY, COMPLIANCE, and REGULATOR roles.
@@ -51,7 +53,7 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.getAllProjects());
     }
 
-    // Sl No 3: Get by ID
+
     /**
      * Retrieves a specific research project by its unique identifier.
      * Accessible by ADMIN, DEPT_HEAD, FACULTY, COMPLIANCE, and STUDENT roles.
@@ -65,7 +67,7 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.getProjectById(id));
     }
 
-    // Sl No 6: Assign Co-investigator
+
     /**
      * Adds a faculty member as a co-investigator to a research project.
      * Accessible by ADMIN and FACULTY roles.
@@ -80,7 +82,6 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.addFacultyMember(id, facultyId));
     }
 
-    // Sl No 7: Remove Co-investigator
     /**
      * Removes a faculty co-investigator from a research project.
      * Accessible by ADMIN and FACULTY roles.
@@ -95,7 +96,6 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.removeFacultyMember(id, facultyId));
     }
 
-    // Sl No 8: Add Student
     /**
      * Adds a student as a participant in a research project.
      * Accessible by ADMIN and FACULTY roles.
@@ -110,7 +110,7 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.addStudent(id, studentId));
     }
 
-    // Sl No 9: Remove Student
+
     /**
      * Removes a student participant from a research project.
      * Accessible by ADMIN and FACULTY roles.
@@ -125,7 +125,7 @@ public class ResearchProjectController {
         return ResponseEntity.ok(projectService.removeStudent(id, studentId));
     }
 
-    // Sl No 10: Delete
+
     /**
      * Permanently deletes a research project by its unique identifier.
      * Accessible by ADMIN role only.
@@ -139,4 +139,6 @@ public class ResearchProjectController {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }
+
+
 }

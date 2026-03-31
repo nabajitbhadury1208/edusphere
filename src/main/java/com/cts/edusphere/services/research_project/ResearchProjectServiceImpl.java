@@ -79,10 +79,10 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     @Override
     @ComplianceAudit(entityType = AuditEntityType.RESEARCH_APPROVAL, scope = "Verify funding sources and ethical clearance")
     public ResearchProjectResponse createProject(ResearchProjectRequest request) {
-        try {
+
             Faculty lead = facultyRepository.findById(request.facultyId())
                     .orElseThrow(() -> new FacultyNotFoundException("Lead faculty not found"));
-
+        try {
             List<Faculty> members = request.facultyMembers().stream()
                     .map(facultyRepository::getReferenceById)
                     .toList();
@@ -97,7 +97,8 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
             log.info("Research project '{}' created with Lead faculty ID: {}", saved.getTitle(), lead.getId());
 
             return projectMapper.toResponse(saved);
-        }  catch (ResearchProjectCreationFailureException e) {
+        }
+        catch (ResearchProjectCreationFailureException e) {
             log.error("Failed to create research project: {}", e.getMessage());
             throw new ResearchProjectCreationFailureException("Error occurred while creating project: " + e.getMessage());
         } catch (Exception e) {
@@ -126,22 +127,20 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
      */
     @Override
     public ResearchProjectResponse addFacultyMember(UUID projectId, UUID facultyId) {
-        try {
+
             ResearchProject project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new ResearchProjectNotFoundException("Project not found"));
                     
             Faculty coInvestigator = facultyRepository.findById(facultyId)
-                    .orElseThrow(() -> new FacultyNotFoundException("faculty member not found"));
-    
+                    .orElseThrow(() -> new FacultyNotFoundException("Faculty memberwith ID: " + facultyId + "not found"));
+        try {
             project.getAssociatedFacultyMembers().add(coInvestigator);
             
             return projectMapper.toResponse(projectRepository.save(project));
-        } catch (ResearchProjectUpdateFailedException e) {
+        }
+        catch (ResearchProjectUpdateFailedException e) {
             log.error("Failed to add faculty member to project {}: {}", projectId, e.getMessage());
             throw new ResearchProjectUpdateFailedException("Error occurred while adding faculty member: " + e.getMessage());
-        } catch (FacultiesNotFoundException e) {
-            log.error("Faculty member with ID {} not found: {}", facultyId, e.getMessage());
-            throw new FacultyNotFoundException("Faculty member with ID: " + facultyId + " not found");
         } catch (Exception e) {
             log.error("Unexpected error occurred while adding faculty member to project {}: {}", projectId, e.getMessage());
             throw new InternalServerErrorException("An unexpected error occurred while updating the project");
@@ -167,10 +166,10 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
      */
     @Override
     public ResearchProjectResponse removeFacultyMember(UUID projectId, UUID facultyId) {
-        try {
+
             ResearchProject project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new ResearchProjectNotFoundException("Project not found"));
-        
+        try {
             project.getAssociatedFacultyMembers().removeIf(f -> f.getId().equals(facultyId));
             return projectMapper.toResponse(projectRepository.save(project));
         } catch (ResearchProjectUpdateFailedException e) {
@@ -202,13 +201,13 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
      */
     @Override
     public ResearchProjectResponse addStudent(UUID projectId, UUID studentId) {
-        try {
+
         ResearchProject project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResearchProjectNotFoundException("Project not found"));
 
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new StudentNotFoundException("student not found"));
-
+        try {
         project.getParticipatedStudents().add(student);
         return projectMapper.toResponse(projectRepository.save(project));
         } catch (ResearchProjectUpdateFailedException e) {
@@ -239,10 +238,10 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
      */
     @Override
     public ResearchProjectResponse removeStudent(UUID projectId, UUID studentId) {
-        try {
+
             ResearchProject project = projectRepository.findById(projectId)
                     .orElseThrow(() -> new ResearchProjectNotFoundException("Project not found"));
-
+        try {
             project.getParticipatedStudents().removeIf(s -> s.getId().equals(studentId));
             return projectMapper.toResponse(projectRepository.save(project));
         } catch (ResearchProjectUpdateFailedException e) {
@@ -273,14 +272,19 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     @Override
     @Transactional(readOnly = true)
     public List<ResearchProjectResponse> getAllProjects() {
+        List<ResearchProject> projects = projectRepository.findAll();
+
+
+        if (projects.isEmpty()) {
+            throw new ResearchProjectNotFoundException("No research projects found in the system.");
+        }
         try {
-            return projectRepository.findAll().stream()
+            return projects.stream()
                     .map(projectMapper::toResponse)
                     .collect(Collectors.toList());
 
         } catch (ResearchProjectNotFoundException e) {
             log.error("Error occurred while fetching all research projects: {}", e.getMessage());
-
             throw new ResearchProjectNotFoundException("Failed to retrieve research projects list");
         } catch (Exception e) {
             log.error("Unexpected error occurred while fetching all research projects: {}", e.getMessage());
@@ -309,12 +313,11 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         try {
         return projectRepository.findById(id)
                 .map(projectMapper::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Project not found with ID: " + id));
+                .orElseThrow(() -> new ResearchProjectNotFoundException("Project not found with ID: " + id));
 
         } catch (ResearchProjectNotFoundException e) {
             log.error("Research project with ID {} not found: {}", id, e.getMessage());
             throw new ResearchProjectNotFoundException("Project with ID: " + id + " not found");
-
         } catch (Exception e) {
             log.error("Error occurred while fetching research project with ID {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve research project details");
@@ -338,11 +341,11 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
      */
     @Override
     public void deleteProject(UUID id) {
-        try {
+
             if (!projectRepository.existsById(id)) {
                 throw new ResourceNotFoundException("Project not found");
             }
-    
+        try {
             projectRepository.deleteById(id);
             log.info("Research project with ID {} deleted", id);
 
