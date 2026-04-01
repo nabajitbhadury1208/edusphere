@@ -30,4 +30,5 @@ public interface ResearchProjectService {
     // Sl No 10
 
     void deleteProject(UUID id);
+
 }

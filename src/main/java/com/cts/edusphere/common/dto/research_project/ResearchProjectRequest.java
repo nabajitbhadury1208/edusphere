@@ -1,5 +1,6 @@
 package com.cts.edusphere.common.dto.research_project;
 
+import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.enums.ProjectStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,26 +12,26 @@ import java.util.UUID;
 
 public record ResearchProjectRequest(
 
-        @NotBlank
+        @NotBlank(groups = OnCreate.class, message = "Project title is required")
         @Size(min = 3, max = 100, message = "Title must be between 3 and 200 characters")
         String title,
 
-        @NotNull(message = "Faculty is required")
+        @NotNull(groups = OnCreate.class,message = "Faculty is required")
         UUID facultyId,
 
-        @NotNull(message = "facultyMember cannot be null; send empty list if none")
+        @NotNull(groups = OnCreate.class,message = "facultyMember cannot be null; send empty list if none")
         List<UUID> facultyMembers,
 
-        @NotNull(message = "student cannot be null; send empty list if none")
+        @NotNull(groups = OnCreate.class,message = "student cannot be null; send empty list if none")
         List<UUID> students,
 
-        @NotNull(message = "startDate is required")
+        @NotNull(groups = OnCreate.class,message = "startDate is required")
         LocalDate startDate,
 
-        @NotNull(message = "endDate is required")
+        @NotNull(groups = OnCreate.class,message = "endDate is required")
         LocalDate endDate,
 
-        @NotNull(message = "status is required")
+        @NotNull(groups = OnCreate.class,message = "status is required")
         ProjectStatus status
 )
  {
