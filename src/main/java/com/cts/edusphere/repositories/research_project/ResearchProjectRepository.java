@@ -6,13 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
-/**
- * Repository interface for managing {@link ResearchProject} entities.
- *
- * <p>Extends {@link JpaRepository} to provide standard CRUD and pagination operations
- * for research project records. No additional custom query methods are defined beyond
- * the inherited JpaRepository contract.</p>
- */
 @Repository
 public interface ResearchProjectRepository extends JpaRepository<ResearchProject, UUID> {
 

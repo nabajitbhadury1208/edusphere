@@ -20,23 +20,10 @@ import java.util.UUID;
 @RequestMapping("/api/v1/faculties")
 @RequiredArgsConstructor
 @Slf4j
-/**
- * REST controller for managing faculty members.
- * Base path: /api/v1/faculties
- */
 public class FacultyController {
 
     private final FacultyService facultyService;
 
-    /**
-     * Creates a new faculty member in the system.
-     * Validates department existence, encodes password, assigns FACULTY role,
-     * and triggers a compliance audit for background check.
-     * Accessible by ADMIN role only.
-     *
-     * @param requestDTO the request containing name, email, phone, password, department ID, and position
-     * @return HTTP 201 with the created FacultyResponseDTO
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<FacultyResponseDTO> createFaculty(@Validated(OnCreate.class) @RequestBody FacultyRequestDTO requestDTO) {
@@ -45,12 +32,6 @@ public class FacultyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Retrieves all faculty members in the system.
-     * Accessible by ADMIN and DEPARTMENT_HEAD roles.
-     *
-     * @return HTTP 200 with a list of all FacultyResponseDTO objects
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<List<FacultyResponseDTO>> getAllFaculties() {
@@ -59,14 +40,6 @@ public class FacultyController {
         return ResponseEntity.ok(faculties);
     }
 
-    /**
-     * Retrieves a specific faculty member by their unique identifier.
-     * Accessible by ADMIN and DEPARTMENT_HEAD, or by the faculty member themselves
-     * when the requested ID matches the authenticated user's ID.
-     *
-     * @param id the UUID of the faculty member to retrieve
-     * @return HTTP 200 with the matching FacultyResponseDTO
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD') or (hasRole('FACULTY') and #id == principal.userId)")
     public ResponseEntity<FacultyResponseDTO> getFacultyById(@PathVariable UUID id) {
@@ -75,15 +48,6 @@ public class FacultyController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    /**
-     * Updates an existing faculty member's details by their unique identifier.
-     * Supports partial updates: only non-null fields in the request are applied.
-     * Accessible by ADMIN role only.
-     *
-     * @param id         the UUID of the faculty member to update
-     * @param requestDTO the request body containing updated faculty fields
-     * @return HTTP 200 with the updated FacultyResponseDTO
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<FacultyResponseDTO> updateFaculty(
@@ -94,13 +58,6 @@ public class FacultyController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    /**
-     * Permanently deletes a faculty member by their unique identifier.
-     * Accessible by ADMIN role only.
-     *
-     * @param id the UUID of the faculty member to delete
-     * @return HTTP 204 No Content on successful deletion
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteFaculty(@PathVariable UUID id) {

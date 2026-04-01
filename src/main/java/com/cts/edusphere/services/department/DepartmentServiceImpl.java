@@ -24,18 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service implementation for managing department-related operations.
- *
- * <p>Provides transactional CRUD operations for {@link Department} entities, including
- * creation, retrieval, update, department-head reassignment, and deletion. All write
- * operations run within a transaction; read-only operations use a read-only transaction
- * for performance optimisation.
- *
- * <p>Authorisation is enforced at the business layer: only users that hold the
- * {@link Role#DEPARTMENT_HEAD} or {@link Role#ADMIN} role may be assigned as the head
- * of a department.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -46,22 +34,6 @@ public class DepartmentServiceImpl implements DepartmentService {
   private final UserRepository userRepository;
   private final DepartmentMapper departmentMapper;
 
-  /**
-   * Creates a new department from the supplied request data.
-   *
-   * <p>If a {@code headId} is present in the request, the corresponding user is looked up
-   * and validated to ensure they hold the {@link Role#DEPARTMENT_HEAD} or {@link Role#ADMIN}
-   * role before being set as the department head.
-   *
-   * @param requestDTO the DTO containing the new department's details, including an optional
-   *                   {@code headId} for the department head
-   * @return a {@link DepartmentResponseDTO} representing the persisted department
-   * @throws UserNotFoundException           if a {@code headId} is provided but no matching
-   *                                         user can be found
-   * @throws InsufficientPermissionException if the resolved user does not hold the required role
-   * @throws DepartmentNotCreatedException   if a domain-level error prevents department creation
-   * @throws InternalServerErrorException    if an unexpected error occurs during creation
-   */
   @Override
   public DepartmentResponseDTO createDepartment(DepartmentRequestDTO requestDTO) {
     try {
@@ -99,14 +71,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
   }
 
-  /**
-   * Retrieves a single department by its unique identifier.
-   *
-   * @param id the {@link UUID} of the department to retrieve
-   * @return a {@link DepartmentResponseDTO} representing the found department
-   * @throws DepartmentNotFoundException  if no department exists with the given {@code id}
-   * @throws InternalServerErrorException if an unexpected error occurs during retrieval
-   */
   @Override
   @Transactional(readOnly = true)
   public DepartmentResponseDTO getDepartmentById(UUID id) {
@@ -130,15 +94,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
   }
 
-  /**
-   * Retrieves all departments persisted in the system.
-   *
-   * @return a {@link List} of {@link DepartmentResponseDTO} objects representing every
-   *         department; never {@code null}, but may be empty
-   * @throws DepartmentsNotFoundException if a domain-level error signals that departments
-   *                                      cannot be retrieved
-   * @throws InternalServerErrorException if an unexpected error occurs during retrieval
-   */
   @Override
   @Transactional(readOnly = true)
   public List<DepartmentResponseDTO> getAllDepartments() {
@@ -155,23 +110,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
   }
 
-  /**
-   * Partially updates an existing department with the values supplied in the request DTO.
-   *
-   * <p>Only non-{@code null} fields in {@code requestDTO} are applied to the stored entity,
-   * allowing callers to perform partial (PATCH-style) updates. If a new {@code headId} is
-   * provided, the referenced user is validated for the required role before being assigned.
-   *
-   * @param id         the {@link UUID} of the department to update
-   * @param requestDTO the DTO containing the fields to update; {@code null} fields are ignored
-   * @return a {@link DepartmentResponseDTO} representing the updated department
-   * @throws DepartmentNotFoundException        if no department exists with the given {@code id}
-   * @throws UserNotFoundException              if a {@code headId} is supplied but the user
-   *                                            cannot be found
-   * @throws InsufficientPermissionException    if the resolved user does not hold the required role
-   * @throws DepartmentCouldNotBeUpdatedException if a domain-level error prevents the update
-   * @throws InternalServerErrorException       if an unexpected error occurs during the update
-   */
   @Override
   public DepartmentResponseDTO updateDepartment(UUID id, DepartmentRequestDTO requestDTO) {
     try {
@@ -222,21 +160,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
   }
 
-  /**
-   * Reassigns the head of an existing department to a different user.
-   *
-   * <p>Both the department and the prospective new head are looked up by their respective
-   * identifiers. No role validation is performed here beyond verifying the user exists;
-   * role enforcement is expected to have occurred upstream.
-   *
-   * @param id     the {@link UUID} of the department whose head is to be changed
-   * @param headId the {@link UUID} of the user to assign as the new department head
-   * @return a {@link DepartmentResponseDTO} representing the updated department
-   * @throws DepartmentNotFoundException          if no department exists with the given {@code id}
-   * @throws UserNotFoundException                if no user exists with the given {@code headId}
-   * @throws DepartmentCouldNotBeUpdatedException if a domain-level error prevents the update
-   * @throws InternalServerErrorException         if an unexpected error occurs during the update
-   */
   @Override
   public DepartmentResponseDTO changeDepartmentHead(UUID id, UUID headId) {
     try {
@@ -270,17 +193,6 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
   }
 
-  /**
-   * Deletes the department identified by the given {@code id}.
-   *
-   * <p>The department is first fetched to confirm it exists before the delete is issued,
-   * ensuring a meaningful error is returned rather than a silent no-op.
-   *
-   * @param id the {@link UUID} of the department to delete
-   * @throws DepartmentNotFoundException          if no department exists with the given {@code id}
-   * @throws DepartmentCouldNotBeDeletedException if a domain-level error prevents deletion
-   * @throws InternalServerErrorException         if an unexpected error occurs during deletion
-   */
   @Override
   public void deleteDepartment(UUID id) {
     try {

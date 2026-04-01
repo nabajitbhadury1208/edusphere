@@ -7,15 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-/**
- * Data Transfer Object for creating a department head user account.
- *
- * @param name     the full name of the department head; must not be blank
- * @param email    the department head's unique email address; must be a valid email format
- * @param phone    the contact phone number; must be 7 to 15 digits, with an optional leading '+'
- * @param password the account password; write-only and never returned in responses
- * @param status   the initial account status of the department head (ACTIVE or INACTIVE)
- */
 public record DepartmentHeadRequest(
         @NotBlank(message = "Name cannot be blank")
         String name,

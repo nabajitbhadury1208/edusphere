@@ -10,16 +10,6 @@ import jakarta.validation.constraints.Size;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Data Transfer Object for updating an existing user's general profile information.
- * Email and password changes are handled through dedicated endpoints.
- *
- * @param id     the UUID of the user to be updated; used for identification purposes
- * @param name   the updated display name; must be between 3 and 50 characters; validated on create and update
- * @param phone  the updated phone number; must match a 7-15 digit pattern with an optional leading '+'; validated on create and update
- * @param roles  the updated set of roles assigned to this user
- * @param status the updated account status (ACTIVE or INACTIVE)
- */
 public record UserRequestDto(
 
         UUID id,

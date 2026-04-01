@@ -20,10 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * REST controller for managing user accounts and profiles.
- * Base path: /api/v1/users
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
@@ -32,13 +28,6 @@ public class UserController {
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
 
-    /**
-     * Retrieves the authenticated user's own profile.
-     * Accessible by any authenticated user.
-     *
-     * @param principal the authenticated user principal
-     * @return HTTP 200 with the user's UserResponseDto, or HTTP 500 on error
-     */
     @GetMapping("/me")
     public ResponseEntity<UserResponseDto> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
         try {
@@ -50,13 +39,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Retrieves a user by their unique identifier.
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the user to retrieve
-     * @return HTTP 200 with the matching UserResponseDto, or HTTP 500 on error
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable UUID id) {
@@ -69,13 +51,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Deletes a user and nullifies their associated audit log entries.
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the user to delete
-     * @return HTTP 204 on success, HTTP 404 if not found, or HTTP 500 on error
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
@@ -91,12 +66,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Retrieves all users.
-     * Accessible by ADMIN only.
-     *
-     * @return HTTP 200 with a list of all UserResponseDto objects, or HTTP 500 on error
-     */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
@@ -109,14 +78,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Updates the authenticated user's own profile.
-     * Non-admin users may only update their name and phone number.
-     *
-     * @param principal the authenticated user principal
-     * @param request the updated profile fields
-     * @return HTTP 200 with the updated UserResponseDto, HTTP 403 if unauthorized, or HTTP 500 on error
-     */
     @PostMapping("/me")
     public ResponseEntity<UserResponseDto> updateCurrentUser(@AuthenticationPrincipal UserPrincipal principal, @RequestBody UserRequestDto request) {
         try {
@@ -131,15 +92,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Updates a user by their unique identifier (admin operation).
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the user to update
-     * @param request the updated user fields
-     * @param principal the admin principal performing the update
-     * @return HTTP 200 with the updated UserResponseDto, HTTP 403 if unauthorized, or HTTP 500 on error
-     */
     @PostMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUserById(@PathVariable UUID id, @Valid @RequestBody UserRequestDto request, @AuthenticationPrincipal UserPrincipal principal) {
@@ -154,16 +106,6 @@ public class UserController {
             return ResponseEntity.status(500).build();
         }
     }
-    /**
-     * Updates the ACTIVE or INACTIVE status of a user.
-     * Triggers a compliance audit. Prevents an admin from deactivating their own account.
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the user whose status is being updated
-     * @param requestDto the request body containing the new status
-     * @param principal the admin principal performing the update
-     * @return HTTP 200 with the updated UserResponseDto, or the appropriate error response
-     */
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     @ComplianceAudit(entityType = AuditEntityType.STUDENT_UPDATED, scope = "Verify change of student activate status")

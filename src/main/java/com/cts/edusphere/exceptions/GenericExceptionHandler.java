@@ -20,41 +20,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-/**
- * Global REST exception handler for the EduSphere application.
- *
- * <p>All {@link org.springframework.web.bind.annotation.RestController} exceptions
- * bubble up here and are mapped to appropriate HTTP status codes before being
- * returned as a structured {@link ErrorResponse} payload.  Each handler method
- * also triggers an audit-log entry via {@link GenericExceptionConfig}.</p>
- *
- * <p>Handler groupings by HTTP status:</p>
- * <ul>
- *   <li>400 Bad Request  – validation failures and invalid-password errors</li>
- *   <li>401 Unauthorized – bad credentials, invalid/expired tokens, locked accounts</li>
- *   <li>403 Forbidden    – access-denied, disabled accounts, insufficient permissions</li>
- *   <li>404 Not Found    – any domain entity that could not be located</li>
- *   <li>409 Conflict     – duplicate resource or data-integrity violations</li>
- *   <li>500 Internal     – operation failures (create/update/delete), file storage, etc.</li>
- * </ul>
- */
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GenericExceptionHandler {
 
     private final GenericExceptionConfig exceptionConfig;
 
-    /**
-     * Handles bean-validation failures thrown by {@code @Valid} / {@code @Validated}
-     * on request bodies or parameters.
-     *
-     * <p>Collects all field-level constraint violations into a map and returns them
-     * as the {@code validationError} field of {@link ErrorResponse}.</p>
-     *
-     * @param ex  the validation exception containing per-field binding results
-     * @param req the current web request
-     * @return {@code 400 Bad Request} with a map of field → error message
-     */
     // 400 (Bad Request) - Validation Failures
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex, WebRequest req) {
@@ -71,14 +42,6 @@ public class GenericExceptionHandler {
             "Validation failed", HttpStatus.BAD_REQUEST, req, errors);
     }
 
-    /**
-     * Handles custom bad-request exceptions such as an invalid password format
-     * or a storage operation error that is the caller's fault.
-     *
-     * @param ex  the runtime exception indicating a bad request condition
-     * @param req the current web request
-     * @return {@code 400 Bad Request} with the exception message
-     */
     // 400 (Bad Request) - Custom Exceptions
     @ExceptionHandler({
         InvalidPasswordException.class,
@@ -88,14 +51,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.BAD_REQUEST, req);
     }
 
-    /**
-     * Handles authentication failures, including bad credentials, invalid or
-     * expired JWT tokens, and locked user accounts.
-     *
-     * @param ex  the exception indicating the request is unauthenticated
-     * @param req the current web request
-     * @return {@code 401 Unauthorized} with the exception message
-     */
     // 401 (Unauthorized)
     @ExceptionHandler({
         BadCredentialsException.class,
@@ -108,14 +63,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.UNAUTHORIZED, req);
     }
 
-    /**
-     * Handles authorisation failures for authenticated users who lack the required
-     * permissions, have disabled accounts, or attempt to access a forbidden resource.
-     *
-     * @param ex  the exception indicating insufficient access rights
-     * @param req the current web request
-     * @return {@code 403 Forbidden} with the exception message
-     */
     // 403 (Forbidden)
     @ExceptionHandler({
         AccessDeniedException.class,
@@ -127,14 +74,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.FORBIDDEN, req);
     }
 
-    /**
-     * Handles all "entity not found" exceptions across every domain in the
-     * application (audits, compliance records, courses, students, users, etc.).
-     *
-     * @param ex      the exception indicating the requested resource was not found
-     * @param request the current web request
-     * @return {@code 404 Not Found} with the exception message
-     */
     // 404 (Not Found)
     @ExceptionHandler({
         AuditLogNotFoundException.class,
@@ -176,14 +115,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.NOT_FOUND, request);
     }
 
-    /**
-     * Handles conflict exceptions raised when a resource already exists or a
-     * database unique-constraint is violated.
-     *
-     * @param ex  the exception indicating a resource conflict
-     * @param req the current web request
-     * @return {@code 409 Conflict} with the exception message
-     */
     // 409 (Conflict)
     @ExceptionHandler({
         CourseAlreadyExistsException.class,
@@ -195,15 +126,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.CONFLICT, req);
     }
 
-    /**
-     * Handles all server-side operation failures: creation, update, and deletion
-     * failures across every domain, as well as file-storage and external-service
-     * errors and any uncategorised internal errors.
-     *
-     * @param ex  the exception describing the internal failure
-     * @param req the current web request
-     * @return {@code 500 Internal Server Error} with the exception message
-     */
     // 500 (Internal Server Error)
     @ExceptionHandler({
         AuditNotDeletedException.class,
@@ -268,17 +190,6 @@ public class GenericExceptionHandler {
         return exceptionConfig.processError(ex, HttpStatus.INTERNAL_SERVER_ERROR, req);
     }
 
-    /**
-     * Last-resort handler that catches any {@link Exception} not matched by a
-     * more specific handler above.
-     *
-     * <p>Prevents raw stack traces from leaking to API consumers by returning a
-     * consistent {@link ErrorResponse} structure.</p>
-     *
-     * @param ex  the uncaught exception
-     * @param req the current web request
-     * @return {@code 500 Internal Server Error} with the exception message
-     */
     // Global Fallback for Unhandled Exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobal(Exception ex, WebRequest req) {

@@ -29,23 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-/**
- * Service implementation for managing research projects within the EduSphere platform.
- *
- * <p>Provides full lifecycle operations for research projects, including creation,
- * retrieval, membership management (faculty and students), and deletion. All
- * write operations participate in the surrounding Spring-managed transaction declared
- * at the class level. Read-only operations override the transaction with
- * {@code readOnly = true} for performance optimisation.</p>
- *
- * <p>Compliance auditing is applied selectively at the method level via
- * {@link com.cts.edusphere.aspects.ComplianceAudit} to ensure that regulated
- * operations (e.g. project creation) are traceable for funding and ethical-clearance
- * purposes.</p>
- *
- * @see ResearchProjectService
- * @see com.cts.edusphere.modules.research_project.ResearchProject
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -57,25 +40,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     private final StudentRepository studentRepository;
     private final ResearchProjectMapper projectMapper;
 
-    /**
-     * Creates a new research project and persists it to the database.
-     *
-     * <p>Resolves the lead faculty, all co-investigator faculty members, and the
-     * participating students referenced in the request before delegating to the
-     * mapper to build the entity. A compliance audit trail is recorded automatically
-     * by the {@code @ComplianceAudit} aspect to verify funding sources and ethical
-     * clearance.</p>
-     *
-     * @param request the {@link ResearchProjectRequest} DTO containing project title,
-     *                lead faculty ID, co-investigator faculty IDs, and student IDs
-     * @return a {@link ResearchProjectResponse} representing the newly persisted project
-     * @throws FacultyNotFoundException               if the lead faculty ID does not match
-     *                                               any existing faculty record
-     * @throws ResearchProjectCreationFailureException if a domain-level creation constraint
-     *                                               is violated
-     * @throws InternalServerErrorException          if any other unexpected error occurs
-     *                                               during persistence
-     */
     @Override
     @ComplianceAudit(entityType = AuditEntityType.RESEARCH_APPROVAL, scope = "Verify funding sources and ethical clearance")
     public ResearchProjectResponse createProject(ResearchProjectRequest request) {
@@ -106,24 +70,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Adds an existing faculty member as a co-investigator to an existing research project.
-     *
-     * <p>Both the project and the faculty record must already exist in the database.
-     * The faculty member is appended to the project's associated faculty members
-     * collection and the updated project is immediately saved.</p>
-     *
-     * @param projectId the {@link UUID} of the research project to update
-     * @param facultyId the {@link UUID} of the faculty member to add as a co-investigator
-     * @return a {@link ResearchProjectResponse} reflecting the updated project state
-     * @throws ResearchProjectNotFoundException      if no project exists for the given
-     *                                              {@code projectId}
-     * @throws FacultyNotFoundException              if no faculty record exists for the
-     *                                              given {@code facultyId}
-     * @throws ResearchProjectUpdateFailedException  if a domain-level update constraint
-     *                                              is violated
-     * @throws InternalServerErrorException         if any other unexpected error occurs
-     */
     @Override
     public ResearchProjectResponse addFacultyMember(UUID projectId, UUID facultyId) {
         try {
@@ -148,23 +94,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Removes a faculty member from the co-investigator list of a research project.
-     *
-     * <p>The project must already exist. The faculty member whose {@link UUID} matches
-     * {@code facultyId} is removed from the associated faculty members collection using
-     * an identity comparison, and the updated project is saved. If no matching faculty
-     * member is present in the collection, the save still succeeds with no change.</p>
-     *
-     * @param projectId the {@link UUID} of the research project to update
-     * @param facultyId the {@link UUID} of the faculty member to remove
-     * @return a {@link ResearchProjectResponse} reflecting the updated project state
-     * @throws ResearchProjectNotFoundException      if no project exists for the given
-     *                                              {@code projectId}
-     * @throws ResearchProjectUpdateFailedException  if a domain-level update constraint
-     *                                              is violated
-     * @throws InternalServerErrorException         if any other unexpected error occurs
-     */
     @Override
     public ResearchProjectResponse removeFacultyMember(UUID projectId, UUID facultyId) {
         try {
@@ -182,24 +111,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Enrolls a student as a participant in an existing research project.
-     *
-     * <p>Both the project and the student record must already exist in the database.
-     * The student is appended to the project's participated-students collection and
-     * the updated project is immediately saved.</p>
-     *
-     * @param projectId the {@link UUID} of the research project to update
-     * @param studentId the {@link UUID} of the student to enrol as a participant
-     * @return a {@link ResearchProjectResponse} reflecting the updated project state
-     * @throws ResearchProjectNotFoundException     if no project exists for the given
-     *                                             {@code projectId}
-     * @throws StudentNotFoundException             if no student record exists for the
-     *                                             given {@code studentId}
-     * @throws ResearchProjectUpdateFailedException if a domain-level update constraint
-     *                                             is violated
-     * @throws InternalServerErrorException        if any other unexpected error occurs
-     */
     @Override
     public ResearchProjectResponse addStudent(UUID projectId, UUID studentId) {
         try {
@@ -220,23 +131,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Removes a student from the participant list of a research project.
-     *
-     * <p>The project must already exist. The student whose {@link UUID} matches
-     * {@code studentId} is removed from the participated-students collection using
-     * an identity comparison, and the updated project is saved. If no matching student
-     * is present in the collection, the save still succeeds with no change.</p>
-     *
-     * @param projectId the {@link UUID} of the research project to update
-     * @param studentId the {@link UUID} of the student to remove
-     * @return a {@link ResearchProjectResponse} reflecting the updated project state
-     * @throws ResearchProjectNotFoundException     if no project exists for the given
-     *                                             {@code projectId}
-     * @throws ResearchProjectUpdateFailedException if a domain-level update constraint
-     *                                             is violated
-     * @throws InternalServerErrorException        if any other unexpected error occurs
-     */
     @Override
     public ResearchProjectResponse removeStudent(UUID projectId, UUID studentId) {
         try {
@@ -255,21 +149,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Retrieves all research projects stored in the database.
-     *
-     * <p>This is a read-only transactional operation. Every persisted
-     * {@link com.cts.edusphere.modules.research_project.ResearchProject} is mapped to a
-     * {@link ResearchProjectResponse} DTO and returned as a list. The list will be
-     * empty if no projects have been created yet.</p>
-     *
-     * @return a {@link List} of {@link ResearchProjectResponse} DTOs representing all
-     *         research projects; never {@code null}
-     * @throws ResearchProjectNotFoundException if a domain-level retrieval constraint
-     *                                         is violated
-     * @throws InternalServerErrorException    if any other unexpected error occurs
-     *                                         during retrieval
-     */
     @Override
     @Transactional(readOnly = true)
     public List<ResearchProjectResponse> getAllProjects() {
@@ -288,21 +167,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Retrieves a single research project by its unique identifier.
-     *
-     * <p>This is a read-only transactional operation. The project entity is fetched
-     * from the repository by its {@link UUID} primary key and mapped to a response DTO.
-     * An exception is thrown when no matching record is found.</p>
-     *
-     * @param id the {@link UUID} primary key of the research project to retrieve
-     * @return a {@link ResearchProjectResponse} representing the found project
-     * @throws ResourceNotFoundException        if no project exists for the given {@code id}
-     * @throws ResearchProjectNotFoundException if a domain-level not-found constraint
-     *                                         is violated
-     * @throws InternalServerErrorException    if any other unexpected error occurs
-     *                                         during retrieval
-     */
     @Override
     @Transactional(readOnly = true)
     public ResearchProjectResponse getProjectById(UUID id) {
@@ -321,21 +185,6 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
         }
     }
 
-    /**
-     * Permanently deletes a research project identified by its unique identifier.
-     *
-     * <p>Existence of the project is verified before deletion is attempted. If the
-     * project is not found, a {@link ResourceNotFoundException} is thrown immediately
-     * without attempting any database write. On successful deletion a log entry at
-     * INFO level is emitted.</p>
-     *
-     * @param id the {@link UUID} primary key of the research project to delete
-     * @throws ResourceNotFoundException      if no project exists for the given {@code id}
-     * @throws ResearchProjectDeletionFailed  if a domain-level deletion constraint is
-     *                                       violated
-     * @throws InternalServerErrorException  if any other unexpected error occurs during
-     *                                       deletion
-     */
     @Override
     public void deleteProject(UUID id) {
         try {

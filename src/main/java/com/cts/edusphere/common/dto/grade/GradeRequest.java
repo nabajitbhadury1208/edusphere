@@ -10,15 +10,6 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-/**
- * Data Transfer Object for assigning or updating a student's grade for an exam.
- *
- * @param examId    the UUID of the exam being graded; required on create
- * @param studentId the UUID of the student receiving the grade; required on create
- * @param score     the numerical score achieved; must be between 0.0 and 100.0 inclusive; required on create
- * @param grade     the letter or descriptor grade (e.g., "A", "B+"); required on update
- * @param status    the grading status indicating whether the student passed, failed, or is pending review; required on create
- */
 public record GradeRequest(
         @NotNull(groups = {OnCreate.class},message = "ExamId is required")
         UUID examId,

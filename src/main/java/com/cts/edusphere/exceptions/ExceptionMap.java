@@ -10,33 +10,12 @@ import org.springframework.security.authentication.LockedException;
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
 
-/**
- * Utility class that maps every application-specific (and selected Spring Security)
- * exception type to its corresponding {@link SystemLogType} audit-log category.
- *
- * <p>The single, immutable {@link #LOG_MAPPINGS} constant is consumed by
- * {@link GenericExceptionConfig#processError(Exception, org.springframework.http.HttpStatus,
- * org.springframework.web.context.request.WebRequest)} to determine which log
- * category to write when an exception propagates out of a controller.</p>
- *
- * <p>This class is non-instantiable by design.</p>
- */
 public final class ExceptionMap {
 
-    /**
-     * Private constructor to prevent instantiation of this utility class.
-     */
     private ExceptionMap() {
         // pvt const
     }
 
-    /**
-     * Immutable mapping from exception class to the {@link SystemLogType} that
-     * should be recorded in the audit log when that exception is handled.
-     *
-     * <p>If an exception class is not present in this map,
-     * {@link SystemLogType#INTERNAL_ERROR} is used as the default fallback.</p>
-     */
     public static final java.util.Map<Class<? extends Exception>, SystemLogType> LOG_MAPPINGS =
             Map.ofEntries(
                     Map.entry(AuditLogNotFoundException.class, SystemLogType.AUDIT_LOGS_NOT_FOUND),

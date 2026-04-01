@@ -28,16 +28,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
-/**
- * Implementation of {@link NotificationService} that handles all notification-related
- * business logic for the EduSphere platform.
- *
- * <p>This service supports both real-time reactive notification streaming via Project Reactor
- * and standard CRUD operations on persisted notifications. A multicast {@link Sinks.Many} sink
- * is used to push live notifications to any currently subscribed users.</p>
- *
- * <p>All public methods are transactional by default, as declared at the class level.</p>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -52,18 +42,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final Sinks.Many<NotificationResponse> notificationSink =
             Sinks.many().multicast().onBackpressureBuffer();
 
-    /**
-     * Opens a reactive stream that delivers both existing (persisted) notifications and any
-     * new (live) notifications for the specified user.
-     *
-     * <p>The returned {@link Flux} first emits all notifications already stored in the database
-     * for the user, then continues to emit new notifications as they arrive via the shared sink.</p>
-     *
-     * @param userId the {@link UUID} of the user whose notification stream is requested
-     * @return a {@link Flux} of {@link NotificationResponse} objects; never {@code null}
-     * @throws SubscribingToNotificationFailed if an expected subscription error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during stream setup
-     */
     public Flux<NotificationResponse> subscribeToNofications(UUID userId) {
         try {
             Flux<NotificationResponse> existingNotifs =
@@ -84,18 +62,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Creates a new notification for a specific user and immediately emits it to the shared
-     * reactive sink so that any active subscribers receive it in real time.
-     *
-     * @param userId              the {@link UUID} of the user who should receive the notification
-     * @param notificationRequest a {@link NotificationRequest} DTO containing the notification
-     *                            message and category details
-     * @return the persisted {@link NotificationResponse} representing the created notification
-     * @throws UserNotFoundException            if no user exists with the given {@code userId}
-     * @throws NotificationNotCreatedException if a known creation error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during creation
-     */
     @Override
     public NotificationResponse createNotification(
             UUID userId, NotificationRequest notificationRequest) {
@@ -123,17 +89,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Broadcasts a notification to every user registered in the system.
-     *
-     * <p>Internally delegates to {@link #dispatchToUsers(List, BroadcastNotificationRequest)}
-     * after fetching the full user list.</p>
-     *
-     * @param request a {@link BroadcastNotificationRequest} containing the message and category
-     *                to broadcast
-     * @return a {@link List} of {@link NotificationResponse} objects, one per user notified
-     * @throws RuntimeException if any error occurs during broadcast
-     */
     @Override
     public List<NotificationResponse> sendToAll(BroadcastNotificationRequest request) {
         try {
@@ -144,18 +99,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Broadcasts a notification to all users who possess the specified role.
-     *
-     * <p>Internally delegates to {@link #dispatchToUsers(List, BroadcastNotificationRequest)}
-     * after fetching users filtered by role.</p>
-     *
-     * @param role    the {@link Role} enum value used to filter target users
-     * @param request a {@link BroadcastNotificationRequest} containing the message and category
-     *                to broadcast
-     * @return a {@link List} of {@link NotificationResponse} objects, one per matched user
-     * @throws RuntimeException if any error occurs during role-based broadcast
-     */
     @Override
     public List<NotificationResponse> sendToRole(Role role, BroadcastNotificationRequest request) {
         try{
@@ -167,15 +110,6 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
 
-    /**
-     * Persists a notification for each user in the supplied list and emits every saved
-     * notification through the reactive sink for real-time delivery to active subscribers.
-     *
-     * @param users   the {@link List} of {@link User} entities who should receive the notification
-     * @param request a {@link BroadcastNotificationRequest} containing the message and category
-     * @return a {@link List} of {@link NotificationResponse} objects representing all saved
-     *         notifications
-     */
     private List<NotificationResponse> dispatchToUsers(List<User> users, BroadcastNotificationRequest request) {
         var notifications = users.stream()
                 .map(user ->
@@ -197,15 +131,6 @@ public class NotificationServiceImpl implements NotificationService {
         return responses;
     }
 
-    /**
-     * Retrieves all notifications associated with the specified user.
-     *
-     * @param userId the {@link UUID} of the user whose notifications are to be fetched
-     * @return a non-empty {@link List} of {@link NotificationResponse} objects
-     * @throws NotificationNotFoundException    if no notifications are found for the user
-     * @throws NotificationsNotFoundException  if a known fetch error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during retrieval
-     */
     @Override
     public List<NotificationResponse> getAllNotificationsForUserId(UUID userId) {
         try {
@@ -227,15 +152,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Marks a single notification as read by setting its {@code isRead} flag to {@code true}
-     * and persisting the change.
-     *
-     * @param notificationId the {@link UUID} of the notification to mark as read
-     * @throws NotificationNotFoundException   if no notification exists with the given ID
-     * @throws NotificationNotUpdatedException if a known update error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during the update
-     */
     @Override
     public void markNotificationAsRead(UUID notificationId) {
         try {
@@ -262,13 +178,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Marks all notifications belonging to the specified user as read in a single bulk operation.
-     *
-     * @param userId the {@link UUID} of the user whose notifications should all be marked as read
-     * @throws NotificationNotUpdatedException if a known update error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during the bulk update
-     */
     @Override
     public void markAllNotificationsAsRead(UUID userId) {
         try {
@@ -283,13 +192,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-    /**
-     * Permanently deletes the notification identified by the given ID from the data store.
-     *
-     * @param notificationId the {@link UUID} of the notification to delete
-     * @throws NotificationNotDeletedException if a known deletion error occurs
-     * @throws InternalServerErrorException    if an unexpected error occurs during deletion
-     */
     @Override
     public void deleteNotificationById(UUID notificationId) {
         try {

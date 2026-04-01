@@ -22,23 +22,11 @@ import java.util.UUID;
 @RequestMapping("/api/v1/departments")
 @RequiredArgsConstructor
 @Slf4j
-/**
- * REST controller for managing academic departments.
- * Base path: /api/v1/departments
- */
 public class DepartmentController {
 
     private final DepartmentService departmentService;
     private final FacultyService facultyService;
 
-    /**
-     * Creates a new department in the system.
-     * Validates that the optional department head has the DEPARTMENT_HEAD or ADMIN role.
-     * Accessible by ADMIN role only.
-     *
-     * @param requestDTO the request containing department name, code, contact info, and optional head ID
-     * @return HTTP 201 with the created DepartmentResponseDTO
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDTO> createDepartment(@Validated(OnCreate.class) @RequestBody DepartmentRequestDTO requestDTO) {
@@ -47,12 +35,6 @@ public class DepartmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
-    /**
-     * Retrieves all departments in the system.
-     * Publicly accessible (no role restriction).
-     *
-     * @return HTTP 200 with a list of all DepartmentResponseDTO objects
-     */
     @GetMapping
     public ResponseEntity<List<DepartmentResponseDTO>> getAllDepartments() {
         log.info("Fetching all departments");
@@ -60,13 +42,6 @@ public class DepartmentController {
         return ResponseEntity.ok(departments);
     }
 
-    /**
-     * Retrieves a specific department by its unique identifier.
-     * Publicly accessible (no role restriction).
-     *
-     * @param id the UUID of the department to retrieve
-     * @return HTTP 200 with the matching DepartmentResponseDTO
-     */
     @GetMapping("/{id}")
     public ResponseEntity<DepartmentResponseDTO> getDepartmentById(@PathVariable UUID id) {
         log.info("Fetching department details for ID: {}", id);
@@ -74,15 +49,6 @@ public class DepartmentController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    /**
-     * Updates an existing department's details by its unique identifier.
-     * Supports partial updates: only non-null fields are applied.
-     * Accessible by ADMIN and DEPARTMENT_HEAD roles.
-     *
-     * @param id         the UUID of the department to update
-     * @param requestDTO the request body containing updated department fields
-     * @return HTTP 200 with the updated DepartmentResponseDTO
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD')")
     public ResponseEntity<DepartmentResponseDTO> updateDepartment(
@@ -93,14 +59,6 @@ public class DepartmentController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    /**
-     * Changes the head of a specific department to a different user.
-     * Accessible by ADMIN role only.
-     *
-     * @param id     the UUID of the department whose head is to be changed
-     * @param headId the UUID of the new department head user
-     * @return HTTP 200 with the updated DepartmentResponseDTO reflecting the new head
-     */
     @PatchMapping("/{id}/head") //TODO NB CHECK THE MAPPING CONVENTIONS.
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DepartmentResponseDTO> changeDepartmentHead(
@@ -111,13 +69,6 @@ public class DepartmentController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    /**
-     * Retrieves all faculty members belonging to a specific department.
-     * Publicly accessible (no role restriction).
-     *
-     * @param id the UUID of the department
-     * @return HTTP 200 with a list of FacultyResponseDTO objects for the department
-     */
     @GetMapping("/{id}/faculty") //TODO NB PLEASE CHECK THE MAPPING CONVENTION
     public ResponseEntity<List<FacultyResponseDTO>> getDepartmentFaculties(@PathVariable UUID id) {
         log.info("Fetching all faculty members for department: {}", id);
@@ -125,13 +76,6 @@ public class DepartmentController {
         return ResponseEntity.ok(faculties);
     }
 
-    /**
-     * Permanently deletes a department by its unique identifier.
-     * Accessible by ADMIN role only.
-     *
-     * @param id the UUID of the department to delete
-     * @return HTTP 204 No Content on successful deletion
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDepartment(@PathVariable UUID id) {

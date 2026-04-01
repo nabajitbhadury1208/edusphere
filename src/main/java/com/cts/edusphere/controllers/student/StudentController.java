@@ -16,10 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * REST controller for managing student records.
- * Base path: /api/v1/students
- */
 @RestController
 @RequestMapping("/api/v1/students")
 @RequiredArgsConstructor
@@ -28,14 +24,6 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    /**
-     * Creates a new student account.
-     * Encodes password, assigns STUDENT role, sets ACTIVE status, and triggers compliance audit.
-     * Accessible by ADMIN only.
-     *
-     * @param requestDTO student details including name, email, and password
-     * @return HTTP 201 with the created StudentResponseDTO
-     */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDTO> createStudent(@Validated(OnCreate.class) @RequestBody StudentRequestDTO requestDTO) {
@@ -44,12 +32,6 @@ public class StudentController {
 
     }
 
-    /**
-     * Retrieves all students.
-     * Accessible by ADMIN and FACULTY roles.
-     *
-     * @return HTTP 200 with a list of all StudentResponseDTO objects
-     */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY')")
     public ResponseEntity<List<StudentResponseDTO>> getAllStudents() {
@@ -58,13 +40,6 @@ public class StudentController {
 
     }
 
-    /**
-     * Retrieves a student by their unique identifier.
-     * Accessible by ADMIN and FACULTY roles, or the student themselves.
-     *
-     * @param id the UUID of the student to retrieve
-     * @return HTTP 200 with the matching StudentResponseDTO
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'FACULTY') or (hasRole('STUDENT') and #id == principal.userId)")
     public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable UUID id) {
@@ -73,14 +48,6 @@ public class StudentController {
 
     }
 
-    /**
-     * Updates student fields (partial update).
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the student to update
-     * @param requestDTO the updated student fields
-     * @return HTTP 200 with the updated StudentResponseDTO
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<StudentResponseDTO> updateStudent(
@@ -91,13 +58,6 @@ public class StudentController {
     }
 
 
-    /**
-     * Permanently deletes a student.
-     * Accessible by ADMIN only.
-     *
-     * @param id the UUID of the student to delete
-     * @return HTTP 204 No Content on successful deletion
-     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteStudent(@PathVariable UUID id) {
