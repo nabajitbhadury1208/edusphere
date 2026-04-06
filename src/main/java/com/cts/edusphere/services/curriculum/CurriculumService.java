@@ -7,9 +7,14 @@ import com.cts.edusphere.common.dto.curriculum.CurriculumRequest;
 import com.cts.edusphere.common.dto.curriculum.CurriculumResponse;
 
 public interface CurriculumService {
+
     CurriculumResponse createCurriculum(CurriculumRequest curriculumRequest);
+
     List<CurriculumResponse> getAllCurriculums();
+
     CurriculumResponse getCurriculumById(UUID id);
+
     void updateCurriculumById(UUID id, CurriculumRequest curriculumRequest);
-    void deleteCurriculumById(UUID id);    
+
+    void deleteCurriculumById(UUID id);
 }

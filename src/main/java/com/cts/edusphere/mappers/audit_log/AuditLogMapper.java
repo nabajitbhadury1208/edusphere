@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuditLogMapper {
+
     public AuditLogResponseDTO toResponseDTO(AuditLog entity) {
         return new AuditLogResponseDTO(
                 entity.getId(),

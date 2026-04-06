@@ -5,4 +5,4 @@ public class UpdatingComplianceRecordFailedException extends RuntimeException {
     public UpdatingComplianceRecordFailedException(String mssg) {
         super(mssg);
     }
-}   
+}

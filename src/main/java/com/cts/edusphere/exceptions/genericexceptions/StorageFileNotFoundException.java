@@ -1,6 +1,7 @@
 package com.cts.edusphere.exceptions.genericexceptions;
 
 public class StorageFileNotFoundException extends RuntimeException {
+
     public StorageFileNotFoundException(String message) {
         super(message);
     }

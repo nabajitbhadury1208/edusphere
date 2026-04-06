@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface NotificationService {
+
   NotificationResponse createNotification(
     UUID userId,
     NotificationRequest notificationRequest

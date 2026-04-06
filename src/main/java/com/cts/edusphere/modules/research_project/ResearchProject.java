@@ -56,7 +56,6 @@ public class ResearchProject extends BaseEntity {
     @JsonIgnore
     private List<Student> participatedStudents = new ArrayList<>();
 
-
     @Column(nullable = false, name = "start_date")
     private LocalDate startDate;
 

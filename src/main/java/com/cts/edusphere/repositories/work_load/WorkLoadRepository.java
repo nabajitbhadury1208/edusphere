@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface WorkLoadRepository extends JpaRepository<WorkLoad, UUID> {
+
     List<WorkLoad> findByFacultyId(UUID facultyId);
 }
-

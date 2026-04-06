@@ -10,4 +10,3 @@ import java.util.UUID;
 public interface ResearchProjectRepository extends JpaRepository<ResearchProject, UUID> {
 
 }
-

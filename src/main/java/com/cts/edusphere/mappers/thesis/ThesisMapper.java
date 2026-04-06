@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ThesisMapper {
+
     public Thesis toEntity(ThesisRequestDto request) {
           return Thesis.builder()
                   .student(Student.builder().id(request.studentId()).build())

@@ -2,7 +2,6 @@ package com.cts.edusphere.modules.faculty;
 
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.modules.department.Department;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,6 +19,7 @@ import java.time.Instant;
 @PrimaryKeyJoinColumn(name = "user_id")
 
 public class Faculty extends User {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;

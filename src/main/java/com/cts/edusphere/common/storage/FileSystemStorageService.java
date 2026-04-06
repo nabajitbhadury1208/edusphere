@@ -2,7 +2,6 @@ package com.cts.edusphere.common.storage;
 
 import com.cts.edusphere.config.storage.StorageProperties;
 import com.cts.edusphere.exceptions.genericexceptions.StorageException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
 public class FileSystemStorageService implements StorageService {
     private final Path rootLocation;
 
-    @Autowired
     public FileSystemStorageService(StorageProperties properties) {
         if (properties.getLocation() == null || properties.getLocation().isEmpty()) {
             throw new IllegalArgumentException("Storage location must be specified");

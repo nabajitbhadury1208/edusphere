@@ -19,6 +19,7 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
 public class BaseEntity {
+
     @Id
     @UuidGenerator
     @Column(name = "id")

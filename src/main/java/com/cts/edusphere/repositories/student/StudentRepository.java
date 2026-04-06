@@ -11,10 +11,10 @@ import java.util.UUID;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, UUID> {
+
     Optional<Student> findByEmail(String email);
 
     Optional<Student> findByPhone(String phone);
 
     List<Student> findAllByStatus(Status status);
 }
-

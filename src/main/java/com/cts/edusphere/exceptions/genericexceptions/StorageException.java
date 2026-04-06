@@ -1,6 +1,7 @@
 package com.cts.edusphere.exceptions.genericexceptions;
 
 public class StorageException extends RuntimeException{
+
     public StorageException(String message) {
         super(message);
     }

@@ -25,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 public class Department extends BaseEntity {
+
     @Column(name = "department_name", nullable = false)
     private String departmentName;
 

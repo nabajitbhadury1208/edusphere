@@ -26,6 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class Audit extends BaseEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User complianceOfficer;

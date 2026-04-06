@@ -1,11 +1,9 @@
 package com.cts.edusphere.controllers.thesis;
 
-import com.cts.edusphere.aspects.ComplianceAudit;
 import com.cts.edusphere.common.dto.thesis.ThesisRequestDto;
 import com.cts.edusphere.common.dto.thesis.ThesisResponseDto;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
-import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.thesis.ThesisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

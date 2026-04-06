@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface ThesisRepository extends JpaRepository<Thesis, UUID> {
+
     List<Thesis> findByStudentId(UUID studentId);
+
     List<Thesis> findBySupervisorId(UUID facultyId);
-
 }
-

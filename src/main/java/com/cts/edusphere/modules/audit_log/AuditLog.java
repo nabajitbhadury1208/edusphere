@@ -25,6 +25,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 
 public class AuditLog extends BaseEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = true, referencedColumnName = "user_id")
     private User user;

@@ -9,8 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface GradeRepository extends JpaRepository<Grade, UUID> {
+
     List<Grade> findByStudentId(UUID studentId);
 
     List<Grade> findByExamId(UUID examId);
 }
-

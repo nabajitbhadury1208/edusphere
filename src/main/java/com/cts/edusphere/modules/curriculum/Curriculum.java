@@ -22,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 
 public class Curriculum extends BaseEntity {
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;

@@ -8,6 +8,7 @@ import com.cts.edusphere.modules.curriculum.Curriculum;
 
 @Component
 public class CurriculumMapper {
+
     public CurriculumResponse toResponseDto(Curriculum curriculum) {
         if (curriculum == null) {
             return null;

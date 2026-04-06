@@ -11,6 +11,7 @@ import com.cts.edusphere.repositories.department.DepartmentRepository;
 
 @Component
 public class CoursesMapper {
+
     @Autowired
     DepartmentRepository departmentRepository;
 

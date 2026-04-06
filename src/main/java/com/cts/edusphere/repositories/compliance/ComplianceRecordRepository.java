@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface ComplianceRecordRepository extends JpaRepository<ComplianceRecord, UUID> {
+
     // Nested property navigation: recordedBy.id
     List<ComplianceRecord> findByComplianceOfficer_Id(UUID userId);
 

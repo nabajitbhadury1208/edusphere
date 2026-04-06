@@ -12,6 +12,7 @@ import java.util.UUID;
 
 @Repository
 public interface StudentDocumentRepository extends JpaRepository<StudentDocument, UUID> {
+
     @Query("SELECT sd FROM StudentDocument sd WHERE sd.studentUser.id = :studentId")
     List<StudentDocument> findByStudentUserId(@Param("studentId") UUID studentId);
 
@@ -23,4 +24,3 @@ public interface StudentDocumentRepository extends JpaRepository<StudentDocument
     @Query("SELECT sd FROM StudentDocument sd ORDER BY sd.createdAt DESC")
     List<StudentDocument> findAllOrderedByCreatedAt();
 }
-

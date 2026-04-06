@@ -3,7 +3,6 @@ package com.cts.edusphere.services.exam;
 import com.cts.edusphere.common.dto.exam.ExamRequest;
 import com.cts.edusphere.common.dto.exam.ExamResponse;
 import com.cts.edusphere.enums.Status;
-import com.cts.edusphere.exceptions.genericexceptions.CannotDeleteException;
 import com.cts.edusphere.exceptions.genericexceptions.CourseNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamNotCreatedException;
 import com.cts.edusphere.exceptions.genericexceptions.ExamCouldNotBeDeletedException;
@@ -73,7 +72,7 @@ public class ExamServiceImpl implements ExamService {
         try {
             Exam exam = examRepository.findById(id)
                     .orElseThrow(() -> new ExamNotFoundException("Exam not found with id: " + id));
-    
+
             return ExamMapper.toDTO(exam);
 
         } catch (ExamNotFoundException e) {
@@ -140,7 +139,7 @@ public class ExamServiceImpl implements ExamService {
             log.error("Unexpected error occurred while deleting exam with id {}: {}", id, e.getMessage());
             throw new InternalServerErrorException("An unexpected error occurred while deleting the exam: " + e.getMessage());
         }
-    } 
+    }
 
     @Override
     public List<ExamResponse> getExamsByCourse(UUID courseId) {

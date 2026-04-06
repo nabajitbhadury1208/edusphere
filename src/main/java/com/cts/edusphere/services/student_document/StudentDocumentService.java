@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface StudentDocumentService {
+
     StudentDocumentResponse uploadDocument(MultipartFile file, UUID studentId, String docType);
 
     StudentDocumentResponse getDocumentById(UUID id);

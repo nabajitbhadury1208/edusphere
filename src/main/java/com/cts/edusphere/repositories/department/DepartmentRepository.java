@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @Repository
 public interface DepartmentRepository extends JpaRepository<Department, UUID> {
+
     Optional<Department> findByDepartmentCode(String departmentCode);
 
     Optional<Department> findByDepartmentName(String departmentName);

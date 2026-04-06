@@ -22,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class Course extends BaseEntity {
+
     @Column(nullable = false, unique = true)
     private String title;
 

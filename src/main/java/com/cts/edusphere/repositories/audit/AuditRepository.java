@@ -10,6 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface AuditRepository extends JpaRepository<Audit, UUID> {
+
     List<Audit> findByEntityType(AuditEntityType entityType);
 }
-

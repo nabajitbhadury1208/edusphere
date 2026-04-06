@@ -5,10 +5,10 @@ import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
 import com.cts.edusphere.enums.AuditStatus;
 import com.cts.edusphere.modules.audit.Audit;
 import org.springframework.stereotype.Component;
-import java.time.LocalDate;
 
 @Component
 public class AuditMapper {
+
     public Audit toEntity(AuditRequestDTO dto) {
         return Audit.builder()
                 .entityType(dto.entityType())

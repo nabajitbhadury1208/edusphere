@@ -11,7 +11,6 @@ import com.cts.edusphere.exceptions.genericexceptions.FacultyNotCreatedException
 import com.cts.edusphere.exceptions.genericexceptions.FacultyNotDeletedException;
 import com.cts.edusphere.exceptions.genericexceptions.FacultyNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.FacultyNotUpdatedException;
-import com.cts.edusphere.exceptions.genericexceptions.FacultyServiceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.faculty.FacultyMapper;

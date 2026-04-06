@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.UUID;
 
-
 public record ExamRequest(
         @NotNull(groups = {OnCreate.class},message = "CourseId is required")
         UUID courseId,

@@ -30,6 +30,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @SuperBuilder
 public class ComplianceRecord extends BaseEntity {
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "recorded_by_user_id", nullable = false)
     private User complianceOfficer;

@@ -10,7 +10,6 @@ import com.cts.edusphere.exceptions.genericexceptions.DepartmentNotFoundExceptio
 import com.cts.edusphere.exceptions.genericexceptions.DepartmentsNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.InsufficientPermissionException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.UserNotFoundException;
 import com.cts.edusphere.mappers.department.DepartmentMapper;
 import com.cts.edusphere.modules.department.Department;

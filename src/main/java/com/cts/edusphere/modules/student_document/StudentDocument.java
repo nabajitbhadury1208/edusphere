@@ -21,6 +21,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class StudentDocument extends BaseEntity {
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Student studentUser;
@@ -31,7 +32,6 @@ public class StudentDocument extends BaseEntity {
 
     @Column(nullable = false, name = "file_uri")
     private String fileUri;
-
 
     @Column(nullable = false, name = "verification_status")
     private boolean verificationStatus;

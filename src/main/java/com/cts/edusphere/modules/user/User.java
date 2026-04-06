@@ -24,6 +24,7 @@ import java.util.Set;
 @AttributeOverride(name = "id", column = @Column(name = "user_id"))
 
 public class User extends BaseEntity {
+
     @NotBlank(message = "Name cannot be blank")
     @Column(nullable = false, name = "name")
     private String name;

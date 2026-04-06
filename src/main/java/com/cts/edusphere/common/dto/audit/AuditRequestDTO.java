@@ -6,7 +6,6 @@ import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.enums.AuditStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 

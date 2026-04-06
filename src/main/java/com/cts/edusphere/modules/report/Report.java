@@ -28,10 +28,10 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 @SuperBuilder
 public class Report extends BaseEntity {
+
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "generated_by_user_id", nullable = false)
     private User generatedBy;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)

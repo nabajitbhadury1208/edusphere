@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ReportMapper {
+
     public Report toEntity(ReportRequestDto request) {
 //        Report report = new Report();
 //        report.setMetrics(request.metrics());

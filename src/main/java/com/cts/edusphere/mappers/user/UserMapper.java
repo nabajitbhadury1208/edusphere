@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {
+
     public User toEntity(RegisterRequest request) {
         if (request == null) {
             return null;
@@ -25,7 +26,6 @@ public class UserMapper {
                 .status(Status.ACTIVE)
                 .build();
     }
-
 
     public UserResponseDto toResponse(User user) {
         if (user == null) {

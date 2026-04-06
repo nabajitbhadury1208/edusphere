@@ -7,15 +7,12 @@ import com.cts.edusphere.exceptions.genericexceptions.AuditLogNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.AuditLogsNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.FailedToCreateLogException;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
-import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.mappers.audit_log.AuditLogMapper;
 import com.cts.edusphere.modules.audit_log.AuditLog;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.audit_log.AuditLogRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,6 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final AuditLogMapper auditLogMapper;
     private final UserRepository userRepository;
 
-    @Autowired
     public AuditLogServiceImpl(
             @Lazy AuditLogRepository auditLogRepository,
             AuditLogMapper auditLogMapper,
@@ -43,12 +39,11 @@ public class AuditLogServiceImpl implements AuditLogService {
         this.userRepository = userRepository;
     }
 
-
     @Override
     @Transactional
     public void logSystemEvent(SystemLogType logType, Severity severity,
-                               String action, String resource,
-                               String details, UUID userId) {
+            String action, String resource,
+            String details, UUID userId) {
         try {
             User user = null;
             if (userId != null) {
@@ -68,7 +63,7 @@ public class AuditLogServiceImpl implements AuditLogService {
             auditLogRepository.save(log);
         } catch (FailedToCreateLogException e) {
             log.error("Failed to persist system audit log: {}", e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected error occurred while logging system event: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to log system event");
         }
@@ -95,8 +90,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             return auditLogRepository.findById(id)
                     .map(auditLogMapper::toResponseDTO)
                     .orElseThrow(() -> new AuditLogNotFoundException("Audit log not found with id: " + id));
-        // } catch (ResourceNotFoundException e) {
-        //     throw e;
+            // } catch (ResourceNotFoundException e) {
+            // throw e;
         } catch (AuditLogNotFoundException e) {
             log.error("Error fetching audit log {}: {}", id, e.getMessage());
             throw new AuditLogNotFoundException("Failed to retrieve audit log");
@@ -131,7 +126,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             log.error("Error fetching audit logs for resource {}: {}", resource, e.getMessage());
             throw new AuditLogsNotFoundException("Failed to retrieve resource audit logs");
         } catch (Exception e) {
-            log.error("Unexpected error occurred while fetching audit logs for resource {}: {}", resource, e.getMessage());
+            log.error("Unexpected error occurred while fetching audit logs for resource {}: {}", resource,
+                    e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve resource audit logs");
         }
     }
@@ -146,7 +142,8 @@ public class AuditLogServiceImpl implements AuditLogService {
             log.error("Error fetching audit logs by severity {}: {}", severity, e.getMessage());
             throw new AuditLogsNotFoundException("Failed to retrieve audit logs by severity");
         } catch (Exception e) {
-            log.error("Unexpected error occurred while fetching audit logs by severity {}: {}", severity, e.getMessage());
+            log.error("Unexpected error occurred while fetching audit logs by severity {}: {}", severity,
+                    e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve audit logs by severity");
         }
     }

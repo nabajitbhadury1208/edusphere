@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GradeMapper {
+
     public static Grade toEntity(GradeRequest dto, Exam exam, Student student){
 
         if(dto == null){
@@ -23,6 +24,7 @@ public class GradeMapper {
                 .status(dto.status())
                 .build();
     }
+
     public static GradeResponse toDTO(Grade grade){
 
         if (grade == null) {

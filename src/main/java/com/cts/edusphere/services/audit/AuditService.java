@@ -8,9 +8,14 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AuditService {
+
     AuditResponseDTO reviewAudit(UUID auditId, AuditRequestDTO dto);
+
     List<AuditResponseDTO> getAllAudits();
+
     AuditResponseDTO getAuditById(UUID id);
+
     void deleteAudit(UUID id);
+
     List<AuditResponseDTO> getAuditsByEntityType(AuditEntityType entityType);
-}   
+}

@@ -8,12 +8,19 @@ import java.util.List;
 import java.util.UUID;
 
 public interface ExamService {
+
     ExamResponse createExam(ExamRequest request);
+
     List<ExamResponse> getAllExams();
+
     ExamResponse getExamById(UUID id);
+
     ExamResponse updateExam(UUID id, ExamRequest request);
+
     ExamResponse updateExamStatus(UUID id, Status status);
+
     void deleteExam(UUID id);
+
     List<ExamResponse> getExamsByCourse(UUID courseId);
 
 

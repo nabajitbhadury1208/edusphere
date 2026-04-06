@@ -1,7 +1,6 @@
 package com.cts.edusphere.mappers.student_document;
 
 import com.cts.edusphere.common.dto.student_document.StudentDocumentResponse;
-import com.cts.edusphere.modules.student.Student;
 import com.cts.edusphere.modules.student_document.StudentDocument;
 import com.cts.edusphere.modules.user.User;
 import org.springframework.stereotype.Component;

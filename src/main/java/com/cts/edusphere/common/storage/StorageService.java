@@ -7,12 +7,15 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 public interface StorageService {
+
     void init();
+
     void deleteAllFiles();
 
     String uploadFile(MultipartFile file, String subFolder);
 
     Stream<Path> loadAllFiles();
+
     Path loadFile(String filename);
 
     Resource loadAsResource(String filename);

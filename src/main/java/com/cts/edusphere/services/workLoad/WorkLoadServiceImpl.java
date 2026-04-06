@@ -2,8 +2,6 @@ package com.cts.edusphere.services.workLoad;
 
 import com.cts.edusphere.common.dto.workload.WorkLoadRequestDto;
 import com.cts.edusphere.common.dto.workload.WorkLoadResponseDto;
-import com.cts.edusphere.enums.Severity;
-import com.cts.edusphere.enums.SystemLogType;
 import com.cts.edusphere.exceptions.genericexceptions.InternalServerErrorException;
 import com.cts.edusphere.exceptions.genericexceptions.ResourceNotFoundException;
 import com.cts.edusphere.exceptions.genericexceptions.WorkLoadCreateFailedException;
@@ -14,7 +12,6 @@ import com.cts.edusphere.modules.work_load.WorkLoad;
 import com.cts.edusphere.repositories.course.CourseRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import com.cts.edusphere.repositories.work_load.WorkLoadRepository;
-import com.cts.edusphere.services.audit_log.AuditLogService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +32,6 @@ public class WorkLoadServiceImpl implements WorkLoadService {
     private final WorkLoadMapper mapper;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
-    private final AuditLogService auditLogService;
-
-
     @Override
     public WorkLoadResponseDto createWorkLoad(WorkLoadRequestDto request) {
         try {
