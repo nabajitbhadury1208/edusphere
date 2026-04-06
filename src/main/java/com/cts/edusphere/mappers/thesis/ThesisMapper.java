@@ -21,6 +21,7 @@ public class ThesisMapper {
 
     public ThesisResponseDto toResponse(Thesis thesis) {
         return new ThesisResponseDto(
+                thesis.getId(),
                 thesis.getStudent().getId(),
                 thesis.getTitle(),
                 thesis.getSupervisor().getId(),

@@ -29,6 +29,7 @@ public class GradeMapper {
             return null;
         }
         return GradeResponse.builder()
+                .id(grade.getId())
                 .examId(grade.getExam().getId())
                 .studentId(grade.getStudent().getId())
                 .score(grade.getScore())

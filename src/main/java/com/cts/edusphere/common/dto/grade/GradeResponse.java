@@ -10,6 +10,7 @@ import java.util.UUID;
 @Builder
 public record GradeResponse(
 
+        UUID id,
         UUID examId,
         UUID studentId,
         Double score,

@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record ThesisResponseDto(
+        UUID id,
         UUID studentId,
         String title,
         UUID supervisorId,

@@ -30,13 +30,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String jwtToken = null;
+
+        // 1. Try the standard Authorization header
         final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwtToken = authHeader.substring(7);
+        }
+
+        // 2. Fallback: accept ?token= query-param for SSE streams (EventSource cannot set headers)
+        if (jwtToken == null && request.getRequestURI().contains("/notifications/stream/")) {
+            jwtToken = request.getParameter("token");
+        }
+
+        if (jwtToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
-        final String jwtToken = authHeader.substring(7);
         try {
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserPrincipal userPrincipal = jwtService.getUserPrincipalFromToken(jwtToken);

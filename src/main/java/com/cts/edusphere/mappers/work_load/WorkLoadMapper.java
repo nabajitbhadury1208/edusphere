@@ -23,6 +23,7 @@ public class WorkLoadMapper {
 
     public WorkLoadResponseDto toResponse(WorkLoad workLoad) {
         return new WorkLoadResponseDto(
+                workLoad.getId(),
                 workLoad.getFaculty().getId(),
                 workLoad.getCourse().getId(),
                 workLoad.getHours(),

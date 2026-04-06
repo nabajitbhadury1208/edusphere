@@ -35,13 +35,13 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping(value = "/stream/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.principal.userId().toString()")
     public Flux<NotificationResponse> streamNotifications(@PathVariable UUID userId) {
         return notificationService.subscribeToNofications(userId);
     }
 
     @PostMapping("/send/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.principal.userId().toString()")
     public ResponseEntity<NotificationResponse> sendToUser(
             @PathVariable UUID userId,
             @Valid @RequestBody NotificationRequest notificationRequest) {
@@ -70,27 +70,27 @@ public class NotificationController {
 
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.principal.userId().toString()")
     public ResponseEntity<List<NotificationResponse>> getAllNotificationsForUserId(@PathVariable UUID userId) {
         return ResponseEntity.ok(notificationService.getAllNotificationsForUserId(userId));
     }
 
     @PatchMapping("/{notificationId}/read")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> markNotificationAsRead(@PathVariable UUID notificationId) {
         notificationService.markNotificationAsRead(notificationId);
         return ResponseEntity.ok("Successfully marked notification with id: " + notificationId + " as read");
     }
 
     @PatchMapping("/{userId}/read-all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.principal.userId().toString()")
     public ResponseEntity<String> markAllNotificationsAsRead(@PathVariable UUID userId) {
         notificationService.markAllNotificationsAsRead(userId);
         return ResponseEntity.ok("Successfully marked all notifications for user id: " + userId + " as read");
     }
 
     @DeleteMapping("/{notificationId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> deleteNotificationById(@PathVariable UUID notificationId) {
         notificationService.deleteNotificationById(notificationId);
         return ResponseEntity.ok("Successfully deleted notification with id: " + notificationId);

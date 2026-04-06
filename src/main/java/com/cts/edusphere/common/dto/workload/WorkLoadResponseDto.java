@@ -7,6 +7,7 @@ import java.util.UUID;
 
 //TODO NB CHECK THIS THERE IS A API FOR CHECKING THE WORKLOAD BY DATA , BUT RESPONSE DOES NOT CONTAIN UUID
 public record WorkLoadResponseDto(
+        UUID id,
         UUID facultyId,
         UUID courseId,
         Integer hours,

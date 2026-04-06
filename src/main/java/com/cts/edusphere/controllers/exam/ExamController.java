@@ -34,7 +34,7 @@ public class ExamController {
   }
 
   @GetMapping
-  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD)")
+  @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD')")
   public ResponseEntity<List<ExamResponse>> getAllExams() {
 
     List<ExamResponse> exams = examService.getAllExams();
