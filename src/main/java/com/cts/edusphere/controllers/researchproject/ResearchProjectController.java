@@ -4,7 +4,6 @@ import com.cts.edusphere.common.dto.research_project.ResearchProjectRequest;
 import com.cts.edusphere.common.dto.research_project.ResearchProjectResponse;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.services.research_project.ResearchProjectService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +47,7 @@ public class ResearchProjectController {
      * @return HTTP 200 with a list of all ResearchProjectResponse objects
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'FACULTY', 'COMPLIANCE', 'REGULATOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEPT_HEAD', 'FACULTY', 'COMPLIANCE', 'REGULATOR', 'STUDENT')")
     public ResponseEntity<List<ResearchProjectResponse>> getAll() {
         return ResponseEntity.ok(projectService.getAllProjects());
     }

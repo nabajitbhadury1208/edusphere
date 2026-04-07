@@ -151,20 +151,11 @@ public class ResearchProjectServiceImpl implements ResearchProjectService {
     @Override
     @Transactional(readOnly = true)
     public List<ResearchProjectResponse> getAllProjects() {
-        List<ResearchProject> projects = projectRepository.findAll();
-
-
-        if (projects.isEmpty()) {
-            throw new ResearchProjectNotFoundException("No research projects found in the system.");
-        }
         try {
+            List<ResearchProject> projects = projectRepository.findAll();
             return projects.stream()
                     .map(projectMapper::toResponse)
                     .collect(Collectors.toList());
-
-        } catch (ResearchProjectNotFoundException e) {
-            log.error("Error occurred while fetching all research projects: {}", e.getMessage());
-            throw new ResearchProjectNotFoundException("Failed to retrieve research projects list");
         } catch (Exception e) {
             log.error("Unexpected error occurred while fetching all research projects: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve research projects list");

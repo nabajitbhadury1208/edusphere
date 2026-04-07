@@ -63,6 +63,19 @@ public class ThesisServiceImpl implements ThesisService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ThesisResponseDto> getAllThesis() {
+        try {
+            return thesisRepository.findAll().stream()
+                    .map(thesisMapper::toResponse)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            log.error("Error fetching all thesis records: {}", e.getMessage());
+            throw new InternalServerErrorException("Failed to retrieve thesis records");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ThesisResponseDto getThesisById(UUID id) {
         try {
             return thesisRepository.findById(id)

@@ -18,7 +18,6 @@ public class ComplianceRecordMapper {
                 complianceRecord.getComplianceOfficer() != null ? complianceRecord.getComplianceOfficer().getId() : null,
                 complianceRecord.getEntityId(),
                 complianceRecord.getEntityType(),
-                complianceRecord.getComplianceType(),
                 complianceRecord.getResult(),
                 complianceRecord.getComplianceDate(),
                 complianceRecord.getNotes(),
@@ -34,7 +33,6 @@ public class ComplianceRecordMapper {
         return ComplianceRecord.builder()
                 .entityId(request.entityId())
                 .entityType(request.entityType())
-                .complianceType(request.complianceType())
                 .result(request.result())
                 .complianceDate(request.complianceDate())
                 .notes(request.notes())

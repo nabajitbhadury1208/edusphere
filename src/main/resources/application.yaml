@@ -1,11 +1,9 @@
 server:
   port: 9086
 
-cors:
-  allowed-origins: http://localhost:5174,http://localhost:3000
-
 spring:
   application:
     name: edusphere
   profiles:
     active: local
+

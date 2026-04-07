@@ -4,8 +4,8 @@ import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
 import com.cts.edusphere.config.security.JwtAuthenticationFilter;
 import com.cts.edusphere.config.security.JwtService;
+import com.cts.edusphere.enums.ComplianceEntityType;
 import com.cts.edusphere.enums.ComplianceResult;
-import com.cts.edusphere.enums.ComplianceType;
 import com.cts.edusphere.services.compliance_record.ComplianceRecordService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -88,12 +88,12 @@ public class ComplianceRecordControllerTest {
         entityId = UUID.randomUUID();
 
         complianceRecordRequest = new ComplianceRecordRequest(
-                userId, entityId, "COURSE", ComplianceType.COURSE,
-                ComplianceResult.PASS, LocalDate.now(), "Compliance check passed");
+                userId, entityId, ComplianceEntityType.COURSE,
+                ComplianceResult.COMPLIANT, LocalDate.now(), "Compliance check passed");
 
         complianceRecordResponse = new ComplianceRecordResponse(
-                recordId, userId, entityId, "COURSE", ComplianceType.COURSE,
-                ComplianceResult.PASS, LocalDate.now(), "Compliance check passed", Instant.now());
+                recordId, userId, entityId, ComplianceEntityType.COURSE,
+                ComplianceResult.COMPLIANT, LocalDate.now(), "Compliance check passed", Instant.now());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.cts.edusphere.controllers.notification;
 
+import com.cts.edusphere.common.dto.ApiResponse;
 import com.cts.edusphere.common.dto.notification.BroadcastNotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationRequest;
 import com.cts.edusphere.common.dto.notification.NotificationResponse;
@@ -77,22 +78,22 @@ public class NotificationController {
 
     @PatchMapping("/{notificationId}/read")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> markNotificationAsRead(@PathVariable UUID notificationId) {
+    public ResponseEntity<ApiResponse> markNotificationAsRead(@PathVariable UUID notificationId) {
         notificationService.markNotificationAsRead(notificationId);
-        return ResponseEntity.ok("Successfully marked notification with id: " + notificationId + " as read");
+        return ResponseEntity.ok(ApiResponse.of("Successfully marked notification with id: " + notificationId + " as read", HttpStatus.OK.value()));
     }
 
     @PatchMapping("/{userId}/read-all")
     @PreAuthorize("hasRole('ADMIN') or #userId.toString() == authentication.principal.userId().toString()")
-    public ResponseEntity<String> markAllNotificationsAsRead(@PathVariable UUID userId) {
+    public ResponseEntity<ApiResponse> markAllNotificationsAsRead(@PathVariable UUID userId) {
         notificationService.markAllNotificationsAsRead(userId);
-        return ResponseEntity.ok("Successfully marked all notifications for user id: " + userId + " as read");
+        return ResponseEntity.ok(ApiResponse.of("Successfully marked all notifications for user id: " + userId + " as read", HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{notificationId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> deleteNotificationById(@PathVariable UUID notificationId) {
+    public ResponseEntity<ApiResponse> deleteNotificationById(@PathVariable UUID notificationId) {
         notificationService.deleteNotificationById(notificationId);
-        return ResponseEntity.ok("Successfully deleted notification with id: " + notificationId);
+        return ResponseEntity.ok(ApiResponse.of("Successfully deleted notification with id: " + notificationId, HttpStatus.OK.value()));
     }
 }

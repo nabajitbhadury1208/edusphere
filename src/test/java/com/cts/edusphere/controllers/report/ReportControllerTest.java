@@ -86,8 +86,8 @@ public class ReportControllerTest {
         departmentId = UUID.randomUUID();
         generatedById = UUID.randomUUID();
 
-        reportRequest = new ReportRequestDto("Test metrics data", Status.ACTIVE, ReportScope.DEPARTMENT, departmentId, generatedById);
-        reportResponse = new ReportResponseDto(reportId, "Test metrics data", Status.ACTIVE, ReportScope.DEPARTMENT, departmentId, null);
+        reportRequest = new ReportRequestDto("Test metrics data", Status.ACTIVE, ReportScope.DEPARTMENT_OVERVIEW, departmentId, generatedById);
+        reportResponse = new ReportResponseDto(reportId, "Test metrics data", Status.ACTIVE, ReportScope.DEPARTMENT_OVERVIEW, departmentId, null);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ReportControllerTest {
         when(reportService.createReport(any(ReportRequestDto.class))).thenReturn(reportResponse);
 
         mockMvc.perform(post("/api/v1/reports").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(reportRequest)))
+                        .content(objectMapper.writeValueAsString(reportRequest)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(reportResponse)));
     }
@@ -144,7 +144,7 @@ public class ReportControllerTest {
         when(reportService.updateReport(eq(reportId), any(ReportRequestDto.class))).thenReturn(reportResponse);
 
         mockMvc.perform(put("/api/v1/reports/{id}", reportId).with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(reportRequest)))
+                        .content(objectMapper.writeValueAsString(reportRequest)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(reportResponse)));
     }

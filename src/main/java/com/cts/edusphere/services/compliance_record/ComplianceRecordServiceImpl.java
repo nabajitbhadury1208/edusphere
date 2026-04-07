@@ -2,15 +2,24 @@ package com.cts.edusphere.services.compliance_record;
 
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
+import com.cts.edusphere.enums.ComplianceEntityType;
 import com.cts.edusphere.exceptions.genericexceptions.*;
 import com.cts.edusphere.mappers.compliance_record.ComplianceRecordMapper;
 import com.cts.edusphere.modules.compliance_record.ComplianceRecord;
 import com.cts.edusphere.modules.user.User;
 import com.cts.edusphere.repositories.compliance.ComplianceRecordRepository;
+import com.cts.edusphere.repositories.course.CourseRepository;
+import com.cts.edusphere.repositories.curriculum.CurriculumRepository;
+import com.cts.edusphere.repositories.department.DepartmentRepository;
+import com.cts.edusphere.repositories.exam.ExamRepository;
+import com.cts.edusphere.repositories.faculty.FacultyRepository;
+import com.cts.edusphere.repositories.research_project.ResearchProjectRepository;
+import com.cts.edusphere.repositories.student.StudentRepository;
+import com.cts.edusphere.repositories.student_document.StudentDocumentRepository;
+import com.cts.edusphere.repositories.thesis.ThesisRepository;
 import com.cts.edusphere.repositories.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +34,15 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     private final ComplianceRecordRepository complianceRecordRepository;
     private final UserRepository userRepository;
     private final ComplianceRecordMapper complianceRecordMapper;
+    private final StudentRepository studentRepository;
+    private final FacultyRepository facultyRepository;
+    private final DepartmentRepository departmentRepository;
+    private final CourseRepository courseRepository;
+    private final CurriculumRepository curriculumRepository;
+    private final ExamRepository examRepository;
+    private final ThesisRepository thesisRepository;
+    private final ResearchProjectRepository researchProjectRepository;
+    private final StudentDocumentRepository studentDocumentRepository;
 
     @Override
     public ComplianceRecordResponse createComplianceRecord(ComplianceRecordRequest request) {
@@ -34,6 +52,8 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
             User officer = userRepository.findById(request.recordedByUserId())
                     .orElseThrow(() -> new UserNotFoundException("Compliance Officer not found with id: " + request.recordedByUserId()));
 
+            validateEntityExists(request.entityType(), request.entityId());
+
             ComplianceRecord record = complianceRecordMapper.toEntity(request);
             record.setComplianceOfficer(officer);
 
@@ -41,8 +61,8 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
             log.info("Compliance record created successfully with ID: {}", savedRecord.getId());
             return complianceRecordMapper.toResponseDto(savedRecord);
 
-        } catch (UserNotFoundException e) {
-            log.error("Officer validation failed: {}", e.getMessage());
+        } catch (UserNotFoundException | ResourceNotFoundException e) {
+            log.error("Validation failed: {}", e.getMessage());
             throw e;
         } catch (ComplianceRecordNotCreatedException e) {
             log.error("Domain failure during compliance creation: {}", e.getMessage());
@@ -58,15 +78,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         try {
             List<ComplianceRecord> records = complianceRecordRepository.findAll();
             if (records.isEmpty()) {
-                throw new ComplianceRecordsNotFoundException("No compliance records found in the system.");
+                log.info("No compliance records found in the system, returning empty list.");
+                return List.of();
             }
             return records.stream()
                     .map(complianceRecordMapper::toResponseDto)
                     .collect(Collectors.toList());
-        } catch (ComplianceRecordsNotFoundException e) {
-            log.error("No records found: {}", e.getMessage());
-            throw e;
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Unexpected error occurred while fetching compliance records: {}", e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve compliance records list");
         }
@@ -91,19 +109,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     public List<ComplianceRecordResponse> getComplianceRecordsByEntityId(UUID entityId) {
         try {
             List<ComplianceRecord> records = complianceRecordRepository.findByEntityId(entityId);
-
             if (records.isEmpty()) {
-                throw new ComplianceRecordNotFoundException("No compliance records found for entity ID: " + entityId);
+                log.info("No compliance records found for entity ID: {}, returning empty list.", entityId);
+                return List.of();
             }
-
             return records.stream()
                     .map(complianceRecordMapper::toResponseDto)
                     .collect(Collectors.toList());
-
-        } catch (ComplianceRecordNotFoundException e) {
-            log.error("Compliance lookup failed for entity {}: {}", entityId, e.getMessage());
-            throw e;
-
         } catch (Exception e) {
             log.error("Unexpected error fetching compliance records by entity ID {}: {}", entityId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve compliance records for the specified entity");
@@ -114,19 +126,13 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
     public List<ComplianceRecordResponse> getComplianceRecordsByUserId(UUID userId) {
         try {
             List<ComplianceRecord> records = complianceRecordRepository.findByComplianceOfficer_Id(userId);
-
             if (records.isEmpty()) {
-                throw new ComplianceRecordNotFoundException("No compliance records found for officer ID: " + userId);
+                log.info("No compliance records found for officer ID: {}, returning empty list.", userId);
+                return List.of();
             }
-
             return records.stream()
                     .map(complianceRecordMapper::toResponseDto)
                     .collect(Collectors.toList());
-
-        } catch (ComplianceRecordNotFoundException e) {
-            log.error("Compliance lookup failed for officer {}: {}", userId, e.getMessage());
-            throw e;
-
         } catch (Exception e) {
             log.error("Unexpected error fetching compliance records by officer ID {}: {}", userId, e.getMessage());
             throw new InternalServerErrorException("Failed to retrieve compliance records for the specified officer");
@@ -145,16 +151,19 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
                 record.setComplianceOfficer(officer);
             }
 
-            if (request.entityId() != null) record.setEntityId(request.entityId());
-            if (request.entityType() != null) record.setEntityType(request.entityType());
-            if (request.complianceType() != null) record.setComplianceType(request.complianceType());
+            if (request.entityType() != null && request.entityId() != null) {
+                validateEntityExists(request.entityType(), request.entityId());
+                record.setEntityId(request.entityId());
+                record.setEntityType(request.entityType());
+            }
+
             if (request.result() != null) record.setResult(request.result());
             if (request.complianceDate() != null) record.setComplianceDate(request.complianceDate());
             if (request.notes() != null) record.setNotes(request.notes());
 
             complianceRecordRepository.save(record);
 
-        } catch (ComplianceRecordNotFoundException | UserNotFoundException e) {
+        } catch (ComplianceRecordNotFoundException | UserNotFoundException | ResourceNotFoundException e) {
             log.error("Update validation failed: {}", e.getMessage());
             throw e;
         } catch (UpdatingComplianceRecordFailedException e) {
@@ -187,4 +196,23 @@ public class ComplianceRecordServiceImpl implements ComplianceRecordService {
         }
     }
 
+    private void validateEntityExists(ComplianceEntityType entityType, UUID entityId) {
+        boolean exists = switch (entityType) {
+            case STUDENT -> studentRepository.existsById(entityId);
+            case FACULTY -> facultyRepository.existsById(entityId);
+            case DEPARTMENT -> departmentRepository.existsById(entityId);
+            case COURSE -> courseRepository.existsById(entityId);
+            case CURRICULUM -> curriculumRepository.existsById(entityId);
+            case EXAM -> examRepository.existsById(entityId);
+            case THESIS -> thesisRepository.existsById(entityId);
+            case RESEARCH_PROJECT -> researchProjectRepository.existsById(entityId);
+            case STUDENT_DOCUMENT -> studentDocumentRepository.existsById(entityId);
+        };
+
+        if (!exists) {
+            throw new ResourceNotFoundException(
+                    entityType.name().charAt(0) + entityType.name().substring(1).toLowerCase().replace('_', ' ')
+                    + " with id " + entityId + " not found");
+        }
     }
+}

@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
 
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
+import com.cts.edusphere.enums.ComplianceEntityType;
 import com.cts.edusphere.enums.ComplianceResult;
-import com.cts.edusphere.enums.ComplianceType;
 import com.cts.edusphere.exceptions.genericexceptions.ComplianceRecordNotFoundException;
 import com.cts.edusphere.mappers.compliance_record.ComplianceRecordMapper;
 import com.cts.edusphere.modules.compliance_record.ComplianceRecord;
@@ -62,25 +62,23 @@ class ComplianceRecordServiceImplTest {
                 .build();
 
         request = new ComplianceRecordRequest(
-                userId, entityId, "COURSE", ComplianceType.COURSE,
-                ComplianceResult.PASS, LocalDate.now(), "Notes"
+                userId, entityId, ComplianceEntityType.COURSE,
+                ComplianceResult.COMPLIANT, LocalDate.now(), "Notes"
         );
 
         complianceRecord = ComplianceRecord.builder()
                 .id(recordId)
                 .entityId(entityId)
-                .entityType("COURSE")
-                .complianceType(ComplianceType.COURSE)
-                .result(ComplianceResult.PASS)
+                .entityType(ComplianceEntityType.COURSE)
+                .result(ComplianceResult.COMPLIANT)
                 .complianceOfficer(officer)
                 .complianceDate(LocalDate.now())
                 .notes("Notes")
                 .build();
 
         response = new ComplianceRecordResponse(
-                recordId, userId, entityId, "COURSE",
-                ComplianceType.COURSE, ComplianceResult.PASS,
-                LocalDate.now(), "Notes", Instant.now()
+                recordId, userId, entityId, ComplianceEntityType.COURSE,
+                ComplianceResult.COMPLIANT, LocalDate.now(), "Notes", Instant.now()
         );
     }
 

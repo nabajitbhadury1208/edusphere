@@ -136,16 +136,9 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             List<Notification> notifications = notificationRepository.findByUser_Id(userId);
 
-            if (notifications.isEmpty()) {
-                throw new NotificationNotFoundException("No notifications found with user id " + userId);
-            }
-
-            log.info("Successfully fetched notifications for user with id: " + userId);
+            log.info("Successfully fetched {} notifications for user with id: {}", notifications.size(), userId);
             return notifications.stream().map(NotificationMapper::toDTO).toList();
 
-        } catch (NotificationsNotFoundException e) {
-            log.error("Error getting notifications for user with id {}", userId);
-            throw new NotificationsNotFoundException("Error getting all notifications");
         } catch (Exception e) {
             log.error("Unexpected error fetching notifications for user with id {}: {}", userId, e.getMessage());
             throw new InternalServerErrorException("Unexpected error fetching notifications");

@@ -82,7 +82,7 @@ class ReportServiceImplTest {
         request = new ReportRequestDto(
                 "{\"passPercentage\": 92}",
                 Status.ACTIVE,
-                ReportScope.DEPARTMENT,
+                ReportScope.DEPARTMENT_OVERVIEW,
                 departmentId,
                 generatedById
         );
@@ -91,7 +91,7 @@ class ReportServiceImplTest {
                 .id(reportId)
                 .metrics("{\"passPercentage\": 92}")
                 .status(Status.ACTIVE)
-                .scope(ReportScope.DEPARTMENT)
+                .scope(ReportScope.DEPARTMENT_OVERVIEW)
                 .department(department)
                 .generatedBy(generator)
                 .build();
@@ -100,7 +100,7 @@ class ReportServiceImplTest {
                 reportId,
                 "{\"passPercentage\": 92}",
                 Status.ACTIVE,
-                ReportScope.DEPARTMENT,
+                ReportScope.DEPARTMENT_OVERVIEW,
                 departmentId,
                 generator
         );
@@ -117,7 +117,7 @@ class ReportServiceImplTest {
         assertNotNull(result);
         assertEquals(reportId, result.id());
         assertEquals(departmentId, result.department());
-        assertEquals(ReportScope.DEPARTMENT, result.scope());
+        assertEquals(ReportScope.DEPARTMENT_OVERVIEW, result.scope());
         verify(reportRepository).save(any(Report.class));
     }
 
@@ -194,7 +194,7 @@ class ReportServiceImplTest {
         ReportRequestDto updatedRequest = new ReportRequestDto(
                 "{\"passPercentage\": 95}",
                 Status.INACTIVE,
-                ReportScope.COMPLIANCE,
+                ReportScope.COMPLIANCE_SUMMARY,
                 departmentId,
                 generatedById
         );
@@ -203,7 +203,7 @@ class ReportServiceImplTest {
                 .id(reportId)
                 .metrics("{\"passPercentage\": 95}")
                 .status(Status.INACTIVE)
-                .scope(ReportScope.COMPLIANCE)
+                .scope(ReportScope.COMPLIANCE_SUMMARY)
                 .department(department)
                 .generatedBy(generator)
                 .build();
@@ -212,7 +212,7 @@ class ReportServiceImplTest {
                 reportId,
                 "{\"passPercentage\": 95}",
                 Status.INACTIVE,
-                ReportScope.COMPLIANCE,
+                ReportScope.COMPLIANCE_SUMMARY,
                 departmentId,
                 generator
         );
@@ -225,7 +225,7 @@ class ReportServiceImplTest {
 
         assertNotNull(result);
         assertEquals(Status.INACTIVE, result.status());
-        assertEquals(ReportScope.COMPLIANCE, result.scope());
+        assertEquals(ReportScope.COMPLIANCE_SUMMARY, result.scope());
         verify(reportRepository).save(any(Report.class));
     }
 

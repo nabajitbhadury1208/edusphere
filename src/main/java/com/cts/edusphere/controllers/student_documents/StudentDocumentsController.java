@@ -11,8 +11,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,8 +40,20 @@ public class StudentDocumentsController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER') or (hasRole('STUDENT') and @studentDocumentService.getDocumentById(#id)?.studentId() == principal.userId())")
-    public ResponseEntity<StudentDocumentResponse> getDocument(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER', 'STUDENT')")
+    public ResponseEntity<StudentDocumentResponse> getDocument(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal) {
+
+        boolean isPrivileged = principal.authorities().contains(new SimpleGrantedAuthority("ROLE_FACULTY"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_DEPARTMENT_HEAD"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_COMPLIANCE_OFFICER"));
+
+        if (!isPrivileged && !studentDocumentService.isDocumentOwnedByStudent(id, principal.userId())) {
+            throw new AccessDeniedException("You do not have permission to view this document.");
+        }
+
         return ResponseEntity.ok(studentDocumentService.getDocumentById(id));
     }
 
@@ -56,13 +70,24 @@ public class StudentDocumentsController {
     }
 
     @GetMapping("/download/{id}")
-    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER')" + "or (hasRole('STUDENT') and @studentDocumentService.getDocumentById(#id)?.studentId() == principal.userId())")
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN', 'DEPARTMENT_HEAD', 'COMPLIANCE_OFFICER', 'STUDENT')")
+    public ResponseEntity<Resource> downloadDocument(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal) {
 
-    public ResponseEntity<Resource> downloadDocument(@PathVariable UUID id) {
+        boolean isPrivileged = principal.authorities().contains(new SimpleGrantedAuthority("ROLE_FACULTY"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_DEPARTMENT_HEAD"))
+                || principal.authorities().contains(new SimpleGrantedAuthority("ROLE_COMPLIANCE_OFFICER"));
+
+        if (!isPrivileged && !studentDocumentService.isDocumentOwnedByStudent(id, principal.userId())) {
+            throw new AccessDeniedException("You do not have permission to download this document.");
+        }
+
         Resource file = studentDocumentService.downloadDocument(id);
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"")
+                .body(file);
     }
 
     @PatchMapping("/{id}/verify")
@@ -85,7 +110,6 @@ public class StudentDocumentsController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestParam(value = "docType", required = false) String docType
     ) {
-
         log.info("Fetching documents for logged-in user: {}", principal.userId());
 
         List<StudentDocumentResponse> responses;

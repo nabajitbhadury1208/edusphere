@@ -24,4 +24,6 @@ public interface StudentDocumentService {
     void deleteDocument(UUID id);
 
     Resource downloadDocument(UUID id);
+
+    boolean isDocumentOwnedByStudent(UUID documentId, UUID studentId);
 }

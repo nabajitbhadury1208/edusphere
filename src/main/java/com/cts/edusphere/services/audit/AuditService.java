@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface AuditService {
 
-    AuditResponseDTO reviewAudit(UUID auditId, AuditRequestDTO dto);
+    AuditResponseDTO reviewAudit(UUID auditId, UUID officerId, AuditRequestDTO dto);
 
     List<AuditResponseDTO> getAllAudits();
 

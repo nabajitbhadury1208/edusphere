@@ -38,16 +38,16 @@ public class AuditServiceImpl implements AuditService {
 
     @Override
     @Transactional
-    public AuditResponseDTO reviewAudit(UUID auditId,AuditRequestDTO dto) {
+    public AuditResponseDTO reviewAudit(UUID auditId, UUID officerId, AuditRequestDTO dto) {
         try {
             Audit audit = auditRepository.findById(auditId)
                     .orElseThrow(() -> new AuditNotFoundException("Audit record not found"));
-            User complianceOfficer = findOfficerById(dto.officerId());
+            User complianceOfficer = findOfficerById(officerId);
 
             audit.setComplianceOfficer(complianceOfficer);
             audit.setFindings(dto.findings());
             audit.setAuditDate(LocalDate.now());
-            if(dto.status() != null){
+            if (dto.status() != null) {
                 audit.setStatus(dto.status());
             }
 

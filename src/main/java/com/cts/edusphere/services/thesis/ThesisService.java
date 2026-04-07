@@ -10,6 +10,8 @@ public interface ThesisService {
 
     ThesisResponseDto createThesis(ThesisRequestDto request);
 
+    List<ThesisResponseDto> getAllThesis();
+
     ThesisResponseDto getThesisById(UUID id);
 
     List<ThesisResponseDto> getThesisByStudent(UUID studentId);

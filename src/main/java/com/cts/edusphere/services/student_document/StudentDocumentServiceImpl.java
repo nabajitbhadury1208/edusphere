@@ -242,4 +242,11 @@ public class StudentDocumentServiceImpl implements StudentDocumentService {
           "Failed to retrieve document types: " + e.getMessage());
     }
   }
+
+  @Override
+  public boolean isDocumentOwnedByStudent(UUID documentId, UUID studentId) {
+    return studentDocumentRepository.findById(documentId)
+        .map(doc -> doc.getStudentUser() != null && studentId.equals(doc.getStudentUser().getId()))
+        .orElse(false);
+  }
 }

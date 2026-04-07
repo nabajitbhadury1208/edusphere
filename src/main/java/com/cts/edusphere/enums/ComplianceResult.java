@@ -1,9 +1,9 @@
 package com.cts.edusphere.enums;
 
 public enum ComplianceResult {
-    PASS,
-    FAIL,
-    PENDING,
-    DEFERRED,
-    NOT_APPLICABLE
+    COMPLIANT,
+    NON_COMPLIANT,
+    PARTIALLY_COMPLIANT,
+    UNDER_REVIEW,
+    EXEMPTED
 }

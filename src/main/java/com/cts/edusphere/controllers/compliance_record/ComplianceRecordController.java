@@ -1,5 +1,6 @@
 package com.cts.edusphere.controllers.compliance_record;
 
+import com.cts.edusphere.common.dto.ApiResponse;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordRequest;
 import com.cts.edusphere.common.dto.compliance_record.ComplianceRecordResponse;
 import com.cts.edusphere.common.validation.OnCreate;
@@ -57,17 +58,17 @@ public class ComplianceRecordController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE_OFFICER')")
-    public ResponseEntity<String> updateComplianceRecordById(
+    public ResponseEntity<ApiResponse> updateComplianceRecordById(
             @PathVariable UUID id,
             @Validated(OnUpdate.class) @RequestBody ComplianceRecordRequest request) {
         complianceRecordService.updateComplianceRecord(id, request);
-        return ResponseEntity.ok("Successfully updated ComplianceRecord with id: " + id);
+        return ResponseEntity.ok(ApiResponse.of("Successfully updated compliance record with id: " + id, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<String> deleteComplianceRecordById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse> deleteComplianceRecordById(@PathVariable UUID id) {
         complianceRecordService.deleteComplianceRecordById(id);
-        return ResponseEntity.ok("Successfully deleted ComplianceRecord with id: " + id);
+        return ResponseEntity.ok(ApiResponse.of("Successfully deleted compliance record with id: " + id, HttpStatus.OK.value()));
     }
 }

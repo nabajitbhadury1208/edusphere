@@ -1,8 +1,8 @@
 package com.cts.edusphere.modules.compliance_record;
 
 import com.cts.edusphere.core.BaseEntity;
+import com.cts.edusphere.enums.ComplianceEntityType;
 import com.cts.edusphere.enums.ComplianceResult;
-import com.cts.edusphere.enums.ComplianceType;
 import com.cts.edusphere.modules.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,7 @@ import java.util.UUID;
         name = "compliance_records",
         indexes = {
                 @Index(name = "idx_compliance_recorded_by", columnList = "recorded_by_user_id"),
-                @Index(name = "idx_compliance_entity_id", columnList = "entity_id"),
-                @Index(name = "idx_compliance_type", columnList = "compliance_type"),
+                @Index(name = "idx_compliance_entity_id", columnList = "entity_id")
         }
 )
 @AttributeOverride(name = "id", column = @Column(name = "compliance_id"))
@@ -38,12 +37,9 @@ public class ComplianceRecord extends BaseEntity {
     @Column(name = "entity_id", nullable = false)
     private UUID entityId;
 
-    @Column(name = "entity_type", nullable = false)
-    private String entityType;
-
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ComplianceType complianceType;
+    @Column(name = "entity_type", nullable = false)
+    private ComplianceEntityType entityType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "result")

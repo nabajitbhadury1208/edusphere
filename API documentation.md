@@ -68,13 +68,13 @@
 
 ## Faculty API
 
-| Sl No | Method   | Endpoint                    | Description                        | Role                                    |
-|:------|:---------|:----------------------------|:-----------------------------------|:----------------------------------------|
-| 1     | `POST`   | `/faculties`                | Create a new faculty               | Admin                                   |
-| 2     | `GET`    | `/faculties`                | Get all faculties                  | Admin, DeptHead                         |
-| 3     | `GET`    | `/faculties/{id}`           | Get a faculty by id                | Admin, DeptHead, Faculty (own)          |
-| 4     | `PUT`    | `/faculties/{id}`           | Fully update a faculty by id       | Admin                                   |
-| 5     | `DELETE` | `/faculties/{id}`           | Delete a faculty by id             | Admin                                   |
+| Sl No | Method   | Endpoint                    | Description                        | Role                                              |
+|:------|:---------|:----------------------------|:-----------------------------------|:--------------------------------------------------|
+| 1     | `POST`   | `/faculties`                | Create a new faculty               | Admin                                             |
+| 2     | `GET`    | `/faculties`                | Get all faculties                  | Admin, DeptHead, Student                          |
+| 3     | `GET`    | `/faculties/{id}`           | Get a faculty by id                | Admin, DeptHead, Student, Faculty (own)           |
+| 4     | `PUT`    | `/faculties/{id}`           | Fully update a faculty by id       | Admin                                             |
+| 5     | `DELETE` | `/faculties/{id}`           | Delete a faculty by id             | Admin                                             |
 
 ---
 
@@ -132,15 +132,16 @@
 
 ## Grades API
 
-| Sl No | Method   | Endpoint                            | Description                              | Role                                              |
-|:------|:---------|:------------------------------------|:-----------------------------------------|:--------------------------------------------------|
-| 1     | `POST`   | `/grades`                           | Submit a grade                           | Admin, Faculty                                    |
-| 2     | `GET`    | `/grades`                           | Get all grades                           | Admin, Compliance                                 |
-| 3     | `GET`    | `/grades/{id}`                      | Get a grade by id                        | Admin, Faculty, Compliance                        |
-| 4     | `GET`    | `/grades/students/{studentId}`      | Get all grades of a student              | Admin, Faculty, DeptHead, Student (own), Compliance |
-| 5     | `GET`    | `/grades/exam/{examId}`             | Get all grades for an exam               | Admin, Faculty, Compliance                        |
-| 6     | `PUT`    | `/grades/{id}`                      | Update a grade by id                     | Admin, Faculty                                    |
-| 7     | `DELETE` | `/grades/{id}`                      | Delete a grade by id                     | Admin                                             |
+| Sl No | Method   | Endpoint                            | Description                              | Role                                                        |
+|:------|:---------|:------------------------------------|:-----------------------------------------|:------------------------------------------------------------|
+| 1     | `POST`   | `/grades`                           | Submit a grade                           | Admin, Faculty                                              |
+| 2     | `GET`    | `/grades`                           | Get all grades                           | Admin, Faculty, Compliance                                  |
+| 3     | `GET`    | `/grades/{id}`                      | Get a grade by id                        | Admin, Faculty, Compliance                                  |
+| 4     | `GET`    | `/grades/my`                        | Get grades of the logged-in student      | Student (own only)                                          |
+| 5     | `GET`    | `/grades/students/{studentId}`      | Get all grades of a student              | Admin, Faculty, DeptHead, Compliance, Student (own only)    |
+| 6     | `GET`    | `/grades/exam/{examId}`             | Get all grades for an exam               | Admin, Faculty, Compliance                                  |
+| 7     | `PUT`    | `/grades/{id}`                      | Update a grade by id                     | Admin, Faculty                                              |
+| 8     | `DELETE` | `/grades/{id}`                      | Delete a grade by id                     | Admin                                                       |
 
 ---
 
@@ -159,14 +160,16 @@
 
 ## Thesis API
 
-| Sl No | Method   | Endpoint                                    | Description                              | Role                                         |
-|:------|:---------|:--------------------------------------------|:-----------------------------------------|:---------------------------------------------|
-| 1     | `POST`   | `/thesis`                                   | Create a new thesis                      | Admin, Faculty, Student                      |
-| 2     | `GET`    | `/thesis/{id}`                              | Get a thesis by id                       | Admin, Faculty, Student (own), Compliance    |
-| 3     | `GET`    | `/thesis/student/{studentId}`               | Get all theses for a student             | Admin, Faculty, DeptHead, Student (own), Compliance |
-| 4     | `GET`    | `/thesis/supervisor/{facultyId}`            | Get all theses supervised by a faculty   | Admin, DeptHead, Faculty (own), Compliance   |
-| 5     | `PUT`    | `/thesis/{id}`                              | Fully update a thesis by id              | Admin, Faculty                               |
-| 6     | `DELETE` | `/thesis/{id}`                              | Delete a thesis by id                    | Admin                                        |
+| Sl No | Method   | Endpoint                             | Description                                      | Role                                                                             |
+|:------|:---------|:-------------------------------------|:-------------------------------------------------|:---------------------------------------------------------------------------------|
+| 1     | `POST`   | `/thesis`                            | Create a new thesis                              | Admin, Faculty, Student                                                          |
+| 2     | `GET`    | `/thesis`                            | Get all theses                                   | Admin                                                                            |
+| 3     | `GET`    | `/thesis/my`                         | Get theses assigned to the logged-in user        | Student (own), Faculty (as supervisor only)                                      |
+| 4     | `GET`    | `/thesis/{id}`                       | Get a thesis by id                               | Admin, DeptHead, Compliance, Student (own), Faculty (own as supervisor)          |
+| 5     | `GET`    | `/thesis/student/{studentId}`        | Get all theses for a student                     | Admin, Faculty, DeptHead, Compliance, Student (own only)                         |
+| 6     | `GET`    | `/thesis/supervisor/{facultyId}`     | Get all theses supervised by a faculty           | Admin, DeptHead, Compliance, Faculty (own only)                                  |
+| 7     | `PUT`    | `/thesis/{id}`                       | Fully update a thesis by id                      | Admin, Faculty                                                                   |
+| 8     | `DELETE` | `/thesis/{id}`                       | Delete a thesis by id                            | Admin                                                                            |
 
 ---
 

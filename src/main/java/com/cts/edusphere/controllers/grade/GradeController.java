@@ -3,11 +3,13 @@ import com.cts.edusphere.common.dto.grade.GradeRequest;
 import com.cts.edusphere.common.dto.grade.GradeResponse;
 import com.cts.edusphere.common.validation.OnCreate;
 import com.cts.edusphere.common.validation.OnUpdate;
+import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.services.grade.GradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -28,14 +30,14 @@ public class GradeController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','COMPLIANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE_OFFICER')")
     public ResponseEntity<List<GradeResponse>> getAllGrades() {
             List<GradeResponse> grades = gradeService.getAllGrades();
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE_OFFICER')")
     public ResponseEntity<GradeResponse> getGradeById(@PathVariable UUID id) {
             GradeResponse grade = gradeService.getGradeById(id);
             return ResponseEntity.ok(grade);
@@ -58,16 +60,24 @@ public class GradeController {
     }
 
     @GetMapping("/students/{studentId}")
-    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD','STUDENT','COMPLIANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','DEPARTMENT_HEAD','COMPLIANCE_OFFICER') or " +
+                  "(hasRole('STUDENT') and #studentId == authentication.principal.userId)")
     public ResponseEntity<List<GradeResponse>> getGradesByStudent(@PathVariable UUID studentId) {
             List<GradeResponse> grades = gradeService.getGradesByStudent(studentId);
             return ResponseEntity.ok(grades);
     }
 
     @GetMapping("/exam/{examId}")
-    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE')")
+    @PreAuthorize("hasAnyRole('ADMIN','FACULTY','COMPLIANCE_OFFICER')")
     public ResponseEntity<List<GradeResponse>> getGradesByExam(@PathVariable UUID examId) {
             List<GradeResponse> grades = gradeService.getGradesByExam(examId);
             return ResponseEntity.ok(grades);
+    }
+
+    @GetMapping("/my")
+    @PreAuthorize("hasRole('STUDENT')")
+    public ResponseEntity<List<GradeResponse>> getMyGrades(@AuthenticationPrincipal UserPrincipal principal) {
+        List<GradeResponse> grades = gradeService.getGradesByStudent(principal.userId());
+        return ResponseEntity.ok(grades);
     }
 }

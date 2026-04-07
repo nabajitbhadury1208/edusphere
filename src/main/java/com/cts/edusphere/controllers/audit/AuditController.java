@@ -3,12 +3,14 @@ package com.cts.edusphere.controllers.audit;
 import com.cts.edusphere.common.dto.audit.AuditRequestDTO;
 import com.cts.edusphere.common.dto.audit.AuditResponseDTO;
 import com.cts.edusphere.common.validation.OnUpdate;
+import com.cts.edusphere.config.security.UserPrincipal;
 import com.cts.edusphere.enums.AuditEntityType;
 import com.cts.edusphere.services.audit.AuditService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,9 +51,12 @@ public class AuditController {
 
     @PutMapping("/{id}/review")
     @PreAuthorize("hasAnyRole('ADMIN', 'COMPLIANCE')")
-    public ResponseEntity<AuditResponseDTO> reviewAudit(@PathVariable UUID id, @Validated(OnUpdate.class) @RequestBody AuditRequestDTO dto) {
-        log.info("Reviewing audit record {}", dto);
-        return ResponseEntity.ok(auditService.reviewAudit(id, dto));
+    public ResponseEntity<AuditResponseDTO> reviewAudit(
+            @PathVariable UUID id,
+            @AuthenticationPrincipal UserPrincipal principal,
+            @Validated(OnUpdate.class) @RequestBody AuditRequestDTO dto) {
+        log.info("Reviewing audit record {} by officer {}", id, principal.userId());
+        return ResponseEntity.ok(auditService.reviewAudit(id, principal.userId(), dto));
     }
 
 

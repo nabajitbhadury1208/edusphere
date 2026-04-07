@@ -2,6 +2,7 @@ package com.cts.edusphere.common.storage;
 
 import com.cts.edusphere.config.storage.StorageProperties;
 import com.cts.edusphere.exceptions.genericexceptions.StorageException;
+import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class FileSystemStorageService implements StorageService {
         this.rootLocation = Path.of(properties.getLocation()).toAbsolutePath().normalize();
     }
 
-    @Override
+    @PostConstruct
     public void init() {
         try {
             if (!rootLocation.toFile().exists()) {

@@ -1,5 +1,6 @@
 package com.cts.edusphere.controllers.curriculum;
 
+import com.cts.edusphere.common.dto.ApiResponse;
 import com.cts.edusphere.common.dto.curriculum.CurriculumRequest;
 import com.cts.edusphere.common.dto.curriculum.CurriculumResponse;
 import com.cts.edusphere.common.validation.OnCreate;
@@ -43,16 +44,16 @@ public class CurriculumController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DEPARTMENT_HEAD')")
-    public ResponseEntity<String> updateCurriculumById(@PathVariable UUID id,
-                                                       @Validated(OnUpdate.class) @RequestBody CurriculumRequest curriculumRequest) {
+    public ResponseEntity<ApiResponse> updateCurriculumById(@PathVariable UUID id,
+                                                            @Validated(OnUpdate.class) @RequestBody CurriculumRequest curriculumRequest) {
         curriculumService.updateCurriculumById(id, curriculumRequest);
-        return ResponseEntity.ok("Successfully updated Curriculum with id: " + id);
+        return ResponseEntity.ok(ApiResponse.of("Successfully updated curriculum with id: " + id, HttpStatus.OK.value()));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<String> deleteCurriculumById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse> deleteCurriculumById(@PathVariable UUID id) {
         curriculumService.deleteCurriculumById(id);
-        return ResponseEntity.ok("Successfully deleted Curriculum with id: " + id);
+        return ResponseEntity.ok(ApiResponse.of("Successfully deleted curriculum with id: " + id, HttpStatus.OK.value()));
     }
 }
